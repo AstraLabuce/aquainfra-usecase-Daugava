@@ -21,6 +21,9 @@ pacman::p_load(readxl,
                janitor, 
                rstudioapi)
 
+#blablabla
+
+
 # working directory ####
 # automatic setting wd to the folder where current script file is
 current_path = rstudioapi::getActiveDocumentContext()$path 
