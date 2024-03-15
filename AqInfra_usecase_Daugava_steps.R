@@ -1,5 +1,5 @@
 ### Aquainfra project 
-### This project has received funding from the European Commissionÿs Horizon
+### This project has received funding from the European Commission?s Horizon
 #### Europe Research and Innovation programme under grant agreement No 101094434.
 
 ### WP5 Use case: Baltic Sea Daugava-Gulf of Riga: shapefile attributes as grouping parameter
@@ -21,7 +21,7 @@ pacman::p_load(readxl,
                janitor, 
                rstudioapi)
 
-#blablabla
+#blablablabalabla
 
 
 # working directory ####
