@@ -19,7 +19,8 @@ pacman::p_load(readxl,
                readxl, 
                sf,
                janitor, 
-               rstudioapi)
+               rstudioapi,
+               lubridate)
 
 #blablablabalabla
 
@@ -76,5 +77,24 @@ data_shp_over <- sp::over(data_rel_spatial, shp)
 # bind shapefile attributes to in situ data.frame
 data_rel_shp_attributes <- cbind(data_rel, data_shp_over)
 
+################################################################################
+#STEP 2: group data by seasons
+################################################################################
+#create new columns of the 'Day','Month' and 'Year'
+data_rel_shp_attributes$visit_date<-as.POSIXct(data_rel_shp_attributes$visit_date)
 
+data_rel_shp_attributes$Month<-month(data_rel_shp_attributes$visit_date)
+data_rel_shp_attributes$Year<-year(data_rel_shp_attributes$visit_date)
+data_rel_shp_attributes$Day<-day(data_rel_shp_attributes$visit_date)
 
+#change year indication for December observations in order to assign it to the correct season
+data_rel_shp_attributes$Year_corrected <- ifelse(data_rel_shp_attributes$Month == 12, 
+                                                 data_rel_shp_attributes$Year + 1, 
+                                                 data_rel_shp_attributes$Year)
+
+#create new column 'Season'
+data_rel_shp_attributes$Season <- ifelse(data_rel_shp_attributes$Month %in% c(4, 5)|
+                                           (data_rel_shp_attributes$Month == 3 & data_rel_shp_attributes$Day > 15), "Spring",
+                                            ifelse(data_rel_shp_attributes$Month %in% c(6, 7, 8), "Summer",
+                                                   ifelse(data_rel_shp_attributes$Month %in% c(12, 1, 2) | 
+                                                            (data_rel_shp_attributes$Month == 3 & data_rel_shp_attributes$Day <= 15), "Winter", "Autumn")))
