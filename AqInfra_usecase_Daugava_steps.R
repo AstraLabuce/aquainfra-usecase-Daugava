@@ -98,3 +98,18 @@ data_rel_shp_attributes$Season <- ifelse(data_rel_shp_attributes$Month %in% c(4,
                                             ifelse(data_rel_shp_attributes$Month %in% c(6, 7, 8), "Summer",
                                                    ifelse(data_rel_shp_attributes$Month %in% c(12, 1, 2) | 
                                                             (data_rel_shp_attributes$Month == 3 & data_rel_shp_attributes$Day <= 15), "Winter", "Autumn")))
+
+
+################################################################################
+#STEP 3: calculate data average per year, per season and per HELCOM_ID
+################################################################################
+data_rel_shp_attributes$HELCOM_ID<-as.factor(data_rel_shp_attributes$HELCOM_ID)
+data_rel_shp_attributes$Year_corrected<-as.factor(data_rel_shp_attributes$Year_corrected)
+data_rel_shp_attributes$Season<-as.factor(data_rel_shp_attributes$Season)
+data_rel_shp_attributes$transparency_m<-as.numeric(data_rel_shp_attributes$transparency_m)
+data_rel_shp_attributes$color_id<-as.numeric(data_rel_shp_attributes$color_id)
+
+Transarency_m_mean<-aggregate(transparency_m ~ longitude+latitude +Year_corrected+Season+HELCOM_ID, data = data_rel_shp_attributes, FUN = mean, na.rm = TRUE)
+Transarency_m_mean2<-aggregate(transparency_m ~ Year_corrected+Season+HELCOM_ID, data = Transarency_m_mean, FUN = mean, na.rm = TRUE)
+
+Color_id_m_median<-aggregate(cbind(color_id) ~ longitude+latitude +Year_corrected+Season+HELCOM_ID, data = data_rel_shp_attributes, FUN = median, na.rm = TRUE)
