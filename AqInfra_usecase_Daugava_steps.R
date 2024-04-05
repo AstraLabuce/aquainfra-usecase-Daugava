@@ -22,7 +22,8 @@ pacman::p_load(readxl,
                rstudioapi,
                lubridate,
                tidyr,
-               zoo)
+               zoo,
+               Kendall)
 
 #blablablabalabla
 
@@ -168,3 +169,43 @@ for (table_name in names(sub_tables_subset)) {
     cat("Insufficient non-NA values to interpolate in", table_name, "\n")
   }
 }
+
+################################################################################
+#STEP 5: Mann-Kendall test for transparency and the table with results
+################################################################################
+
+# Create empty vectors to store data
+table_names <- c()
+tau_values <- c()
+p_values <- c()
+
+# Loop through each table in sub_tables_subset
+for (table_name in names(sub_tables_subset)) {
+  # Extract the current table
+  current_table <- sub_tables_subset[[table_name]]
+  
+  # Convert columns to numeric if they are not already
+  current_table[, "Year_corrected"] <- as.numeric(as.character(current_table[, "Year_corrected"]))
+  current_table[, "transparency_m"] <- as.numeric(as.character(current_table[, "transparency_m"]))
+  
+  # Create time series object
+  TS <- ts(current_table[, "transparency_m"], frequency = 1, start = c(min(current_table[, "Year_corrected"]), 1))
+  
+  # Perform Mann-Kendall test
+  MK_Test <- MannKendall(TS)
+  
+  # Extract tau-value and p-value
+  tau <- MK_Test$tau
+  p_value <- MK_Test$sl
+  
+  # Append data to vectors
+  table_names <- c(table_names, table_name)
+  tau_values <- c(tau_values, tau)
+  p_values <- c(p_values, p_value)
+}
+
+# Combine data into a data frame
+results_table <- data.frame(Table = table_names, Tau_Value = tau_values, P_Value = p_values)
+
+# Print the results table
+print(results_table)
