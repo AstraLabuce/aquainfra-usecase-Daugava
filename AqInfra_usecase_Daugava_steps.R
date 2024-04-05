@@ -20,7 +20,9 @@ pacman::p_load(readxl,
                sf,
                janitor, 
                rstudioapi,
-               lubridate)
+               lubridate,
+               tidyr,
+               zoo)
 
 #blablablabalabla
 
@@ -112,4 +114,57 @@ data_rel_shp_attributes$color_id<-as.numeric(data_rel_shp_attributes$color_id)
 Transarency_m_mean<-aggregate(transparency_m ~ longitude+latitude +Year_corrected+Season+HELCOM_ID, data = data_rel_shp_attributes, FUN = mean, na.rm = TRUE)
 Transarency_m_mean2<-aggregate(transparency_m ~ Year_corrected+Season+HELCOM_ID, data = Transarency_m_mean, FUN = mean, na.rm = TRUE)
 
-Color_id_m_median<-aggregate(cbind(color_id) ~ longitude+latitude +Year_corrected+Season+HELCOM_ID, data = data_rel_shp_attributes, FUN = median, na.rm = TRUE)
+Color_id_median<-aggregate(cbind(color_id) ~ longitude+latitude +Year_corrected+Season+HELCOM_ID, data = data_rel_shp_attributes, FUN = median, na.rm = TRUE)
+
+################################################################################
+#STEP 4: Interpolation of NAs
+################################################################################
+
+#split data onto sub-tables for each season and HELCOM_ID separately
+# Create a list to store sub-tables of transparency
+sub_tables <- split(Transarency_m_mean2, list(Transarency_m_mean2$Season, Transarency_m_mean2$HELCOM_ID))
+
+#EST data are short, only few years since 1976, therefore the data frames are excluded from the further analysis
+
+# Identify indices of elements containing "EST" in HELCOM_ID
+indices <- grep("EST", names(sub_tables), invert = TRUE)
+
+# Subset sub_tables to exclude elements containing "EST"
+sub_tables_subset <- sub_tables[indices]
+
+#library(tidyr), probably it competes with dplyr if it was not fixed
+
+# Loop through each table in sub_tables_subset a function for extending the dataframes by missing years
+for (table_name in names(sub_tables_subset)) {
+  # Extract the table
+  table_data <- as.data.frame(sub_tables_subset[[table_name]])
+  
+  # Convert Year_corrected to numeric
+  table_data$Year_corrected <- as.numeric(as.character(table_data$Year_corrected))
+  
+  # Extend the data frame
+  extended_table <- complete(table_data, Year_corrected = min(table_data$Year_corrected):max(table_data$Year_corrected))
+  
+  # Assign the extended table back to the list
+  sub_tables_subset[[table_name]] <- extended_table
+}
+
+# Check the result for one table (e.g., Autumn.LAT-005)
+print(sub_tables_subset$"Autumn.LAT-005", n=nrow(sub_tables_subset$"Autumn.LAT-005"))
+
+
+#interpolate the transparency 
+# Loop through each table in sub_tables_subset
+for (table_name in names(sub_tables_subset)) {
+  # Remove the Season and HELCOM_ID columns
+  processed_table <- sub_tables_subset[[table_name]] %>% 
+    select(-Season, -HELCOM_ID)
+  
+  # Apply na.approx() to fill gaps if there are at least two non-NA values
+  if (sum(!is.na(processed_table$transparency_m)) >= 2) {
+    filled_table <- na.approx(processed_table)
+    sub_tables_subset[[table_name]] <- filled_table
+  } else {
+    cat("Insufficient non-NA values to interpolate in", table_name, "\n")
+  }
+}
