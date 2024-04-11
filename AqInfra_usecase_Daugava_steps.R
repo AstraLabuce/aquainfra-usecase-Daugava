@@ -23,9 +23,13 @@ pacman::p_load(readxl,
                lubridate,
                tidyr,
                zoo,
-               Kendall)
+               Kendall,
+               ggplot2,
+               ggsci,
+               broom,
+               ggpubr,
+               Cairo)
 
-#blablablabalabla
 
 
 # working directory ####
@@ -44,7 +48,9 @@ shp <- spTransform(shapefile, CRS("+proj=longlat +datum=WGS84 +no_defs"))
 # locate in situ data set manually
 # load in situ data and respective metadata (geolocation and date are mandatory metadata)
 # example data
-data_raw <- readxl::read_excel("in_situ_data/in_situ_example.xlsx") %>% #example data from https://latmare.lhei.lv/
+#data_raw <- readxl::read_excel("in_situ_data/in_situ_example.xlsx") %>% #example data from https://latmare.lhei.lv/
+#  janitor::clean_names() # makes column names clean for R
+data_raw <- readxl::read_excel("in_situ_data/Latmare_20240111_secchi_color.xlsx") %>% #datafvrom LIAE data base from https://latmare.lhei.lv/
   janitor::clean_names() # makes column names clean for R
 
 #list relevant columns: geolocation (lat and lon), date and values for data points are mendatory
@@ -60,7 +66,7 @@ data_rel <- data_raw %>%
   #select only relevant columns
   select(all_of(rel_columns)) %>%
     # remove cases when Secchi depth, water colour were not measured
-   filter(!is.na(`transparency_m`) & !is.na(`color_id`)) # make sure to use correct column names
+   filter(!is.na(`transparency_m`) & !is.na(`color_id`)& !is.na(`longitude`)& !is.na(`latitude`)) # make sure to use correct column names
 
 # set coordinates ad numeric (in case they are read as chr variables)
 data_rel$`longitude` <- as.numeric(data_rel$`longitude`)
@@ -125,13 +131,56 @@ Color_id_median<-aggregate(cbind(color_id) ~ longitude+latitude +Year_corrected+
 # Create a list to store sub-tables of transparency
 sub_tables <- split(Transarency_m_mean2, list(Transarency_m_mean2$Season, Transarency_m_mean2$HELCOM_ID))
 
-#EST data are short, only few years since 1976, therefore the data frames are excluded from the further analysis
+#Some tables have too many missing years, therefore it is necessary to filter them out. In the example, the treshold is 30% of missing years of the total consequence.
 
-# Identify indices of elements containing "EST" in HELCOM_ID
-indices <- grep("EST", names(sub_tables), invert = TRUE)
+#create a function for which will calculate a percentage of missing years
+calculate_missing_percentage <- function(table) {
+  # Extract the years from the table
+  years <- as.numeric(as.character(table$Year_corrected))
+  
+  # Remove missing values
+  years <- years[!is.na(years)]
+  
+  # Calculate the total number of years
+  total_years <- length(years)
+  
+  # Check if there are enough years for calculation
+  if (total_years < 2) {
+    return(100)  # Return 100% missing if there are not enough years
+  }
+  
+  # Calculate the difference between consecutive years
+  year_diff <- diff(years)
+  
+  # Calculate the number of consecutive years
+  consecutive_years <- sum(year_diff == 1) + 1
+  
+  # Calculate the expected number of rows
+  expected_rows <- max(years, na.rm = TRUE) - min(years, na.rm = TRUE) + 1
+  
+  # Calculate the percentage of missing rows
+  missing_percentage <- ((expected_rows - consecutive_years) / expected_rows) * 100
+  
+  return(missing_percentage)
+}
 
-# Subset sub_tables to exclude elements containing "EST"
-sub_tables_subset <- sub_tables[indices]
+#filter out the tables where part of missing years is above 30% percentage
+filtered_tables <- lapply(sub_tables, function(table) {
+  missing_percentage <- calculate_missing_percentage(table)
+  
+  if (missing_percentage <= 40) {#can be modified as required
+    return(table)
+  } else {
+    return(NULL)
+  }
+})
+
+# Remove NULL elements from the list
+sub_tables_subset <- Filter(Negate(is.null), filtered_tables)
+
+# Show the filtered tables
+summary(sub_tables_subset)
+
 
 #library(tidyr), probably it competes with dplyr if it was not fixed
 
@@ -150,8 +199,8 @@ for (table_name in names(sub_tables_subset)) {
   sub_tables_subset[[table_name]] <- extended_table
 }
 
-# Check the result for one table (e.g., Autumn.LAT-005)
-print(sub_tables_subset$"Autumn.LAT-005", n=nrow(sub_tables_subset$"Autumn.LAT-005"))
+# Check the result for one table 
+print(sub_tables_subset[4])
 
 
 #interpolate the transparency 
@@ -170,6 +219,7 @@ for (table_name in names(sub_tables_subset)) {
   }
 }
 
+print(sub_tables_subset[4])
 ################################################################################
 #STEP 5: Mann-Kendall test for transparency and the table with results
 ################################################################################
@@ -209,3 +259,132 @@ results_table <- data.frame(Table = table_names, Tau_Value = tau_values, P_Value
 
 # Print the results table
 print(results_table)
+
+################################################################################
+#STEP 6: Plot results
+################################################################################
+str(results_table)
+results_table$Table<-as.factor(results_table$Table)
+# Add the polygon column
+results_table$HELCOM_ID <- sub(".*\\.(.*)", "\\1", results_table$Table)
+# Replace '-' with '_'
+#results_table$polygon <- gsub("-", "_", results_table$polygon)
+
+# Add the Season column
+results_table$Season <- substring(results_table$Table, 1, regexpr("\\.", results_table$Table) - 1)
+
+# Reorder the levels of the Season column
+results_table$Season <- factor(results_table$Season, levels = c("Winter", "Spring", "Summer", "Autumn"))
+
+
+#plot the result for trasparency
+barplot_alldata<-ggplot(aes(x=HELCOM_ID, y=Tau_Value), data=results_table)+
+  geom_bar(aes(fill = Season, alpha = P_Value > 0.05),
+           width=0.6,
+           position = position_dodge(width=0.6),
+           stat = "identity")+
+  scale_alpha_manual(values = c(1, 0.3), guide = FALSE) +  # Adjust the transparency if necessary
+  scale_fill_npg()+
+  annotate("text", x = 0.5, y = -Inf, label = "Blurred bars indicate statistically \n insignificant changes over time",
+           vjust = -1, hjust = 0, size = 3) +  # Add annotation
+  labs(x = "Polygons according to the HELCOM shapefile", y = "Tau-value from Mann-Kendall test") +
+  ggtitle('Results from time series analysis')+
+  theme_bw()+
+  theme(axis.text.y = element_text(size=12),
+        axis.text.x = element_text(size=12, angle = 90),
+        axis.title = element_text(size=12),
+        title = element_text(size=12),
+        legend.text = element_text(size=12),
+        legend.title = element_text(size=12))
+print(barplot_alldata)
+
+#plot a map
+
+# Convert selected_shp to a tidy format
+selected_shp_tidy <- tidy(selected_shp)
+selected_shp_tidy <- left_join(selected_shp_tidy, selected_shp@data)
+
+#add information from Mann-Kendall test to the shape data for mapping
+joined_data <- left_join(selected_shp_tidy, results_table, by = c("HELCOM_ID" = "HELCOM_ID"))
+
+#add condition of polygon fill color in a new column
+joined_data <- joined_data %>%
+  mutate(fill_color = ifelse(is.na(Tau_Value) | is.na(P_Value), "white", # For missing values
+                             ifelse(P_Value > 0.05, "grey",#Non-significant P_Value
+                                    ifelse( P_Value <= 0.05&Tau_Value < 0 , "red",  # Negative Tau_Value and significant P_Value
+                                            ifelse(P_Value <= 0.05&Tau_Value > 0 , "blue",  # Positive Tau_Value and significant P_Value
+                                                   "green")  # for error
+                                           )
+                                    )
+                             )
+         )
+
+#convert to factors
+joined_data$fill_color<-as.factor(joined_data$fill_color)
+joined_data$fill_lable<-as.factor(joined_data$fill_lable)
+
+# Filter for a season with maximal number of cases in the table with results of Mann-kendall test
+subset_data <- results_table[results_table$P_Value <= 0.05, ]
+factor_counts <- table(subset_data$Season)
+max_level <- names(factor_counts)[which.max(factor_counts)]
+
+#filter data for the selected season
+selected_shp_tidy_max_data <- joined_data %>% filter(Season == max_level)
+
+#create a fill color and label condition for the future plot
+color_condition <- data.frame(
+  col_values = levels(selected_shp_tidy_max_data$fill_color))
+color_condition <- color_condition %>%
+  mutate( col_labels = ifelse(is.na(levels(selected_shp_tidy_max_data$fill_color)), "No data", 
+                              ifelse(levels(selected_shp_tidy_max_data$fill_color) == "grey", "P > 0.05",
+                                     ifelse(levels(selected_shp_tidy_max_data$fill_color) == "red", "Negative Tau, P < 0.05", 
+                                            ifelse(levels(selected_shp_tidy_max_data$fill_color) == "blue", "Positive Tau, P < 0.05",
+                                                   "Error")
+                                     )
+                              )
+  )
+  )
+
+# Create the plot
+plot_map_max_data <- ggplot(selected_shp_tidy_max_data, aes(x = long, y = lat, group = group, fill = fill_color)) +
+  geom_polygon(color = "black", size = 0.1) +
+  coord_equal() +
+  theme_void() +
+  labs(title = paste("HELCOM subbasins in the Gulf of Riga -", max_level)) +
+  #theme(plot.title = element_text(margin = margin(t = 20, b = -5))) +
+  
+  scale_fill_manual(values = color_condition$col_values,
+                    labels = color_condition$col_labels)+
+  labs(fill = "Results of Mann-Kendall test")
+
+# Print the plot
+print(plot_map_max_data)
+
+
+# Create a table plot
+library(gridExtra)
+names(SummaryTable) <- c("Quantile", 
+                         expression(Loss(CV[1])),
+                         expression(Loss(CV[2])))
+# Set theme to allow for plotmath expressions
+tt <- ttheme_default(colhead=list(fg_params = list(parse=TRUE)))
+tbl <- tableGrob(results_table, rows=NULL, theme=tt)
+
+###############################################################################
+#Print results
+##############################################################################
+
+transparency_results<-ggarrange(tbl,                                                 # First row with table
+          ggarrange(plot_map_max_data, barplot_alldata, ncol = 2, labels = c("B", "C")), # Second row with map and barplot
+          nrow = 2, 
+          labels = "A"                                        # Labels of the scatter plot
+) +
+  theme(
+    plot.background = element_rect(fill = "white"),   # Change plot background color
+    panel.background = element_rect(fill = "white")   # Change panel background color
+  )
+print(transparency_results)
+
+#save the plot with results
+ggsave(transparency_results, file="transparency_results.png", type="cairo-png", dpi = 300,
+       width = 25, height = 20, units = "cm")
