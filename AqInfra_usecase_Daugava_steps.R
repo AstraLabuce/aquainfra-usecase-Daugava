@@ -308,8 +308,10 @@ selected_ids <- levels(as.factor(results_table$HELCOM_ID))
 selected_shp <- shp[shp$HELCOM_ID %in% selected_ids, ]
 
 selected_shp_tidy <- tidy(selected_shp)
-
-#selected_shp_tidy <- left_join(selected_shp_tidy, selected_shp@data)## incorrect
+b <- cbind(HELCOM_ID = selected_shp@data$HELCOM_ID, id = rownames(selected_shp@data)) #Astra
+selected_shp_tidy <- left_join(selected_shp_tidy, as.data.frame(b), by="id") # Astra
+rm(b) #Astra
+selected_shp_tidy <- left_join(selected_shp_tidy, selected_shp@data, by = ("HELCOM_ID")) #Astra
 
 #add information from Mann-Kendall test to the shape data for mapping
 joined_data <- left_join(selected_shp_tidy, results_table, by = c("HELCOM_ID" = "HELCOM_ID"))
