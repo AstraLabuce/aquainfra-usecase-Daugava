@@ -301,8 +301,15 @@ print(barplot_alldata)
 #plot a map
 
 # Convert selected_shp to a tidy format
+# Define the HELCOM_IDs you want to include
+selected_ids <- levels(as.factor(results_table$HELCOM_ID))
+
+# Subset the shapefile to include only the selected HELCOM_IDs
+selected_shp <- shp[shp$HELCOM_ID %in% selected_ids, ]
+
 selected_shp_tidy <- tidy(selected_shp)
-selected_shp_tidy <- left_join(selected_shp_tidy, selected_shp@data)
+
+#selected_shp_tidy <- left_join(selected_shp_tidy, selected_shp@data)## incorrect
 
 #add information from Mann-Kendall test to the shape data for mapping
 joined_data <- left_join(selected_shp_tidy, results_table, by = c("HELCOM_ID" = "HELCOM_ID"))
@@ -321,7 +328,7 @@ joined_data <- joined_data %>%
 
 #convert to factors
 joined_data$fill_color<-as.factor(joined_data$fill_color)
-joined_data$fill_lable<-as.factor(joined_data$fill_lable)
+
 
 # Filter for a season with maximal number of cases in the table with results of Mann-kendall test
 subset_data <- results_table[results_table$P_Value <= 0.05, ]
