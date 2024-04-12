@@ -288,7 +288,7 @@ barplot_alldata<-ggplot(aes(x=HELCOM_ID, y=Tau_Value), data=results_table)+
   annotate("text", x = 0.5, y = -Inf, label = "Blurred bars indicate statistically \n insignificant changes over time",
            vjust = -1, hjust = 0, size = 3) +  # Add annotation
   labs(x = "Polygons according to the HELCOM shapefile", y = "Tau-value from Mann-Kendall test") +
-  ggtitle('Results from time series analysis')+
+  ggtitle('Results from time series analysis \nfor polygons and seasons containing <40% \nof missing years per observation period')+
   theme_bw()+
   theme(axis.text.y = element_text(size=12),
         axis.text.x = element_text(size=12, angle = 90),
@@ -345,13 +345,17 @@ color_condition <- color_condition %>%
   )
   )
 
-# Create the plot
+# Create a plot showing a map with Mann-Kendall results
 plot_map_max_data <- ggplot(selected_shp_tidy_max_data, aes(x = long, y = lat, group = group, fill = fill_color)) +
   geom_polygon(color = "black", size = 0.1) +
-  coord_equal() +
+  coord_map("azequidistant") +
+  scale_x_continuous(breaks = seq(21.7,24.5, by = 0.7), labels=seq(21.7,24.5,0.7))+
+  scale_y_continuous(breaks = seq(57,59, by = 0.4),labels = seq(57,59,0.40)) +
   theme_void() +
   labs(title = paste("HELCOM subbasins in the Gulf of Riga -", max_level)) +
-  #theme(plot.title = element_text(margin = margin(t = 20, b = -5))) +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        panel.border = element_blank(),
+        axis.text = element_text()) +
   
   scale_fill_manual(values = color_condition$col_values,
                     labels = color_condition$col_labels)+
@@ -360,24 +364,38 @@ plot_map_max_data <- ggplot(selected_shp_tidy_max_data, aes(x = long, y = lat, g
 # Print the plot
 print(plot_map_max_data)
 
+#create a plot with map of HELCOM subbasins
+plot_subbasins <- ggplot(joined_data, aes(x = long, y = lat, group = group, fill = HELCOM_ID)) +
+  geom_polygon(color = "black", size = 0.1) +
+  coord_map("azequidistant") +
+  scale_x_continuous(breaks = seq(21.7,24.5, by = 0.7), labels=seq(21.7,24.5,0.7))+
+  scale_y_continuous(breaks = seq(57,59, by = 0.4),labels = seq(57,59,0.40)) +
+  theme_void() +
+  labs(title = "HELCOM subbasins in the Gulf of Riga") +
+  theme(panel.grid.major = element_line(colour = "grey"),
+        panel.border = element_blank(),
+        axis.text = element_text()) +
+  labs(fill = "HELCOM_ID")
 
-# Create a table plot
+
+# Print the plot
+print(plot_subbasins)
+
+# Create a table plot with Mann-Kendall rwsults
 library(gridExtra)
-names(SummaryTable) <- c("Quantile", 
-                         expression(Loss(CV[1])),
-                         expression(Loss(CV[2])))
 # Set theme to allow for plotmath expressions
+printing_table<-results_table[,-1]
+printing_table <- printing_table[, c(3, 4, 1, 2)]
 tt <- ttheme_default(colhead=list(fg_params = list(parse=TRUE)))
-tbl <- tableGrob(results_table, rows=NULL, theme=tt)
+tbl <- tableGrob(printing_table, rows=NULL, theme=tt)
 
 ###############################################################################
 #Print results
 ##############################################################################
-
-transparency_results<-ggarrange(tbl,                                                 # First row with table
-          ggarrange(plot_map_max_data, barplot_alldata, ncol = 2, labels = c("B", "C")), # Second row with map and barplot
-          nrow = 2, 
-          labels = "A"                                        # Labels of the scatter plot
+#arrange all results on one plot
+transparency_results<-ggarrange(ggarrange(tbl, barplot_alldata,ncol = 2, labels = c("A", "B")) ,                                               # First row with table
+          ggarrange(plot_map_max_data, plot_subbasins, ncol = 2, labels = c("C", "D"),heights = c(1, 0.85),widths=c(1, 0.85)), # Second row with map and barplot
+          nrow = 2                                        # Labels of the scatter plot
 ) +
   theme(
     plot.background = element_rect(fill = "white"),   # Change plot background color
@@ -388,3 +406,6 @@ print(transparency_results)
 #save the plot with results
 ggsave(transparency_results, file="transparency_results.png", type="cairo-png", dpi = 300,
        width = 25, height = 20, units = "cm")
+###############################################################################
+# END FOR TRANSPARENCY ANALYSIS
+###############################################################################
