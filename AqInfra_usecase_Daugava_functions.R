@@ -130,7 +130,7 @@ data_rel_shp_attributes <-
   )
 #for manual output uncomment
 #write.csv2(data_rel_shp_attributes, file = "output_f1.csv") 
-
+#rm(shapefile, data_rel, data_raw)
 ##############################################################################################.
 ## peri_conv : period converter ####
 # function peri_conv - adds December to the next year (all winter months together)
@@ -142,90 +142,171 @@ peri_conv <-
   function(data,
            date_col_name,
            group_to_periods = #default season division
-             c("Dec-01:Feb-29", "Mar-01:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30"), 
-           group_labels = c("winter", "spring", "summer", "autumn") #optional - if not defined then labels == group_to_periods
+             c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30"),
+           group_labels = #default season division
+             group_to_periods
            ) {
     #data - dataset with columns for Year and Month (all the rest variables stays the same)
     #Date - column name to Date in format YYYY-MM-DD; Year, Month, Day, Year_adj - will be generated
     #group_to_periods <- group into periods: define the periods, e.g., mmm-DD:mmm-DD, Mar-15:Jun-01.
-
+    # do not put Feb-29th, if needed then choose Mar-01
+    
     if (missing(data))
       stop("missing data")
-    suppressWarnings(
-    if (!unique(!is.na(as.Date(get(Date, data), "%Y-%m-%d"))))
-      stop("Error: Date is not in format YYYY-MM-DD")
-    )
+    suppressWarnings(if (!unique(!is.na(as.Date(
+      get(date_col_name, data), "%Y-%m-%d"
+    ))))
+      stop("Error: Date is not in format YYYY-MM-DD"))
     data$Day_generated <-
-      as.numeric(format(as.Date(get(Date, data), format = "%Y-%m-%d"), "%d"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%d"))
     data$Month_generated <-
-      as.numeric(format(as.Date(get(Date, data), format = "%Y-%m-%d"), "%m"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%m"))
     data$Year_generated <-
-      as.numeric(format(as.Date(get(Date, data), format = "%Y-%m-%d"), "%Y"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%Y"))
     data$Year_adj_generated <-
-      as.numeric(format(as.Date(get(Date, data), format = "%Y-%m-%d"), "%Y"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%Y"))
     
-    data[data$Month_generated == 12, ]$Year_adj_generated <-
-      data[data$Month_generated == 12, ]$Year_generated + 1
+    data[data$Month_generated == 12,]$Year_adj_generated <-
+      data[data$Month_generated == 12,]$Year_generated + 1
     
-    data$season <- NA
-    period <- data.frame(periods = group_to_periods, labels = group_labels)
-    #rownames(period) <- period$group_to_periods
+    data$period_label <- NA
+    data$dayoy <-
+      as.numeric(format(as.Date(data$visit_date, format = "%Y-%m-%d"), "%j"))
+    data$leap_year <- lubridate::leap_year(data$visit_date)
+    
+    period <-
+      expand.grid(periods = group_to_periods,
+                  Year_generated = unique(data$Year_adj_generated))
     
     period$group_date_from <- NA
     period$group_date_to <- NA
+    period$group_month_from <- NA
+    period$group_month_to <- NA
+    period$group_day_from <- NA
+    period$group_day_to <- NA
     
-    for (row in 1:length(group_to_periods)) {
-      period[row,]$group_date_from <- strsplit(period[row,]$periods, "[:]")[[1]][1]
-      period[row,]$group_date_to <- strsplit(period[row,]$periods, "[:]")[[1]][2]
+    for (row in 1:length(period$periods)) {
+      period[row, ]$group_date_from <-
+        strsplit(as.character(period[row, ]$periods), "[:]")[[1]][1]
+      period[row, ]$group_date_to <-
+        strsplit(as.character(period[row, ]$periods), "[:]")[[1]][2]
+      
+      period[row, ]$group_month_from <-
+        strsplit(as.character(period[row, ]$group_date_from), "[-]")[[1]][1]
+      period[row, ]$group_day_from <-
+        strsplit(as.character(period[row, ]$group_date_from), "[-]")[[1]][2]
+      
+      period[row, ]$group_month_to <-
+        strsplit(as.character(period[row, ]$group_date_to), "[-]")[[1]][1]
+      period[row, ]$group_day_to <-
+        strsplit(as.character(period[row, ]$group_date_to), "[-]")[[1]][2]
+    }
+    period$group_month_from <-
+      match(period$group_month_from, month.abb)
+    period$group_month_to <- match(period$group_month_to, month.abb)
+    
+    period$group_date_from_fin <-
+      paste0(period$Year_generated,
+             "-",
+             period$group_month_from,
+             "-",
+             period$group_day_from)
+    period$group_date_to_fin <-
+      paste0(period$Year_generated,
+             "-",
+             period$group_month_to,
+             "-",
+             period$group_day_to)
+    
+    period$group_date_from_dayoy <-
+      as.numeric(format(as.Date(period$group_date_from_fin, format = "%Y-%m-%d"), "%j"))
+    period$leap_year <-
+      lubridate::leap_year(period$group_date_from_fin)
+    
+    period$group_date_to_dayoy <-
+      as.numeric(format(as.Date(period$group_date_to_fin, format = "%Y-%m-%d"), "%j"))
+    
+    period_fin <-
+      unique(period[c(
+        "periods",
+        "group_date_from",
+        "group_date_to",
+        "group_month_from",
+        "group_month_to",
+        "group_day_from",
+        "group_day_to",
+        "group_date_from_dayoy",
+        "group_date_to_dayoy",
+        "leap_year"
+      )])
+    
+    
+    period_leap <- subset(period_fin, leap_year == TRUE)
+    period_leap[period_leap$group_month_from == 12,]$group_date_from_dayoy <-
+      period_leap[period_leap$group_month_from == 12,]$group_date_from_dayoy - 366
+    
+    data_leap <- subset(data, leap_year == TRUE)
+    data_leap[data_leap$Month_generated == 12,]$dayoy <-
+      data_leap[data_leap$Month_generated == 12,]$dayoy - 366
+    
+    for (each in seq(data_leap$visit_date)) {
+      for (row in 1:length(period_leap$periods)) {
+        if (data_leap[each,]$dayoy >= period_leap[row, ]$group_date_from_dayoy &
+            data_leap[each,]$dayoy <= period_leap[row, ]$group_date_to_dayoy) {
+          data_leap[each,]$period_label <-
+            as.character(period_leap[row, ]$periods)
+        }
+      }
     }
     
+    period_regular <- subset(period_fin, leap_year == FALSE)
+    period_regular[period_regular$group_month_from == 12,]$group_date_from_dayoy <-
+      period_regular[period_regular$group_month_from == 12,]$group_date_from_dayoy - 365
     
+    data_regular <- subset(data, leap_year == FALSE)
+    data_regular[data_regular$Month_generated == 12,]$dayoy <-
+      data_regular[data_regular$Month_generated == 12,]$dayoy - 365
     
-    ## potential solution - in progress
-    
-    #for (year in 1:length(unique(data$Year_adj_generated))){
-    #  
-    #}
-    #
-    #data$Year_adj_generated, period
-    
-    # 
-    # period$yday <- format(as.Date(period$group_date_from, format = "%h-%d"), "%j")
-    # 
-    # 
-    # strftime(s_1, format = "%j")
-    # 
-    # data[data$Month_generated %in% c(12, 1, 2), ]$season <-
-    #   "winter (Dec-Feb)"
-    # data[data$Month_generated %in% c(3, 4, 5), ]$season <-
-    #   "spring (Mar-May)"
-    # data[data$Month_generated %in% c(6, 7, 8), ]$season <-
-    #   "summer (Jun-Aug)"
-    # data[data$Month_generated %in% c(9, 10, 11), ]$season <-
-    #   "autumn (Sep-Nov)"
-    # 
-    # data
-    # 
-    # group_to_periods = #default season division
-    #   c("Dec-01:Feb-29", "Mar-01:May-30", "Jun/01:Aug/30", "Sep-01:Nov-30")
-        
+    for (each in seq(data_regular$visit_date)) {
+      for (row in 1:length(period_regular$periods)) {
+        if (data_regular[each,]$dayoy >= period_regular[row, ]$group_date_from_dayoy &
+            data_regular[each,]$dayoy <= period_regular[row, ]$group_date_to_dayoy) {
+          data_regular[each,]$period_label <-
+            as.character(period_regular[row, ]$periods)
+        }
+      }
+    }
+    res <- rbind(data_leap, data_regular)
+    labels <-
+      data.frame(period_label = group_to_periods, group_labels)
+    res <- dplyr::full_join(res, labels, by = "period_label")
+    res <- res[,-which(names(res) %in% c("leap_year", "dayoy"))]
+    rm(
+      data,
+      period,
+      period_fin,
+      period_leap,
+      period_regular,
+      data_leap,
+      data_regular,
+      labels
+    )
+    res
   }
 
 #test the function peri_conv
 out <-
   peri_conv(
-    data_rel_shp_attributes,
+    data = data_rel_shp_attributes,
     date_col_name = "visit_date",
     group_to_periods = c(
-      "Dec-01:Mar-14",
-      "Mar-15:May-30",
-      "Jun-01:Aug-30",
+      "Dec-01:Mar-15",
+      "Mar-16:May-31",
+      "Jun-01:Aug-31",
       "Sep-01:Nov-30"
-    )
+    ),
+    group_labels = c("winter", "spring", "summer", "autumn")
   )
-
-
-
 
 
 
