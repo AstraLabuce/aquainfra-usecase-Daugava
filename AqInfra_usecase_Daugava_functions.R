@@ -152,17 +152,17 @@ peri_conv <-
     if (missing(data))
       stop("missing data")
     suppressWarnings(
-    if (!unique(!is.na(as.Date(get(Date, data), "%Y-%m-%d"))))
+    if (!unique(!is.na(as.Date(get(date_col_name, data), "%Y-%m-%d"))))
       stop("Error: Date is not in format YYYY-MM-DD")
     )
     data$Day_generated <-
-      as.numeric(format(as.Date(get(Date, data), format = "%Y-%m-%d"), "%d"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%d"))
     data$Month_generated <-
-      as.numeric(format(as.Date(get(Date, data), format = "%Y-%m-%d"), "%m"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%m"))
     data$Year_generated <-
-      as.numeric(format(as.Date(get(Date, data), format = "%Y-%m-%d"), "%Y"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%Y"))
     data$Year_adj_generated <-
-      as.numeric(format(as.Date(get(Date, data), format = "%Y-%m-%d"), "%Y"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%Y"))
     
     data[data$Month_generated == 12, ]$Year_adj_generated <-
       data[data$Month_generated == 12, ]$Year_generated + 1
