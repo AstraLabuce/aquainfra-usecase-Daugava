@@ -141,16 +141,20 @@ data_rel_shp_attributes <-
 peri_conv <-
   function(data,
            date_col_name,
-           group_to_periods = #default season division
-             c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30"),
+           group_to_periods = #default season division; # do not put Feb-29th, if needed then choose Mar-01
+             c("Dec-01:Mar-01", "Mar-01:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30"),
            group_labels = #default season division
-             group_to_periods
+             group_to_periods,
+           year_starts_at_Dec1 = TRUE #default
            ) {
     #data - dataset with columns for Year and Month (all the rest variables stays the same)
     #Date - column name to Date in format YYYY-MM-DD; Year, Month, Day, Year_adj - will be generated
     #group_to_periods <- group into periods: define the periods, e.g., mmm-DD:mmm-DD, Mar-15:Jun-01.
-    # do not put Feb-29th, if needed then choose Mar-01
-    
+    if (!requireNamespace("sf", quietly = TRUE)) {
+      stop("Package \"lubridate\" must be installed to use this function.",
+           call. = FALSE)
+    }
+  
     if (missing(data))
       stop("missing data")
     suppressWarnings(if (!unique(!is.na(as.Date(
@@ -166,8 +170,9 @@ peri_conv <-
     data$Year_adj_generated <-
       as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%Y"))
     
+    if(year_starts_at_Dec1 == TRUE ){
     data[data$Month_generated == 12,]$Year_adj_generated <-
-      data[data$Month_generated == 12,]$Year_generated + 1
+      data[data$Month_generated == 12,]$Year_generated + 1}
     
     data$period_label <- NA
     data$dayoy <-
@@ -305,8 +310,22 @@ out <-
       "Jun-01:Aug-31",
       "Sep-01:Nov-30"
     ),
-    group_labels = c("winter", "spring", "summer", "autumn")
+    group_labels = c("winter", "spring", "summer", "autumn"),
+    year_starts_at_Dec1 = TRUE
   )
+
+##############################################################################################.
+## peri_conv : period converter ####
+# function peri_conv - adds December to the next year (all winter months together)
+# in the result every year starts at Dec-01. and ends Nov-30;
+# generates num variable 'Year_adjusted' to show change;
+# generates chr variable 'season' to allow grouping the data based on season.
+
+
+
+
+
+
 
 
 
