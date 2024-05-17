@@ -27,12 +27,15 @@ shapefile <-
 # locate in situ data set manually
 # load in situ data and respective metadata (geolocation and date are mandatory metadata)
 # example data
-#data_raw <- readxl::read_excel("in_situ_data/in_situ_example.xlsx") %>% #example data from https://latmare.lhei.lv/
-#  janitor::clean_names() # makes column names clean for R
-data_raw <-
-  readxl::read_excel("in_situ_data/Latmare_20240111_secchi_color.xlsx") %>% #datafvrom LIAE data base from https://latmare.lhei.lv/
+data_raw <- readxl::read_excel("in_situ_data/in_situ_example.xlsx") %>% #example data from https://latmare.lhei.lv/
   janitor::clean_names() # makes column names clean for R
 
+#############.
+# this is for our local full data set
+# data_raw <-
+#   readxl::read_excel("in_situ_data/Latmare_20240111_secchi_color.xlsx") %>% #datafvrom LIAE data base from https://latmare.lhei.lv/
+#   janitor::clean_names() # makes column names clean for R
+#############.
 
 #list relevant columns: geolocation (lat and lon), date and values for data points are mandatory
 rel_columns <- c(
