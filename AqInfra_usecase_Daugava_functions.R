@@ -64,19 +64,17 @@ data_rel <- data_raw %>%
 data_rel <- data_rel %>%
   mutate(
     longitude  = as.numeric(longitude),
-    latitude   = as.numeric(latitude)
-    #visit_date = as.POSIXct(visit_date),
-    #month      = lubridate::month(visit_date),
-    #year       = lubridate::year(visit_date),
-    #day        = lubridate::month(visit_date)
+    latitude   = as.numeric(latitude),
+    transparency_m = as.numeric(transparency_m)
   )
+#write.csv2(data_rel, file = "data_WP5_DaugavaUseCase_input.csv") # this should be made available to DDAS
 
 ############################################################################################.
 
 # FUNCTIONS for Galaxy ####
 
 ############################################################################################.
-## points_att_polygon ####
+## 1. points_att_polygon ####
 # function points_att_polygon - data points merged with polygon attributes based on data point location
 
 
@@ -128,11 +126,10 @@ data_rel_shp_attributes <-
     long = "longitude",
     lat = "latitude"
   )
-#for manual output uncomment
-#write.csv2(data_rel_shp_attributes, file = "output_f1.csv") 
+
 #rm(shapefile, data_rel, data_raw)
 ##############################################################################################.
-## peri_conv : period converter ####
+## 2. peri_conv : period converter ####
 # function peri_conv - adds December to the next year (all winter months together)
                             # in the result every year starts at Dec-01. and ends Nov-30;
                             # generates num variable 'Year_adjusted' to show change;
@@ -142,15 +139,15 @@ peri_conv <-
   function(data,
            date_col_name,
            group_to_periods = #default season division; # do not put Feb-29th, if needed then choose Mar-01
-             c("Dec-01:Mar-01", "Mar-01:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30"),
-           group_labels = #default season division
-             group_to_periods,
+             c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30"),
+           group_labels = #default = group_to_periods
+             group_to_periods, #if defined, should be the same length as group_to_periods
            year_starts_at_Dec1 = TRUE #default
            ) {
     #data - dataset with columns for Year and Month (all the rest variables stays the same)
     #Date - column name to Date in format YYYY-MM-DD; Year, Month, Day, Year_adj - will be generated
     #group_to_periods <- group into periods: define the periods, e.g., mmm-DD:mmm-DD, Mar-15:Jun-01.
-    if (!requireNamespace("sf", quietly = TRUE)) {
+    if (!requireNamespace("lubridate", quietly = TRUE)) {
       stop("Package \"lubridate\" must be installed to use this function.",
            call. = FALSE)
     }
@@ -300,7 +297,7 @@ peri_conv <-
   }
 
 #test the function peri_conv
-out <-
+data_after_peri_conv <-
   peri_conv(
     data = data_rel_shp_attributes,
     date_col_name = "visit_date",
@@ -315,19 +312,156 @@ out <-
   )
 
 ##############################################################################################.
-## peri_conv : period converter ####
-# function peri_conv - adds December to the next year (all winter months together)
-# in the result every year starts at Dec-01. and ends Nov-30;
-# generates num variable 'Year_adjusted' to show change;
-# generates chr variable 'season' to allow grouping the data based on season.
+## 3. mean_by_group ####
+## calculate data average per site, per year, per season and per HELCOM_ID ###################.
+## In Galaxy workflows , can we use Datamash function for this? ##############################.
+## if we cannot - I will work more on this. ##################################################.
+## At the moment, quick and easy version, just to continue the workflow ######################.
+##############################################################################################.
+data_after_peri_conv$transparency_m <- as.numeric(data_after_peri_conv$transparency_m)
+
+data_annual_seasonal_means <- data_after_peri_conv %>%
+  group_by(longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID) %>%
+  summarise(Secchi_m_mean = mean(transparency_m)) %>%
+  ungroup() %>% 
+  group_by(Year_adj_generated, group_labels, HELCOM_ID) %>%
+  summarise(Secchi_m_mean_annual = mean(Secchi_m_mean)) %>%
+  ungroup()
+
+##############################################################################################.
+## 4. Interpolation of NAs ####
+##############################################################################################.
+
+#split data onto sub-tables for each season and HELCOM_ID separately
+# Create a list to store sub-tables of transparency
+### list subgoups ####
+list_subgroups <- function(
+    data,
+    rel_cols){
+  list_groups <-  vector("list", length(rel_cols))
+  
+  for (each in seq(rel_cols)){
+    list_groups[[each]] <- as.factor(data[,which(names(data) == rel_cols[each])][[1]])
+  }
+  split(data, list_groups)
+}
+
+sub_tables <- list_subgroups(data = data_annual_seasonal_means, 
+               rel_cols = c("group_labels", "HELCOM_ID"))
+
+# Some tables have too many missing years, therefore it is necessary to filter them out. 
+# In the example, the treshold is 40% of missing years of the total consequence.
+# create a function which will calculate a percentage of missing years
+
+############## filtered tables- needs more work ####
+### I do not know how to make this a nested function at the moment
+### I tried but not successfully
+filtered_tables <- lapply(sub_tables, function(table) {
+  
+  #create a function for which will calculate a percentage of missing years
+  calculate_missing_percentage <- function(table) {
+    # Extract the years from the table
+    years <- as.numeric(as.character(table$Year_adj_generated))
+    # Remove missing values
+    years <- years[!is.na(years)]
+    # Calculate the total number of years
+    total_years <- length(years)
+    # Check if there are enough years for calculation
+    if (total_years < 2) {
+      return(100)  # Return 100% missing if there are not enough years
+    }
+    
+    # Calculate the difference between consecutive years
+    year_diff <- diff(years)
+    # Calculate the number of consecutive years
+    consecutive_years <- sum(year_diff == 1) + 1
+    # Calculate the expected number of rows
+    expected_rows <- max(years, na.rm = TRUE) - min(years, na.rm = TRUE) + 1
+    # Calculate the percentage of missing rows
+    missing_percentage <- ((expected_rows - consecutive_years) / expected_rows) * 100
+    
+    return(missing_percentage)
+  }
+  
+  missing_percentage <- calculate_missing_percentage(table)
+  
+  if (missing_percentage <= 40) {#can be modified as required <- this should be made a variable input into function
+    return(table)
+  } else {
+    return(NULL)
+  }
+})
+
+# Remove NULL elements from the list
+sub_tables_subset <- Filter(Negate(is.null), filtered_tables)
 
 
+############################################################################################.
 
+######## extend to fill missing years ####
+# Loop through each table in sub_tables_subset a function for extending 
+# the dataframes by missing years
 
+extend_data_continuos <-
+  function (list_with_missing_years, year_col = "Year") {
+    
+    if (!requireNamespace("tidyr", quietly = TRUE)) {
+      stop("Package \"tidyr\" must be installed to use this function.",
+           call. = FALSE)
+    }
+    
+    for (table_name in names(list_with_missing_years)) {
+      # object for results
+      sub_tables_subset_out <- list_with_missing_years
+      # Extract the table
+      table_data <-
+        as.data.frame(list_with_missing_years[[table_name]])
+      
+      # Convert Year_corrected to numeric
+      table_data$Year_d <-
+        as.numeric(as.character(table_data[, which(names(table_data) == year_col)]))
+      
+      # Assign the extended table back to the list
+      sub_tables_subset_out[[table_name]] <- 
+        tidyr::complete(table_data, Year_d = min(table_data$Year_d):max(table_data$Year_d))
+      return(sub_tables_subset_out)
+    }
+    
+  }
 
+sub_tables_subset_extended <-
+  extend_data_continuos(list_with_missing_years = sub_tables_subset, 
+                        year_col = "Year_adj_generated")
 
+### interpolate NAs ####
+# Loop through each table in sub_tables_subset
 
+interpolate_linear <-
+  function(data_list,
+           year_col = "Year",
+           value_col = "value_mean_annual") {
+    for (table_name in names(data_list)) {
+      # Remove the Season and HELCOM_ID columns
+      processed_table <- data_list[[table_name]]
+      processed_table <-
+        processed_table[, which(names(processed_table) %in% c(year_col, value_col))]
+      
+      # Apply zoo::na.approx() to fill gaps if there re at least two non-NA values
+      if (sum(!is.na(processed_table[, which(names(processed_table) == value_col)][[1]])) >= 2) {
+        filled_table <- zoo::na.approx(processed_table)
+        data_list[[table_name]] <- filled_table
+      } else {
+        data_list[[table_name]] <-
+          paste("Insufficient non-NA values to interpolate")
+      }
+    }
+    return(data_list)
+  }
 
+inter_res <- interpolate_linear(sub_tables_subset_extended,
+                                year_col = "Year_adj_generated",
+                                value_col = "Secchi_m_mean_annual")
+################################################################################################.
 
 
 
