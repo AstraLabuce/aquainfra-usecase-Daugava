@@ -71,6 +71,8 @@ data_rel <- data_rel %>%
     transparency_m = as.numeric(transparency_m)
   )
 #write.csv2(data_rel, file = "data_WP5_DaugavaUseCase_input.csv") # this should be made available to DDAS
+rm(rel_columns, data_rel_spatial, data_shp_over)
+
 
 ############################################################################################.
 
@@ -130,7 +132,7 @@ data_rel_shp_attributes <-
     lat = "latitude"
   )
 
-#rm(shapefile, data_rel, data_raw)
+rm(shapefile, data_rel, data_raw)
 ##############################################################################################.
 ## 2. peri_conv : period converter ####
 # function peri_conv - adds December to the next year (all winter months together)
@@ -314,6 +316,8 @@ data_after_peri_conv <-
     year_starts_at_Dec1 = TRUE
   )
 
+
+rm(data_rel_shp_attributes)
 ##############################################################################################.
 ## 3. mean_by_group ####
 ## calculate data average per site, per year, per season and per HELCOM_ID ###################.
@@ -330,6 +334,8 @@ data_annual_seasonal_means <- data_after_peri_conv %>%
   group_by(Year_adj_generated, group_labels, HELCOM_ID) %>%
   summarise(Secchi_m_mean_annual = mean(Secchi_m_mean)) %>%
   ungroup()
+
+rm(data_after_peri_conv)
 
 ##############################################################################################.
 ## 4. Interpolation of NAs ####
@@ -398,6 +404,7 @@ filtered_tables <- lapply(sub_tables, function(table) {
 # Remove NULL elements from the list
 sub_tables_subset <- Filter(Negate(is.null), filtered_tables)
 
+rm(filtered_tables, data_annual_seasonal_means, sub_tables)
 
 ############################################################################################.
 
@@ -436,6 +443,8 @@ sub_tables_subset_extended <-
   extend_data_continuos(list_with_missing_years = sub_tables_subset, 
                         year_col = "Year_adj_generated")
 
+rm(sub_tables_subset)
+
 ### interpolate NAs ####
 # Loop through each table in sub_tables_subset
 
@@ -464,6 +473,9 @@ interpolate_linear <-
 inter_res <- interpolate_linear(sub_tables_subset_extended,
                                 year_col = "Year_adj_generated",
                                 value_col = "Secchi_m_mean_annual")
+
+rm(sub_tables_subset_extended)
+
 ################################################################################################.
 
 
