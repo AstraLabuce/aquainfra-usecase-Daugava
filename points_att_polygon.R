@@ -90,9 +90,12 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
     stop("missing shp")
   if (missing(dpoints))
     stop("missing dpoints")
-  stopifnot("Error: `long` is not numeric." =
+
+  err = paste0("Error: `", long_col_name, "` is not numeric.")
+  stopifnot(err =
               is.numeric(as.data.frame(dpoints)[, names(dpoints) == long_col_name]))
-  stopifnot("Error: `lat` is not numeric." =
+  err = paste0("Error: `", lat_col_name, "` is not numeric.")
+  stopifnot(err =
               is.numeric(as.data.frame(dpoints)[, names(dpoints) == lat_col_name]))
   
   #dpoints to spatial
