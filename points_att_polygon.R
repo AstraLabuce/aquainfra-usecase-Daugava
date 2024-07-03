@@ -13,11 +13,13 @@ out_result_path = args[5]
 #PATH_OUT="/home/.../test_outputs/mytestoutput.csv"
 #/usr/bin/Rscript --vanilla /home/.../points_att_polygon.R ${PATH_SHP} ${PATH_XLSX} "longitude" "latitude" ${PATH_OUT}
 
-library(rgdal)
+#library(rgdal) # Outdated! See: https://cloud.r-project.org/web/packages/rgdal/index.html
+library(sf)
 library(janitor)
 library(dplyr)
 
-shapefile <- rgdal::readOGR(in_shp_path) #"SpatialPolygonsDataFrame"
+#shapefile <- rgdal::readOGR(in_shp_path) #"SpatialPolygonsDataFrame"
+shapefile <- st_read(in_shp_path)
 
 
 # locate in situ data set manually
