@@ -104,8 +104,10 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
               is.numeric(as.data.frame(dpoints)[, names(dpoints) == lat_col_name]))
   
   #dpoints to spatial
+  print('Making input data spatial based on long, lat...')
   data_spatial <- sf::st_as_sf(dpoints, coords = c(long_col_name, lat_col_name))
   # set to WGS84 projection
+  print('Setting to WGS84 CRS...')
   sf::st_crs(data_spatial) <- 4326
   # make in situ points spatial
   #data_spatial <- as(data_spatial, 'Spatial')
@@ -118,6 +120,7 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
   #   unable to find an inherited method for function ‘spTransform’ for signature
   #   ‘x = "sf", CRSobj = "CRS"’
   # So instead, I use st_intersection:
+  # First, convert from WGS84-Pseudo-Mercator to pure WGS84
   shp_wgs84 <- st_transform(shp, st_crs(data_spatial))
   print('Check if geometries are valid...')# TODO: Check actually needed? Maybe just make valid!
   if (!all(st_is_valid(shp_wgs84))) { # many are not (in the example data)!
@@ -125,7 +128,10 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
     shp_wgs84 <- st_make_valid(shp_wgs84)  # slowish...
     print('Making valid done.')
   }
+  print(paste0('Computing the intersection... This will take a while. ',
+    'Starting at ', Sys.time()))
   data_shp <- st_intersection(shp_wgs84, data_spatial) # SLOOOOOW. CPU and RAM.
+  print(paste0('Done computing the intersection... Finished at ', Sys.time()))
   # bind shapefile attributes to in situ data.frame
   res <- cbind(dpoints, data_shp)
   rm(data_spatial, data_shp)
