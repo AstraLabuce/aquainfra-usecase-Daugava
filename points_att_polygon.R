@@ -111,6 +111,12 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
   #   ‘x = "sf", CRSobj = "CRS"’
   # So instead, I use st_intersection:
   shp_wgs84 <- st_transform(shp, st_crs(data_spatial))
+  print('Check if geometries are valid...')# TODO: Check actually needed? Maybe just make valid!
+  if (!all(st_is_valid(shp_wgs84))) { # many are not (in the example data)!
+    print('They are not! Making valid...')
+    shp_wgs84 <- st_make_valid(shp_wgs84)  # slowish...
+    print('Making valid done.')
+  }
   data_shp <- st_intersection(shp_wgs84, data_spatial) # SLOOOOOW. CPU and RAM.
   # bind shapefile attributes to in situ data.frame
   res <- cbind(dpoints, data_shp)
