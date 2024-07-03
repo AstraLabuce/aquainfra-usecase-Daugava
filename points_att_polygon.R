@@ -100,11 +100,18 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
   # set to WGS84 projection
   sf::st_crs(data_spatial) <- 4326
   # make in situ points spatial
-  data_spatial <- as(data_spatial, 'Spatial')
+  #data_spatial <- as(data_spatial, 'Spatial')
   
   # overlay shapefile and in situ locations
-  data_shp <-
-      sp::over(data_spatial, sp::spTransform(shp, sp::CRS("+proj=longlat +datum=WGS84 +no_defs")))
+  #data_shp <-
+  #    sp::over(data_spatial, sp::spTransform(shp, sp::CRS("+proj=longlat +datum=WGS84 +no_defs")))
+  # Runs into this error:
+  #   error in evaluating the argument 'y' in selecting a method for function 'over':
+  #   unable to find an inherited method for function ‘spTransform’ for signature
+  #   ‘x = "sf", CRSobj = "CRS"’
+  # So instead, I use st_intersection:
+  shp_wgs84 <- st_transform(shp, st_crs(data_spatial))
+  data_shp <- st_intersection(shp_wgs84, data_spatial) # SLOOOOOW. CPU and RAM.
   # bind shapefile attributes to in situ data.frame
   res <- cbind(dpoints, data_shp)
   rm(data_spatial, data_shp)
