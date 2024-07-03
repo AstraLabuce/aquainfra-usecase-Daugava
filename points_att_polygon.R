@@ -7,20 +7,22 @@ in_long_col_name = args[3]
 in_lat_col_name = args[4]
 out_result_path = args[5]
 
-# How to call this from command line:
+## How to call this from command line:
 #PATH_SHP="/home/.../test_inputs/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp"
 #PATH_XLSX="/home/.../test_inputs/in_situ_example.xlsx"
 #PATH_OUT="/home/.../test_outputs/mytestoutput.csv"
 #/usr/bin/Rscript --vanilla /home/.../points_att_polygon.R ${PATH_SHP} ${PATH_XLSX} "longitude" "latitude" ${PATH_OUT}
 
+## Imports
 #library(rgdal) # Outdated! See: https://cloud.r-project.org/web/packages/rgdal/index.html
 library(sf)
 library(janitor)
 library(dplyr)
 
+## Read input files
+## TODO: Make more format agnostic??
 #shapefile <- rgdal::readOGR(in_shp_path) #"SpatialPolygonsDataFrame"
 shapefile <- st_read(in_shp_path)
-
 
 # locate in situ data set manually
 # load in situ data and respective metadata (geolocation and date are mandatory metadata)
@@ -119,19 +121,26 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
   #   error in evaluating the argument 'y' in selecting a method for function 'over':
   #   unable to find an inherited method for function ‘spTransform’ for signature
   #   ‘x = "sf", CRSobj = "CRS"’
-  # So instead, I use st_intersection:
-  # First, convert from WGS84-Pseudo-Mercator to pure WGS84
+  # So instead, I use st_intersection...
+
+  ## First, convert from WGS84-Pseudo-Mercator to pure WGS84
+  print('Setting geometry data to same CRS...')
   shp_wgs84 <- st_transform(shp, st_crs(data_spatial))
+
+  ## Check and fix geometry validity
   print('Check if geometries are valid...')# TODO: Check actually needed? Maybe just make valid!
   if (!all(st_is_valid(shp_wgs84))) { # many are not (in the example data)!
     print('They are not! Making valid...')
     shp_wgs84 <- st_make_valid(shp_wgs84)  # slowish...
     print('Making valid done.')
   }
+
+  ## Overlay shapefile and in situ locations
   print(paste0('Computing the intersection... This will take a while. ',
     'Starting at ', Sys.time()))
   data_shp <- st_intersection(shp_wgs84, data_spatial) # SLOOOOOW. CPU and RAM.
   print(paste0('Done computing the intersection... Finished at ', Sys.time()))
+
   # bind shapefile attributes to in situ data.frame
   res <- cbind(dpoints, data_shp)
   rm(data_spatial, data_shp)
