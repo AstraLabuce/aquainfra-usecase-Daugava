@@ -91,6 +91,11 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
   if (missing(dpoints))
     stop("missing dpoints")
 
+  if (! long_col_name %in% colnames(dpoints))
+    stop(paste0("input data does not have column ", long_col_name))
+  if (! lat_col_name %in% colnames(dpoints))
+    stop(paste0("input data does not have column ", lat_col_name))
+
   err = paste0("Error: `", long_col_name, "` is not numeric.")
   stopifnot(err =
               is.numeric(as.data.frame(dpoints)[, names(dpoints) == long_col_name]))
