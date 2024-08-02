@@ -7,13 +7,13 @@
 
 # working directory ####
 # automatic setting wd to the folder where current script file is
-current_path = rstudioapi::getActiveDocumentContext()$path
-setwd(dirname(current_path))
+#current_path = rstudioapi::getActiveDocumentContext()$path
+#setwd(dirname(current_path))
 
 ## Args <- args use is not clear for me (Comment by Astra)
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
-in_shp_path = "shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp"
+in_shp_path = "shp/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp"
 in_dpoints_path = "in_situ_data/in_situ_example.xlsx"
 in_long_col_name = "longitude"
 in_lat_col_name = "latitude"
