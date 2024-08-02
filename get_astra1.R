@@ -37,7 +37,7 @@ out_result_path = args[5]
 ## download at https://maps.helcom.fi/website/MADS/download/?id=67d653b1-aad1-4af4-920e-0683af3c4a48
 #shapefile <- rgdal::readOGR("shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp") #"SpatialPolygonsDataFrame"
 #shp <- rgdal::readOGR(in_shp_path) #"SpatialPolygonsDataFrame"
-shp <- st_read(in_shp_path)
+shapefile <- st_read(in_shp_path)
 
 
 # locate in situ data set manually
@@ -60,13 +60,8 @@ data_raw <- readxl::read_excel(in_dpoints_path) %>% #example data from https://l
 rel_columns <- c(
   "longitude",
   "latitude",
-  #coordinates
   "visit_date",
-  #date
-  "measured_depth_m",
-  #optional
   "transparency_m",
-  #Secchi depth in meters (numeric)
   "color_id" #water color hue in Furel-Ule (categories)
 )
 
@@ -119,18 +114,16 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
     stop("missing shp")
   if (missing(dpoints))
     stop("missing dpoints")
-
-  # TODO: I added this check, et voila, wrong col name!
   if (! long_col_name %in% colnames(dpoints))
     stop(paste0("input data does not have column ", long_col_name))
   if (! lat_col_name %in% colnames(dpoints))
     stop(paste0("input data does not have column ", lat_col_name))
 
   # TODO: long and lat hardcoded!
-  err = paste0("Error: `", long_col_name, "` is not numeric.") 
+  err = paste0("Error: `", long_col_name, "` is not numeric.")
   stopifnot(err =
               is.numeric(as.data.frame(dpoints)[, names(dpoints) == long_col_name]))
-  err = paste0("Error: `", lat_col_name, "` is not numeric.") 
+  err = paste0("Error: `", lat_col_name, "` is not numeric.")
   stopifnot(err =
               is.numeric(as.data.frame(dpoints)[, names(dpoints) == lat_col_name]))
   
@@ -159,31 +152,39 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
   #>   data_shp <- st_intersection(shp_wgs84, data_spatial)
   #Error in wk_handle.wk_wkb(wkb, s2_geography_writer(oriented = oriented,  : 
   #Loop 994 is not valid: Edge 18723 has duplicate vertex with edge 18736
-  print('Check if geometries are valid...')
-  if (!all(st_is_valid(shp_wgs84))) { # MANY ARE NOT!
+  print('Check if geometries are valid...')# TODO: Check actually needed? Maybe just make valid!
+  if (!all(st_is_valid(shp_wgs84))) { # many are not (in the example data)!
     print('They are not! Making valid...')
-    shp_wgs84 <- st_make_valid(shp_wgs84)  # SLOWISH
+    shp_wgs84 <- st_make_valid(shp_wgs84)  # slowish...
     print('Making valid done.')
   }
-  print('Check if geometries are valid... Done.')
-  print('Computing the intersection... This will take time...')
-  print(paste0('Starting at  ', Sys.time()))
-  data_shp <- st_intersection(shp_wgs84, data_spatial) # SLOOOOOW. CPU and RAM.
-  print(paste0('Finishing at ', Sys.time()))
-  print('Computing the intersection... Done.')
 
-  # bind shapefile attributes to in situ data.frame
-  res <- cbind(dpoints, data_shp)
-  rm(data_spatial, data_shp)
+  ## Overlay shapefile and in situ locations
+  print(paste0('Computing the intersection... This will take a while. ',
+               'Starting at ', Sys.time()))
+  shp_wgs84 <- st_filter(shp_wgs84, data_spatial) 
+  data_shp <- st_join(shp_wgs84, data_spatial)
+  #drop geometry to faster use of the object
+  data_shp <- sf::st_drop_geometry(data_shp)
+  print(paste0('Done computing the intersection... Finished at ', Sys.time()))
+  
+  # merge shapefile attributes to in situ data.frame - as geometry dropped, coordinates are lacking
+  res <- full_join(dpoints, data_shp)
+  rm(data_spatial)
   res
 }
 
+#test the function points_att_polygon
 ## Call the function:
-out_data_rel_shp_attributes <- points_att_polygon(shp, data_rel, in_long_col_name, in_lat_col_name)
+out_points_att_polygon <- points_att_polygon(
+  shp = shapefile, 
+  dpoints = data_rel, 
+  long_col_name = in_long_col_name, 
+  lat_col_name = in_lat_col_name)
 
 ## Output: Now need to store output:
 print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_data_rel_shp_attributes, file = out_result_path)
+data.table::fwrite(out_points_att_polygon, file = out_result_path) 
 
 
 # Spatial: st_write(units, out_unitsCleanedFilePath)
