@@ -1,3 +1,7 @@
+############################################################################################.
+## 1. points_att_polygon ####
+# function points_att_polygon - data points merged with polygon attributes based on data point location
+
 #RUN WITH
 # Rscript points_att_polygon.R "shp/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp" "in_situ_data/in_situ_example.xlsx" "longitude" "latitude" "data_out_point_att_polygon.csv"
 
