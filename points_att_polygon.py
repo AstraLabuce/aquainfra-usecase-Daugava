@@ -123,7 +123,7 @@ class Astra1Processor(BaseProcessor):
         # TODO: Carefully consider permissions of that directory!
 
         # Call R script, result gets stored to downloadfilepath
-        R_SCRIPT_NAME = 'get_astra1.R'
+        R_SCRIPT_NAME = 'points_att_polygon.R'
         r_args = [in_shp_path, in_dpoints, in_long_col_name, in_lat_col_name, downloadfilepath]
 
         LOGGER.error('RUN R SCRIPT AND STORE TO %s!!!' % downloadfilepath)
