@@ -3,7 +3,7 @@
 # function points_att_polygon - data points merged with polygon attributes based on data point location
 
 #RUN WITH
-# Rscript points_att_polygon.R "shp/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp" "in_situ_data/in_situ_example.xlsx" "longitude" "latitude" "data_out_point_att_polygon.csv"
+# Rscript points_att_polygon.R "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip" "in_situ_data/in_situ_example.xlsx" "longitude" "latitude" "data_out_point_att_polygon.csv"
 
 ## Imports
 #library(rgdal)
@@ -14,9 +14,9 @@ library(janitor)
 library(sp)
 library(data.table)
 
-
 ## Args
 args <- commandArgs(trailingOnly = TRUE)
+st_drivers()
 print(paste0('R Command line args: ', args))
 in_shp_path = args[1]
 in_dpoints_path = args[2]
@@ -24,27 +24,15 @@ in_long_col_name = args[3]
 in_lat_col_name = args[4]
 out_result_path = args[5]
 
-#PATH_SHP="/home/mbuurman/work/pyg_geofresh/pygeoapi/pygeoapi/process/daugava/test_inputs/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp"
-#PATH_XLSX="/home/mbuurman/work/pyg_geofresh/pygeoapi/pygeoapi/process/daugava/test_inputs/in_situ_example.xlsx"
-#PATH_OUT="/home/mbuurman/work/pyg_geofresh/pygeoapi/pygeoapi/process/daugava/test_outputs/mytestoutput.csv"
-#/usr/bin/Rscript --vanilla /home/mbuurman/work/pyg_geofresh/pygeoapi/pygeoapi/process/get_astra_1.R ${PATH_SHP} ${PATH_XLSX} "longitude" "latitude" ${PATH_OUT}
-# TODO TEST THIS: Failing imports...
+parts <- strsplit(in_shp_path, "/")[[1]]
+file_name <- parts[length(parts)]
 
-# Problem! rgdal is too old!
-# See: https://stackoverflow.com/questions/76868135/r-package-rgdal-can-not-be-installed
+download.file(in_shp_path, paste0("./shp/", file_name), mode = "wb")
 
+shp_dir <- paste0("./shp/",sub("\\.zip$", "", file_name))
+unzip(paste0("./shp/", file_name), exdir = shp_dir)
 
-## Data from disk to memory.
-## This part is also directly from Astra's code.
-## TODO: Make more format agnostic??
-
-# load HELCOM shapefile for subbasins and adjust to the chosen projection
-# example for HELCOM subbasin L4 shp: <- THIS IS ALREADY IN DDAS
-## download at https://maps.helcom.fi/website/MADS/download/?id=67d653b1-aad1-4af4-920e-0683af3c4a48
-#shapefile <- rgdal::readOGR("shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp") #"SpatialPolygonsDataFrame"
-#shp <- rgdal::readOGR(in_shp_path) #"SpatialPolygonsDataFrame"
-shapefile <- st_read(in_shp_path)
-
+shapefile <- st_read(shp_dir)
 
 # locate in situ data set manually
 # load in situ data and respective metadata (geolocation and date are mandatory metadata)
