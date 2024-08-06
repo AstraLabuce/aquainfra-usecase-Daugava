@@ -1,11 +1,11 @@
 {
     "version": "0.2.0",
-    "id": "get-astra1",
+    "id": "points-att-polygon",
     "title": {
         "en": "points_att_polygon"
     },
     "description": {
-        "en": "points_att_polygon... ask astra or natalija"
+        "en": "points_att_polygon"
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],
