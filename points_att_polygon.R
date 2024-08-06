@@ -5,8 +5,6 @@
 #RUN WITH
 # Rscript points_att_polygon.R "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip" "in_situ_data/in_situ_example.xlsx" "longitude" "latitude" "data_out_point_att_polygon.csv"
 
-## Imports
-#library(rgdal)
 library(sf)
 library(magrittr)
 library(dplyr)
@@ -23,11 +21,10 @@ in_long_col_name <- args[3]
 in_lat_col_name <- args[4]
 out_result_path <- args[5]
 
-parts <- strsplit(in_shp_path, "/")[[1]]
-file_name <- parts[length(parts)]
+url_parts <- strsplit(in_shp_path, "/")[[1]]
+file_name <- url_parts[length(url_parts)]
 
 local_file_path <- paste0("./shp/", file_name)
-shp_dir <- paste0("./shp/", sub("\\.zip$", "", file_name))
 
 # Check if the file is already downloaded
 if (!file.exists(local_file_path)) {
@@ -36,6 +33,7 @@ if (!file.exists(local_file_path)) {
   print(paste0("File ", local_file_path, " already exists. Skipping download."))
 }
 
+shp_dir <- paste0("./shp/", sub("\\.zip$", "", file_name))
 # Check if the unzipped directory already exists
 if (!dir.exists(shp_dir)) {
   # Unzip the downloaded file if the directory doesn't exist
@@ -44,63 +42,34 @@ if (!dir.exists(shp_dir)) {
   print(paste0("Directory ", shp_dir, " already exists. Skipping unzip."))
 }
 
-# Load the shapefile
 shapefile <- st_read(shp_dir)
 
-# locate in situ data set manually
-# load in situ data and respective metadata (geolocation and date are mandatory metadata)
-# example data
-#data_raw <- readxl::read_excel("in_situ_data/in_situ_example.xlsx") %>% #example data from https://latmare.lhei.lv/
-data_raw <- readxl::read_excel(in_dpoints_path) %>% #example data from https://latmare.lhei.lv/
-  janitor::clean_names() # makes column names clean for R
+data_raw <- readxl::read_excel(in_dpoints_path) %>%
+  janitor::clean_names()
 
-#############.
-# this is for our local full data set
-# data_raw <-
-#   readxl::read_excel("in_situ_data/Latmare_20240111_secchi_color.xlsx") %>% #datafvrom LIAE data base from https://latmare.lhei.lv/
-#   janitor::clean_names() # makes column names clean for R
-#############.
-
-#list relevant columns: geolocation (lat and lon), date and values for data points are mandatory
-# TODO: Let user list them!
-# Or move this prep to a separate step!
 rel_columns <- c(
   "longitude",
   "latitude",
   "visit_date",
   "transparency_m",
-  "color_id" #water color hue in Furel-Ule (categories)
+  "color_id"
 )
 
-# relevant data
-print('Making data_rel')
 data_rel <- data_raw %>%
-  #select only relevant columns
   dplyr::select(all_of(rel_columns)) %>%
-  # remove cases when Secchi depth, water colour were not measured
   filter(
     !is.na(`transparency_m`) &
       !is.na(`color_id`) &
       !is.na(`longitude`) &
       !is.na(`latitude`)
-  ) # make sure to use correct column names
+  )
 
-# set coordinates ad numeric (in case they are read as chr variables)
-print('Making data_rel 2')
 data_rel <- data_rel %>%
   mutate(
     longitude  = as.numeric(longitude),
     latitude   = as.numeric(latitude),
     transparency_m = as.numeric(transparency_m)
   )
-#write.csv2(data_rel, file = "data_WP5_DaugavaUseCase_input.csv") # this should be made available to DDAS
-#rm(rel_columns, data_rel_spatial, data_shp_over)
-print('Making data_rel done:')
-print(data_rel)
-
-
-# This function was directly copied from https://github.com/AstraLabuce/aquainfra-usecase-Daugava/blob/main/AqInfra_usecase_Daugava_functions.R
-# 2024-06-26
 
 points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name="lat") {
   #shp - shapefile
@@ -140,59 +109,25 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
   # set to WGS84 projection
   print('Setting to WGS84 CRS...')
   sf::st_crs(data_spatial) <- 4326
-  # make in situ points spatial
-  ##data_spatial <- as(data_spatial, 'Spatial') # LEAVE OUT, KEEP AS SF! TO ALLOW USING SF_INTERSECTION
-  
-  # overlay shapefile and in situ locations
-  # TODO FAILS
-  ## FIrst, convert from WGS84-Pseudo-Mercator to pure WGS84
-  #data_shp <-
-  #  sp::over(data_spatial, sp::spTransform(shp, sp::CRS("+proj=longlat +datum=WGS84 +no_defs")))
-  # shp_wgs84 <- sp::spTransform(shp, sp::CRS("+proj=longlat +datum=WGS84 +no_defs"))
-  print('Setting geometry data to same CRS...')
+
   shp_wgs84 <- st_transform(shp, st_crs(data_spatial))
-  ##print('Computing the intersection... This will take time...')
-  ##data_shp <- sp::over(data_spatial, shp_wgs84) # FAILS: Error: unable to find an inherited method for function ‘over’ for signature ‘x = "SpatialPointsDataFrame", y = "sf"’
-  ##data_shp <- st_intersection(shp_wgs84, data_spatial)
-  ##print('Computing the intersection... Done.')
-  # Error:
-  #>   data_shp <- st_intersection(shp_wgs84, data_spatial)
-  #Error in wk_handle.wk_wkb(wkb, s2_geography_writer(oriented = oriented,  : 
-  #Loop 994 is not valid: Edge 18723 has duplicate vertex with edge 18736
-  print('Check if geometries are valid...')# TODO: Check actually needed? Maybe just make valid!
-  if (!all(st_is_valid(shp_wgs84))) { # many are not (in the example data)!
-    print('They are not! Making valid...')
-    shp_wgs84 <- st_make_valid(shp_wgs84)  # slowish...
-    print('Making valid done.')
+  if (!all(st_is_valid(shp_wgs84))) {
+    shp_wgs84 <- st_make_valid(shp_wgs84)
   }
 
-  ## Overlay shapefile and in situ locations
-  print(paste0('Computing the intersection... This will take a while. ',
-               'Starting at ', Sys.time()))
   shp_wgs84 <- st_filter(shp_wgs84, data_spatial) 
   data_shp <- st_join(shp_wgs84, data_spatial)
-  #drop geometry to faster use of the object
   data_shp <- sf::st_drop_geometry(data_shp)
-  print(paste0('Done computing the intersection... Finished at ', Sys.time()))
-  
-  # merge shapefile attributes to in situ data.frame - as geometry dropped, coordinates are lacking
   res <- full_join(dpoints, data_shp)
   rm(data_spatial)
   res
 }
 
-#test the function points_att_polygon
-## Call the function:
 out_points_att_polygon <- points_att_polygon(
   shp = shapefile, 
   dpoints = data_rel, 
   long_col_name = in_long_col_name, 
   lat_col_name = in_lat_col_name)
 
-## Output: Now need to store output:
 print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_points_att_polygon, file = out_result_path) 
-
-
-# Spatial: st_write(units, out_unitsCleanedFilePath)
-# Tabular: fwrite(stationSamples, file = out_relevantStationSamplesPath)
+data.table::fwrite(out_points_att_polygon, file = out_result_path)
