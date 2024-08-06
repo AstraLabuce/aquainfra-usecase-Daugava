@@ -14,24 +14,37 @@ library(janitor)
 library(sp)
 library(data.table)
 
-## Args
 args <- commandArgs(trailingOnly = TRUE)
-st_drivers()
 print(paste0('R Command line args: ', args))
-in_shp_path = args[1]
-in_dpoints_path = args[2]
-in_long_col_name = args[3]
-in_lat_col_name = args[4]
-out_result_path = args[5]
+
+in_shp_path <- args[1]
+in_dpoints_path <- args[2]
+in_long_col_name <- args[3]
+in_lat_col_name <- args[4]
+out_result_path <- args[5]
 
 parts <- strsplit(in_shp_path, "/")[[1]]
 file_name <- parts[length(parts)]
 
-download.file(in_shp_path, paste0("./shp/", file_name), mode = "wb")
+local_file_path <- paste0("./shp/", file_name)
+shp_dir <- paste0("./shp/", sub("\\.zip$", "", file_name))
 
-shp_dir <- paste0("./shp/",sub("\\.zip$", "", file_name))
-unzip(paste0("./shp/", file_name), exdir = shp_dir)
+# Check if the file is already downloaded
+if (!file.exists(local_file_path)) {
+  download.file(in_shp_path, local_file_path, mode = "wb")
+} else {
+  print(paste0("File ", local_file_path, " already exists. Skipping download."))
+}
 
+# Check if the unzipped directory already exists
+if (!dir.exists(shp_dir)) {
+  # Unzip the downloaded file if the directory doesn't exist
+  unzip(local_file_path, exdir = shp_dir)
+} else {
+  print(paste0("Directory ", shp_dir, " already exists. Skipping unzip."))
+}
+
+# Load the shapefile
 shapefile <- st_read(shp_dir)
 
 # locate in situ data set manually
