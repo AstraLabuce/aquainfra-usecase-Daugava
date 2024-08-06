@@ -3,7 +3,7 @@
 # function points_att_polygon - data points merged with polygon attributes based on data point location
 
 #RUN WITH
-# Rscript points_att_polygon.R "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip" "in_situ_data/in_situ_example.xlsx" "longitude" "latitude" "data_out_point_att_polygon.csv"
+# Rscript points_att_polygon.R "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip" "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx" "longitude" "latitude" "data_out_point_att_polygon.csv"
 
 library(sf)
 library(magrittr)
@@ -11,40 +11,85 @@ library(dplyr)
 library(janitor)
 library(sp)
 library(data.table)
+library(jsonlite)
 
+config_file_path <- "config.json"
+
+# Check if the config.json file exists
+if (file.exists(config_file_path)) {
+  # Read the JSON file
+  config_data <- fromJSON(config_file_path)
+  print("Config file loaded successfully.")
+  input_data_dir <- config_data["input_data_dir"]
+  print(paste("The value of 'input_data_dir' is:", input_data_dir))
+} else {
+  print("Config file not found.")
+}
+
+# Retrieve command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
 
+# Assign arguments to variables
 in_shp_path <- args[1]
 in_dpoints_path <- args[2]
 in_long_col_name <- args[3]
 in_lat_col_name <- args[4]
 out_result_path <- args[5]
 
+# Extract the file name from the shapefile path
 url_parts <- strsplit(in_shp_path, "/")[[1]]
 file_name <- url_parts[length(url_parts)]
 
-local_file_path <- paste0("./shp/", file_name)
+shp_directory <- paste0(input_data_dir, "shp/")
+local_file_path <- paste0(shp_directory, file_name)
 
-# Check if the file is already downloaded
+if (!dir.exists(shp_directory)) {
+  dir.create(shp_directory, recursive = TRUE)
+  print(paste0("Directory ", shp_directory, " created."))
+}
+
 if (!file.exists(local_file_path)) {
   download.file(in_shp_path, local_file_path, mode = "wb")
+  print(paste0("File ", local_file_path, " downloaded."))
 } else {
   print(paste0("File ", local_file_path, " already exists. Skipping download."))
 }
 
-shp_dir <- paste0("./shp/", sub("\\.zip$", "", file_name))
+shp_dir <- paste0(shp_directory, sub("\\.zip$", "", file_name))
+
 # Check if the unzipped directory already exists
 if (!dir.exists(shp_dir)) {
-  # Unzip the downloaded file if the directory doesn't exist
   unzip(local_file_path, exdir = shp_dir)
+  print(paste0("Unzipped to directory ", shp_dir))
 } else {
   print(paste0("Directory ", shp_dir, " already exists. Skipping unzip."))
 }
 
 shapefile <- st_read(shp_dir)
 
-data_raw <- readxl::read_excel(in_dpoints_path) %>%
+# Define the directory and local file path for the Excel file
+in_situ_directory <- paste0(input_data_dir, "in_situ_data/")
+
+url_parts_excel <- strsplit(in_dpoints_path, "/")[[1]]
+excel_file_name <- url_parts_excel[length(url_parts_excel)]
+local_excel_path <- paste0(in_situ_directory, excel_file_name)
+
+# Ensure the in_situ_data directory exists, create if not
+if (!dir.exists(in_situ_directory)) {
+  dir.create(in_situ_directory, recursive = TRUE)
+  print(paste0("Directory ", in_situ_directory, " created."))
+}
+
+# Check if the Excel file is already downloaded
+if (!file.exists(local_excel_path)) {
+  download.file(in_dpoints_path, local_excel_path, mode = "wb")
+  print(paste0("File ", local_excel_path, " downloaded."))
+} else {
+  print(paste0("File ", local_excel_path, " already exists. Skipping download."))
+}
+
+data_raw <- readxl::read_excel(local_excel_path) %>%
   janitor::clean_names()
 
 rel_columns <- c(

@@ -1,63 +1,37 @@
-# =================================================================
-#
-# Authors: Tom Kralidis <tomkralidis@gmail.com>
-#          Francesco Martinelli <francesco.martinelli@ingv.it>
-#
-# Copyright (c) 2022 Tom Kralidis
-# Copyright (c) 2024 Francesco Martinelli
-#
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation
-# files (the "Software"), to deal in the Software without
-# restriction, including without limitation the rights to use,
-# copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following
-# conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-# OTHER DEALINGS IN THE SOFTWARE.
-#
-# =================================================================
-
 import logging
 import subprocess
 import json
 import os
+from urllib.parse import urlparse
+import requests
 
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
-
-# Curl with input reference url:
-URL1="https://aqua.igb-berlin.de/download/testinputs/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp"
-URL2="https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx"
-curl -X POST "https://aqua.igb-berlin.de/pygeoapi-dev/processes/get-astra1/execution" -H "Content-Type: application/json" -d "{\"inputs\":{\"regions\": ${URL1}}}"
-
-curl -X POST "https://aqua.igb-berlin.de/pygeoapi-dev/processes/get-astra1/execution" -H "Content-Type: application/json" -d "{ \"inputs\": { \"regions\": \"https://aqua.igb-berlin.de/download/testinputs/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp\" } }"
-
-TODO: R needs dependency "sf", "units", "dplyr", "janitor"
+curl --location 'http://localhost:5000/processes/get-astra1/execution' \
+--header 'Content-Type: application/json' \
+--data '{ 
+    "inputs": {
+        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "long_col_name": "longitude",
+        "lat_col_name": "latitude",
+        "points": "./pygeoapi/process/in_situ_data/in_situ_example.xlsx"
+    } 
+}'
 '''
-
 
 LOGGER = logging.getLogger(__name__)
 
-
-# Process metadata and description
-# Has to be in a JSON file of the same name, in the same dir! 
 script_title_and_path = __file__
 metadata_title_and_path = script_title_and_path.replace('.py', '.json')
 PROCESS_METADATA = json.load(open(metadata_title_and_path))
 
+def is_url(string):
+    try:
+        result = urlparse(string)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
 
 class Astra1Processor(BaseProcessor):
 
@@ -71,60 +45,24 @@ class Astra1Processor(BaseProcessor):
         self.my_job_id = job_id
 
     def execute(self, data, outputs=None):
+        with open("./pygeoapi/process/config.json") as configFile:
+            configJSON = json.load(configFile)
 
-        # Some contents
-        DOWNLOAD_DIR = '/var/www/nginx/download/'
-        OWN_URL = 'https://aqua.igb-berlin.de/download/'
-        R_SCRIPT_DIR = '/opt/pyg_upstream_dev/pygeoapi/pygeoapi/process/'
-        # TODO: Not hardcode that directory!
-        # TODO: Not hardcode that URL! Get from my config file, or can I even get it from pygeoapi config?
+        DOWNLOAD_DIR = configJSON["DOWNLOAD_DIR"]
+        OWN_URL = configJSON["OWN_URL"]
+        R_SCRIPT_DIR = configJSON["R_SCRIPT_DIR"]
 
-
-        # Get inputs args
         in_long_col_name = data.get('long_col_name', 'longitude')
         in_lat_col_name = data.get('lat_col_name', 'latitude')
-        in_regions = data.get('regions', DOWNLOAD_DIR+'testinputs/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp') # TODO FOR NOW
-        in_dpoints = data.get('points', DOWNLOAD_DIR+'testinputs/in_situ_example.xlsx') # TODO FOR NOW
-
-
-        # Get local path for input data
-        in_shp_path = None
-        if in_regions.startswith('http'):
-            LOGGER.error('THIS IS A URL: %s' % in_regions)
-            if OWN_URL in in_regions:
-                LOGGER.error('Apparently the data is on our own computer!')
-                in_shp_path = in_regions.replace(OWN_URL, DOWNLOAD_DIR)
-
-            else:
-                LOGGER.error('Apparently the data is NOT on our own computer!')
-                # TODO! Fuck, shapefile is various files so we need it zipped!!
-                LOGGER.debug('Reading shapefile from URL: %s' % in_regions)
-                inputfilename = 'astra-inputs-%s.csv' % self.my_job_id
-                in_shp_path = DOWNLOAD_DIR.rstrip('/')+os.sep+inputfilename
-
-                resp = requests.get(in_regions, stream=True)
-                if resp.ok:
-                    LOGGER.error("Saving to", os.path.abspath(in_shp_path))
-                    with open(in_shp_path, 'wb') as myfile:
-                        for chunk in resp.iter_content(chunk_size=1024 * 8):
-                            if chunk:
-                                myfile.write(chunk)
-                                myfile.flush()
-                                os.fsync(myfile.fileno())
-                    LOGGER.error('We got this content (http %s): %s' % (resp, str(in_shp_path)[:100]))
-    
-                else:  # HTTP status code 4XX/5XX
-                    LOGGER.error("Download failed: status code {}\n{}".format(resp.status_code, resp.text))
-
+        in_regions = data.get('regions', DOWNLOAD_DIR+'testinputs/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp')
+        in_dpoints = data.get('points', DOWNLOAD_DIR+'testinputs/in_situ_example.xlsx')
 
         # Where to store output data
         downloadfilename = 'astra-%s.csv' % self.my_job_id
         downloadfilepath = DOWNLOAD_DIR.rstrip('/')+os.sep+downloadfilename
-        # TODO: Carefully consider permissions of that directory!
 
-        # Call R script, result gets stored to downloadfilepath
-        R_SCRIPT_NAME = 'points_att_polygon.R'
-        r_args = [in_shp_path, in_dpoints, in_long_col_name, in_lat_col_name, downloadfilepath]
+        R_SCRIPT_NAME = configJSON["R_SCRIPT_NAME"]
+        r_args = [in_regions, in_dpoints, in_long_col_name, in_lat_col_name, downloadfilepath]
 
         LOGGER.error('RUN R SCRIPT AND STORE TO %s!!!' % downloadfilepath)
         LOGGER.error('R ARGS %s' % r_args)
@@ -182,4 +120,3 @@ def call_r_script(num, LOGGER, r_file_name, path_rscripts, r_args):
             stdout = stdouttext, n = num)
         LOGGER.info(err_and_out)
     return p.returncode, err_and_out
-
