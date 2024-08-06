@@ -2,6 +2,8 @@
     "DOWNLOAD_DIR": "./pygeoapi/process/",
     "OWN_URL": "https://aqua.igb-berlin.de/download/",
     "R_SCRIPT_DIR": "./pygeoapi/process/",
-    "R_SCRIPT_NAME": "points_att_polygon.R",
+    "step_1": "points_att_polygon.R",
+    "step_2": "mean_by_group.R",
+    "step_3": "...",
     "input_data_dir": "./"
 }

@@ -1,0 +1,87 @@
+{
+    "version": "0.2.0",
+    "id": "peri-conv",
+    "title": {
+        "en": "peri-conv"
+    },
+    "description": {
+        "en": "peri-conv"
+    },
+    "jobControlOptions": ["sync-execute", "async-execute"],
+    "keywords": ["hello world", "example", "echo"],
+    "links": [{
+        "type": "text/html",
+        "rel": "about",
+        "title": "information",
+        "href": "https://example.org/process",
+        "hreflang": "en-US"
+    }],
+    "inputs": {
+        "input_data": {
+            "title": "Regions Shapefile",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "column": {
+            "title": "Points excel",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "dates": {
+            "title": "Column name for longitude",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "periods": {
+            "title": "Column name for latiitude",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "someBoolean": {
+            "title": "Column name for latiitude",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        }
+    },
+    "outputs": {
+        "echo": {
+            "title": "Hello, world",
+            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+            "schema": {
+                "type": "object",
+                "contentMediaType": "application/json"
+            }
+        }
+    },
+    "example": {
+        "inputs": {
+            "name": "World",
+            "message": "An optional message."
+        }
+    }
+}

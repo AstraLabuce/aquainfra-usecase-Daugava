@@ -7,14 +7,15 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
-curl --location 'http://localhost:5000/processes/points-att-polygon/execution' \
+curl --location 'http://localhost:5000/processes/peri-conv/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "long_col_name": "longitude",
-        "lat_col_name": "latitude",
-        "points": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx"
+        "input_data": "data_out_point_att_polygon.csv",
+        "column": "visit_date",
+        "dates": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
+        "periods": "winter,spring,summer,autumn",
+        "someBoolean": "True"
     } 
 }'
 '''
@@ -25,7 +26,7 @@ script_title_and_path = __file__
 metadata_title_and_path = script_title_and_path.replace('.py', '.json')
 PROCESS_METADATA = json.load(open(metadata_title_and_path))
 
-class PointsAttPolygonProcessor(BaseProcessor):
+class PeriConvProcessor(BaseProcessor):
 
     def __init__(self, processor_def):
         super().__init__(processor_def, PROCESS_METADATA)
@@ -43,17 +44,18 @@ class PointsAttPolygonProcessor(BaseProcessor):
         OWN_URL = configJSON["OWN_URL"]
         R_SCRIPT_DIR = configJSON["R_SCRIPT_DIR"]
 
-        in_long_col_name = data.get('long_col_name', 'longitude')
-        in_lat_col_name = data.get('lat_col_name', 'latitude')
-        in_regions = data.get('regions', DOWNLOAD_DIR+'testinputs/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp')
-        in_dpoints = data.get('points', DOWNLOAD_DIR+'testinputs/in_situ_example.xlsx')
+        input_data = data.get('input_data', 'data_out_point_att_polygon.csv')
+        column = data.get('column', 'visit date')
+        dates = data.get('dates', 'Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30')
+        periods = data.get('periods', 'winter,spring,summer,autumn')
+        someBoolean = data.get('someBoolean', 'True')
 
         # Where to store output data
-        downloadfilename = 'astra-%s.csv' % self.my_job_id
+        downloadfilename = 'peri_conv_%s.csv' % self.my_job_id
         downloadfilepath = DOWNLOAD_DIR.rstrip('/')+os.sep+downloadfilename
 
-        R_SCRIPT_NAME = configJSON["step_1"]
-        r_args = [in_regions, in_dpoints, in_long_col_name, in_lat_col_name, downloadfilepath]
+        R_SCRIPT_NAME = configJSON["step_2"]
+        r_args = [DOWNLOAD_DIR.rstrip('/')+os.sep+input_data, column, dates, periods, someBoolean, downloadfilepath]
 
         LOGGER.error('RUN R SCRIPT AND STORE TO %s!!!' % downloadfilepath)
         LOGGER.error('R ARGS %s' % r_args)
@@ -85,7 +87,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
             return 'application/json', response_object
 
     def __repr__(self):
-        return f'<PointsAttPolygonProcessor> {self.name}'
+        return f'<PeriConvProcessor> {self.name}'
 
 
 def call_r_script(num, LOGGER, r_file_name, path_rscripts, r_args):
