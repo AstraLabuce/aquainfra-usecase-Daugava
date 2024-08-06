@@ -2,20 +2,19 @@ import logging
 import subprocess
 import json
 import os
-from urllib.parse import urlparse
 import requests
-
+from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
-curl --location 'http://localhost:5000/processes/get-astra1/execution' \
+curl --location 'http://localhost:5000/processes/points-att-polygon/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "long_col_name": "longitude",
         "lat_col_name": "latitude",
-        "points": "./pygeoapi/process/in_situ_data/in_situ_example.xlsx"
+        "points": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx"
     } 
 }'
 '''
@@ -26,17 +25,9 @@ script_title_and_path = __file__
 metadata_title_and_path = script_title_and_path.replace('.py', '.json')
 PROCESS_METADATA = json.load(open(metadata_title_and_path))
 
-def is_url(string):
-    try:
-        result = urlparse(string)
-        return all([result.scheme, result.netloc])
-    except ValueError:
-        return False
-
-class Astra1Processor(BaseProcessor):
+class PointsAttPolygonProcessor(BaseProcessor):
 
     def __init__(self, processor_def):
-
         super().__init__(processor_def, PROCESS_METADATA)
         self.supports_outputs = True
         self.my_job_id = 'nnothing-yet'
@@ -94,7 +85,7 @@ class Astra1Processor(BaseProcessor):
             return 'application/json', response_object
 
     def __repr__(self):
-        return f'<Astra1Processor> {self.name}'
+        return f'<PointsAttPolygonProcessor> {self.name}'
 
 
 def call_r_script(num, LOGGER, r_file_name, path_rscripts, r_args):
