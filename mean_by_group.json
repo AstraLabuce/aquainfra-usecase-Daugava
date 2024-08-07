@@ -1,0 +1,47 @@
+{
+    "version": "0.1.0",
+    "id": "mean-by-group",
+    "title": {
+        "en": "mean-by-group"
+    },
+    "description": {
+        "en": "mean-by-group"
+    },
+    "jobControlOptions": ["sync-execute", "async-execute"],
+    "keywords": ["hello world", "example", "echo"],
+    "links": [{
+        "type": "text/html",
+        "rel": "about",
+        "title": "information",
+        "href": "https://example.org/process",
+        "hreflang": "en-US"
+    }],
+    "inputs": {
+        "input_data": {
+            "title": "Regions Shapefile",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        }
+    },
+    "outputs": {
+        "echo": {
+            "title": "Hello, world",
+            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+            "schema": {
+                "type": "object",
+                "contentMediaType": "application/json"
+            }
+        }
+    },
+    "example": {
+        "inputs": {
+            "name": "World",
+            "message": "An optional message."
+        }
+    }
+}

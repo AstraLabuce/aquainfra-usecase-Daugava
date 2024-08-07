@@ -21,8 +21,6 @@ in_group_labels = strsplit(args[4], ",")[[1]]
 in_year_starts_at_Dec1 = args[5]
 out_result_path = args[6]
 
-print(in_group_to_periods)
-
 data_peri_conv <- data.table::fread(in_data_path)
 
 peri_conv <-
@@ -204,6 +202,5 @@ out_peri_conv <-
     year_starts_at_Dec1 = in_year_starts_at_Dec1
   )
 
-## Output: Now need to store output:
 print(paste0('Write result to csv file: ', out_result_path))
 data.table::fwrite(out_peri_conv , file = out_result_path) 
