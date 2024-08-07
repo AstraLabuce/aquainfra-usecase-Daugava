@@ -10,7 +10,7 @@ library(tidyr)
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
 in_data_path = args[1]
-in_rel_cols = strsplit(args[2], ",")[[1]]
+in_rel_cols = strsplit(args[2], ",")[[1]] #todo: remove spaces if available. otherwise can result in subscript out of bounds error
 in_missing_threshold_percentage = as.numeric(args[3])
 in_year_colname = args[4]
 in_value_colname = args[5]

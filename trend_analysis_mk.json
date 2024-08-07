@@ -1,0 +1,77 @@
+{
+    "version": "0.2.0",
+    "id": "trend-analysis-mk",
+    "title": {
+        "en": "trend-analysis-mk"
+    },
+    "description": {
+        "en": "trend-analysis-mk"
+    },
+    "jobControlOptions": ["sync-execute", "async-execute"],
+    "keywords": ["hello world", "example", "echo"],
+    "links": [{
+        "type": "text/html",
+        "rel": "about",
+        "title": "information",
+        "href": "https://example.org/process",
+        "hreflang": "en-US"
+    }],
+    "inputs": {
+        "in_data_path": {
+            "title": "Regions Shapefile",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "in_rel_cols": {
+            "title": "Points excel",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "in_time_colname": {
+            "title": "Column name for longitude",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "in_value_colname": {
+            "title": "Column name for latiitude",
+            "description": "TODO",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        }
+    },
+    "outputs": {
+        "echo": {
+            "title": "Hello, world",
+            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+            "schema": {
+                "type": "object",
+                "contentMediaType": "application/json"
+            }
+        }
+    },
+    "example": {
+        "inputs": {
+            "name": "World",
+            "message": "An optional message."
+        }
+    }
+}
