@@ -49,7 +49,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
         in_dpoints = data.get('points', DOWNLOAD_DIR+'testinputs/in_situ_example.xlsx')
 
         # Where to store output data
-        downloadfilename = 'astra-%s.csv' % self.my_job_id
+        downloadfilename = 'points_att_polygon-%s.csv' % self.my_job_id
         downloadfilepath = DOWNLOAD_DIR.rstrip('/')+os.sep+downloadfilename
 
         R_SCRIPT_NAME = configJSON["step_1"]

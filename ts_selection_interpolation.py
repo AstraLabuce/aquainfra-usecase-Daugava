@@ -7,7 +7,9 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
-{ 
+curl --location 'http://localhost:5000/processes/ts-selection-interpolation/execution' \
+--header 'Content-Type: application/json' \
+--data '{ 
     "inputs": {
         "in_data_path": "data_out_seasonal_means.csv",
         "in_rel_cols": "group_labels,HELCOM_ID",
@@ -16,7 +18,7 @@ from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
         "in_value_colname": "Secchi_m_mean_annual",
         "in_min_data_point": "10"
     } 
-}
+}'
 '''
 
 LOGGER = logging.getLogger(__name__)
