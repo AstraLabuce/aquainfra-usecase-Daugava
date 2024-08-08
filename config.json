@@ -6,5 +6,6 @@
     "step_2": "peri_conv.R",
     "step_3": "mean_by_group.R",
     "step_4": "ts_selection_interpolation.R",
-    "input_data_dir": "./"
+    "step_5": "trend_analysis_mk.R",
+    "input_data_dir": "./pygeoapi/process/"
 }
