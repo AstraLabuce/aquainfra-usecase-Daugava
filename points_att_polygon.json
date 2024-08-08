@@ -1,14 +1,14 @@
 {
-    "version": "0.2.0",
+    "version": "0.1.0",
     "id": "points-att-polygon",
     "title": {
-        "en": "points_att_polygon"
+        "en": "points-att-polygon"
     },
     "description": {
-        "en": "points_att_polygon"
+        "en": "points-att-polygon"
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
-    "keywords": ["hello world", "example", "echo"],
+    "keywords": ["astra"],
     "links": [{
         "type": "text/html",
         "rel": "about",
@@ -18,28 +18,28 @@
     }],
     "inputs": {
         "regions": {
-            "title": "Regions Shapefile",
-            "description": "TODO",
+            "title": "regions",
+            "description": "astra",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
         "points": {
-            "title": "Points excel",
-            "description": "TODO",
+            "title": "points",
+            "description": "astra",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
         "long_col_name": {
             "title": "Column name for longitude",
-            "description": "TODO",
+            "description": "astra",
             "schema": {
                 "type": "string"
             },
@@ -49,7 +49,7 @@
         },
         "lat_col_name": {
             "title": "Column name for latiitude",
-            "description": "TODO",
+            "description": "astra",
             "schema": {
                 "type": "string"
             },
@@ -59,12 +59,12 @@
         }
     },
     "outputs": {
-        "echo": {
-            "title": "Hello, world",
-            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+        "data_out_point_att_polygon": {
+            "title": "data_out_point_att_polygon",
+            "description": "astra",
             "schema": {
                 "type": "object",
-                "contentMediaType": "application/json"
+                "contentMediaType": "application/csv"
             }
         }
     },

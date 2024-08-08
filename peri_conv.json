@@ -1,5 +1,5 @@
 {
-    "version": "0.2.0",
+    "version": "0.1.0",
     "id": "peri-conv",
     "title": {
         "en": "peri-conv"
@@ -8,7 +8,7 @@
         "en": "peri-conv"
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
-    "keywords": ["hello world", "example", "echo"],
+    "keywords": ["astra"],
     "links": [{
         "type": "text/html",
         "rel": "about",
@@ -69,9 +69,9 @@
         }
     },
     "outputs": {
-        "echo": {
-            "title": "Hello, world",
-            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+        "data_out_peri_conv": {
+            "title": "data_out_peri_conv",
+            "description": "...",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/json"
