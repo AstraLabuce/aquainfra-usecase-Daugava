@@ -46,15 +46,15 @@ class PointsAttPolygonProcessor(BaseProcessor):
 
         in_long_col_name = data.get('long_col_name', 'longitude')
         in_lat_col_name = data.get('lat_col_name', 'latitude')
-        in_regions = data.get('regions', DOWNLOAD_DIR+'testinputs/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp')
-        in_dpoints = data.get('points', DOWNLOAD_DIR+'testinputs/in_situ_example.xlsx')
+        in_regions_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
+        in_dpoints_url = data.get('points', 'https://raw.githubusercontent.com/AstraLabuce/aquainfra-usecase-Daugava/main/in_situ_data/in_situ_example.xlsx')
 
         # Where to store output data
         downloadfilename = 'points_att_polygon-%s.csv' % self.my_job_id
         downloadfilepath = DOWNLOAD_DIR.rstrip('/')+os.sep+downloadfilename
 
         R_SCRIPT_NAME = configJSON["step_1"]
-        r_args = [in_regions, in_dpoints, in_long_col_name, in_lat_col_name, downloadfilepath]
+        r_args = [in_regions_url, in_dpoints_url, in_long_col_name, in_lat_col_name, downloadfilepath]
 
         LOGGER.error('RUN R SCRIPT AND STORE TO %s!!!' % downloadfilepath)
         LOGGER.error('R ARGS %s' % r_args)
@@ -108,7 +108,7 @@ def call_r_script(num, LOGGER, r_file_name, path_rscripts, r_args):
             stdout= stdouttext, stderr=stderrtext, n=num)
         LOGGER.error(err_and_out)
     else:
-        err_and_out = 'R stdour:\n___PROCESS OUTPUT {n}___\n___stdout___\n{stdout}\n___stderr___\n___(Nothing written to stderr)___\n   (END PROCESS OUTPUT {n})\n___________'.format(
+        err_and_out = 'R stdout:\n___PROCESS OUTPUT {n}___\n___stdout___\n{stdout}\n___stderr___\n___(Nothing written to stderr)___\n   (END PROCESS OUTPUT {n})\n___________'.format(
             stdout = stdouttext, n = num)
         LOGGER.info(err_and_out)
     return p.returncode, err_and_out
