@@ -13,10 +13,8 @@ library(sp)
 library(data.table)
 library(jsonlite)
 
-#in pygeoapi environment
-#config_file_path <- "./pygeoapi/process/config.json"
-#in local environment
-config_file_path <- "config.json"
+config_file_path <- Sys.getenv("DAUGAVA_CONFIG_FILE", "./config.json")
+print(paste0("Path to config file: ", config_file_path))
 
 # Get input data directory:
 # If config json exists, read from there, otherwise ./
@@ -26,7 +24,7 @@ if (file.exists(config_file_path)) {
   input_data_dir <- config_data["input_data_dir"]
   print(paste("The value of 'input_data_dir' is:", input_data_dir))
 } else {
-  print("Config file not found. Set to directory ./")
+  print("Config file not found. Input directory set to directory ./")
   input_data_dir <- "./"
 }
 

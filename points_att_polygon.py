@@ -36,7 +36,8 @@ class PointsAttPolygonProcessor(BaseProcessor):
         self.my_job_id = job_id
 
     def execute(self, data, outputs=None):
-        with open("./pygeoapi/process/config.json") as configFile:
+        config_file_path = os.environ.get('DAUGAVA_CONFIG_FILE', "./config.json")
+        with open(config_file_path, 'r') as configFile:
             configJSON = json.load(configFile)
 
         DOWNLOAD_DIR = configJSON["DOWNLOAD_DIR"]
