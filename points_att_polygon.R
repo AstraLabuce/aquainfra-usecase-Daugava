@@ -35,33 +35,33 @@ args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
 
 # Assign arguments to variables
-in_shp_path <- args[1]
-in_dpoints_path <- args[2]
+in_shp_url <- args[1]
+in_dpoints_url <- args[2]
 in_long_col_name <- args[3]
 in_lat_col_name <- args[4]
 out_result_path <- args[5]
 
 # Extract the file name from the shapefile path
-url_parts <- strsplit(in_shp_path, "/")[[1]]
-file_name <- url_parts[length(url_parts)]
+url_parts_shp <- strsplit(in_shp_url, "/")[[1]]
+shp_file_name <- url_parts_shp[length(url_parts_shp)]
 
-shp_directory <- paste0(input_data_dir, "shp/")
-local_file_path <- paste0(shp_directory, file_name)
+shp_dir_zipped <- paste0(input_data_dir, "shp/")
+shp_file_path <- paste0(shp_dir_zipped, shp_file_name)
 
-if (!dir.exists(shp_directory)) {
-  success <- dir.create(shp_directory, recursive = TRUE)
+if (!dir.exists(shp_dir_zipped)) {
+  success <- dir.create(shp_dir_zipped, recursive = TRUE)
   if (success) {
-    print(paste0("Directory ", shp_directory, " created."))
+    print(paste0("Directory ", shp_dir_zipped, " created."))
   } else {
-    print(paste0("Directory ", shp_directory, " not created."))
+    print(paste0("Directory ", shp_dir_zipped, " not created."))
   }
 }
 
-if (!file.exists(local_file_path)) {
+if (!file.exists(shp_file_path)) {
   tryCatch(
     {
-      download.file(in_shp_path, local_file_path, mode = "wb")
-      print(paste0("File ", local_file_path, " downloaded."))
+      download.file(in_shp_url, shp_file_path, mode = "wb")
+      print(paste0("File ", shp_file_path, " downloaded."))
     },
     warning = function(warn) {
       message(paste("Download of shapefile failed, reason: ", warn[1]))
@@ -71,27 +71,27 @@ if (!file.exists(local_file_path)) {
     }
   )
 } else {
-  print(paste0("File ", local_file_path, " already exists. Skipping download."))
+  print(paste0("File ", shp_file_path, " already exists. Skipping download."))
 }
 
-shp_dir <- paste0(shp_directory, sub("\\.zip$", "", file_name))
+shp_dir_unzipped <- paste0(shp_dir_zipped, sub("\\.zip$", "", shp_file_name))
 
 # Check if the unzipped directory already exists
-if (!dir.exists(shp_dir)) {
-  unzip(local_file_path, exdir = shp_dir)
-  print(paste0("Unzipped to directory ", shp_dir))
+if (!dir.exists(shp_dir_unzipped)) {
+  unzip(shp_file_path, exdir = shp_dir_unzipped)
+  print(paste0("Unzipped to directory ", shp_dir_unzipped))
 } else {
-  print(paste0("Directory ", shp_dir, " already exists. Skipping unzip."))
+  print(paste0("Directory ", shp_dir_unzipped, " already exists. Skipping unzip."))
 }
 
-shapefile <- st_read(shp_dir)
+shapefile <- st_read(shp_dir_unzipped)
 
 # Define the directory and local file path for the Excel file
 in_situ_directory <- paste0(input_data_dir, "in_situ_data/")
 
-url_parts_excel <- strsplit(in_dpoints_path, "/")[[1]]
+url_parts_excel <- strsplit(in_dpoints_url, "/")[[1]]
 excel_file_name <- url_parts_excel[length(url_parts_excel)]
-local_excel_path <- paste0(in_situ_directory, excel_file_name)
+excel_file_path <- paste0(in_situ_directory, excel_file_name)
 
 # Ensure the in_situ_data directory exists, create if not
 if (!dir.exists(in_situ_directory)) {
@@ -104,11 +104,11 @@ if (!dir.exists(in_situ_directory)) {
 }
 
 # Check if the Excel file is already downloaded
-if (!file.exists(local_excel_path)) {
+if (!file.exists(excel_file_path)) {
   tryCatch(
     {
-      download.file(in_dpoints_path, local_excel_path, mode = "wb")
-      print(paste0("File ", local_excel_path, " downloaded."))
+      download.file(in_dpoints_url, excel_file_path, mode = "wb")
+      print(paste0("File ", excel_file_path, " downloaded."))
     },
     warning = function(warn) {
       message(paste("Download of excel failed, reason: ", warn[1]))
@@ -118,10 +118,10 @@ if (!file.exists(local_excel_path)) {
     }
   )
 } else {
-  print(paste0("File ", local_excel_path, " already exists. Skipping download."))
+  print(paste0("File ", excel_file_path, " already exists. Skipping download."))
 }
 
-data_raw <- readxl::read_excel(local_excel_path) %>%
+data_raw <- readxl::read_excel(excel_file_path) %>%
   janitor::clean_names()
 
 rel_columns <- c(
