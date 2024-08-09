@@ -49,13 +49,27 @@ shp_directory <- paste0(input_data_dir, "shp/")
 local_file_path <- paste0(shp_directory, file_name)
 
 if (!dir.exists(shp_directory)) {
-  dir.create(shp_directory, recursive = TRUE)
-  print(paste0("Directory ", shp_directory, " created."))
+  success <- dir.create(shp_directory, recursive = TRUE)
+  if (success) {
+    print(paste0("Directory ", shp_directory, " created."))
+  } else {
+    print(paste0("Directory ", shp_directory, " not created."))
+  }
 }
 
 if (!file.exists(local_file_path)) {
-  download.file(in_shp_path, local_file_path, mode = "wb")
-  print(paste0("File ", local_file_path, " downloaded."))
+  tryCatch(
+    {
+      download.file(in_shp_path, local_file_path, mode = "wb")
+      print(paste0("File ", local_file_path, " downloaded."))
+    },
+    warning = function(warn) {
+      message(paste("Download of shapefile failed, reason: ", warn[1]))
+    },
+    error = function(err) {
+      message(paste("Download of shapefile failed, reason: ", err[1]))
+    }
+  )
 } else {
   print(paste0("File ", local_file_path, " already exists. Skipping download."))
 }
@@ -81,14 +95,28 @@ local_excel_path <- paste0(in_situ_directory, excel_file_name)
 
 # Ensure the in_situ_data directory exists, create if not
 if (!dir.exists(in_situ_directory)) {
-  dir.create(in_situ_directory, recursive = TRUE)
-  print(paste0("Directory ", in_situ_directory, " created."))
+  success <- dir.create(in_situ_directory, recursive = TRUE)
+  if (success) {
+    print(paste0("Directory ", in_situ_directory, " created."))
+  } else {
+    print(paste0("Directory ", in_situ_directory, " not created."))
+  }
 }
 
 # Check if the Excel file is already downloaded
 if (!file.exists(local_excel_path)) {
-  download.file(in_dpoints_path, local_excel_path, mode = "wb")
-  print(paste0("File ", local_excel_path, " downloaded."))
+  tryCatch(
+    {
+      download.file(in_dpoints_path, local_excel_path, mode = "wb")
+      print(paste0("File ", local_excel_path, " downloaded."))
+    },
+    warning = function(warn) {
+      message(paste("Download of excel failed, reason: ", warn[1]))
+    },
+    error = function(err) {
+      message(paste("Download of excel failed, reason: ", err[1]))
+    }
+  )
 } else {
   print(paste0("File ", local_excel_path, " already exists. Skipping download."))
 }
