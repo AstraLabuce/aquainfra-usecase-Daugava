@@ -18,9 +18,9 @@ library(jsonlite)
 #in local environment
 config_file_path <- "config.json"
 
-# Check if the config.json file exists
+# Get input data directory:
+# If config json exists, read from there, otherwise ./
 if (file.exists(config_file_path)) {
-  # Read the JSON file
   config_data <- fromJSON(config_file_path)
   print("Config file loaded successfully.")
   input_data_dir <- config_data["input_data_dir"]
@@ -33,21 +33,20 @@ if (file.exists(config_file_path)) {
 # Retrieve command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
-
-# Assign arguments to variables
 in_shp_url <- args[1]
 in_dpoints_url <- args[2]
 in_long_col_name <- args[3]
 in_lat_col_name <- args[4]
 out_result_path <- args[5]
 
-# Extract the file name from the shapefile path
+# Define the directory and local file path for the shape file
 url_parts_shp <- strsplit(in_shp_url, "/")[[1]]
 shp_file_name <- url_parts_shp[length(url_parts_shp)]
-
 shp_dir_zipped <- paste0(input_data_dir, "shp/")
 shp_file_path <- paste0(shp_dir_zipped, shp_file_name)
 
+# Ensure the shapefile directory exists, create if not
+print(paste0('Checking whether this file exists: ', shp_file_path))
 if (!dir.exists(shp_dir_zipped)) {
   success <- dir.create(shp_dir_zipped, recursive = TRUE)
   if (success) {
@@ -57,6 +56,7 @@ if (!dir.exists(shp_dir_zipped)) {
   }
 }
 
+# Download shapefile if it doesn't exist:
 if (!file.exists(shp_file_path)) {
   tryCatch(
     {
@@ -74,9 +74,8 @@ if (!file.exists(shp_file_path)) {
   print(paste0("File ", shp_file_path, " already exists. Skipping download."))
 }
 
+# Unzip shapefile if it is not unzipped yet:
 shp_dir_unzipped <- paste0(shp_dir_zipped, sub("\\.zip$", "", shp_file_name))
-
-# Check if the unzipped directory already exists
 if (!dir.exists(shp_dir_unzipped)) {
   unzip(shp_file_path, exdir = shp_dir_unzipped)
   print(paste0("Unzipped to directory ", shp_dir_unzipped))
@@ -84,11 +83,11 @@ if (!dir.exists(shp_dir_unzipped)) {
   print(paste0("Directory ", shp_dir_unzipped, " already exists. Skipping unzip."))
 }
 
+# Read shapefile
 shapefile <- st_read(shp_dir_unzipped)
 
 # Define the directory and local file path for the Excel file
 in_situ_directory <- paste0(input_data_dir, "in_situ_data/")
-
 url_parts_excel <- strsplit(in_dpoints_url, "/")[[1]]
 excel_file_name <- url_parts_excel[length(url_parts_excel)]
 excel_file_path <- paste0(in_situ_directory, excel_file_name)
@@ -103,7 +102,8 @@ if (!dir.exists(in_situ_directory)) {
   }
 }
 
-# Check if the Excel file is already downloaded
+# Download excel if it doesn't exist:
+print(paste0('Checking if excel file exists: ', excel_file_path))
 if (!file.exists(excel_file_path)) {
   tryCatch(
     {
@@ -121,6 +121,7 @@ if (!file.exists(excel_file_path)) {
   print(paste0("File ", excel_file_path, " already exists. Skipping download."))
 }
 
+# Read excel file
 data_raw <- readxl::read_excel(excel_file_path) %>%
   janitor::clean_names()
 
