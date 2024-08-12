@@ -652,6 +652,373 @@ data.table::fwrite(out_mk , file = out_result_path)
 ################################################################################.
 ## 6. visualization ####
 ################################################################################.
+### 6.1. map: shp + dpoints ####
+in_shp_path = "shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp"
+in_dpoints_path = "data_out_point_att_polygon.csv"
+in_long_col_name = "longitude"
+in_lat_col_name = "latitude"
+in_value_name = "transparency_m"
+in_region_col_name = "HELCOM_ID"
+out_result_path_url = "map_shapefile_insitu.html"
 
-#TBC
+dpoints <- data.table::fread(in_dpoints_path)
+shapefile <- sf::st_read(in_shp_path)
+
+
+map_shapefile_points <- function(shp, dpoints, 
+                                 long_col_name="long", 
+                                 lat_col_name="lat",
+                                 value_name = NULL,
+                                 region_col_name = NULL) {
+
+  if (!requireNamespace("sp", quietly = TRUE)) {
+    stop("Package \"sp\" must be installed to use this function.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    stop("Package \"sf\" must be installed to use this function.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("mapview", quietly = TRUE)) {
+    stop("Package \"mapview\" must be installed to use this function.",
+         call. = FALSE)
+  }
+  if (missing(shp))
+    stop("missing shp")
+  if (missing(dpoints))
+    stop("missing dpoints")
+  if (! long_col_name %in% colnames(dpoints))
+    stop(paste0("input data does not have column ", long_col_name))
+  if (! lat_col_name %in% colnames(dpoints))
+    stop(paste0("input data does not have column ", lat_col_name))
+  
+  err = paste0("Error: `", long_col_name, "` is not numeric.")
+  stopifnot(err =
+              is.numeric(as.data.frame(dpoints)[, names(dpoints) == long_col_name]))
+  err = paste0("Error: `", lat_col_name, "` is not numeric.")
+  stopifnot(err =
+              is.numeric(as.data.frame(dpoints)[, names(dpoints) == lat_col_name]))
+  
+  #dpoints to spatial
+  print('Making input data spatial based on long, lat...')
+  data_spatial <- sf::st_as_sf(dpoints, coords = c(long_col_name, lat_col_name))
+  # set to WGS84 projection
+  print('Setting to WGS84 CRS...')
+  sf::st_crs(data_spatial) <- 4326
+  
+  ## First, convert from WGS84-Pseudo-Mercator to pure WGS84
+  print('Setting geometry data to same CRS...')
+  shp_wgs84 <- sf::st_transform(shp, sf::st_crs(data_spatial))
+  
+  ## Check and fix geometry validity
+  print('Check if geometries are valid...')# TODO: Check actually needed? Maybe just make valid!
+  if (!all(sf::st_is_valid(shp_wgs84))) { # many are not (in the example data)!
+    print('They are not! Making valid...')
+    shp_wgs84 <- sf::st_make_valid(shp_wgs84)  # slowish...
+    print('Making valid done.')
+  }
+  ## Overlay shapefile and in situ locations
+  print(paste0('Drawing map...'))
+  shp_wgs84 <- sf::st_filter(shp_wgs84, data_spatial) 
+
+  mapview::mapview(shp_wgs84, 
+                   alpha.region = 0.3, 
+                   legend = FALSE, 
+                   zcol = region_col_name) + 
+    mapview::mapview(data_spatial, 
+                     zcol = value_name,
+                     legend = TRUE, 
+                     alpha = 0.8)
+  
+}
+
+
+map_out <- map_shapefile_points(shp = shapefile, 
+                                 dpoints = dpoints,
+                                 long_col_name = in_long_col_name,
+                                 lat_col_name = in_lat_col_name,
+                                 value_name = in_value_name, 
+                                 region_col_name = in_region_col_name)
+
+
+## Output: Now need to store output:
+print(paste0('Save map to html: ', out_result_path_url))
+mapview::mapshot(map_out, 
+                 url = out_result_path_url)
+#browseURL(out_result_path_url)
+
+
+
+### 6.2. barplot of trend analysis ####
+args <- commandArgs(trailingOnly = TRUE)
+print(paste0('R Command line args: ', args))
+in_data_path = "mk_trend_analysis_results.csv"
+in_id_col = "polygon_id"
+in_test_value = "Tau_Value"
+in_p_value = "P_Value"
+in_p_value_threshold = "0.05"
+in_group = "season"
+out_result_path = "barplot_trend_results.png"
+
+data_list_subgroups <- data.table::fread(in_data_path)
+library(ggplot2)
+
+#plot the result for transparency
+barplot_trend_results <- function(data, 
+                            id = "polygon_id", 
+                            test_value = "value",
+                            p_value = "p_value",
+                            p_value_threshold = 0.05,
+                            group = "group"){
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package \"ggplot2\" must be installed to use this function.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("viridis", quietly = TRUE)) {
+    stop("Package \"viridis\" must be installed to use this function.",
+         call. = FALSE)
+  }
+  # ggplot(aes(x=data[,which(names(data) == id)], #why which is not working properly??
+  #            y=data[,which(names(data) == test_value)]), 
+  #        data=data)+
+  #   geom_bar(aes(fill = data[,which(names(data) == group)], 
+  #                alpha = data[,which(names(data) == p_value)] > p_value_threshold),
+  #            width=0.6,
+  #            position = position_dodge(width=0.6),
+  #            stat = "identity")+
+    
+  ggplot(aes(
+    x = subset(data, select = names(data) == id)[[1]],
+    y = subset(data, select = names(data) == test_value)[[1]]
+  ), data = data) +
+    geom_bar(
+      aes(
+        fill = subset(data, select = names(data) == group)[[1]],
+        alpha = subset(data, select = names(data) == p_value)[[1]] > p_value_threshold
+      ),
+      width = 0.6,
+      position = position_dodge(width = 0.6),
+      stat = "identity"
+    ) +
+    scale_alpha_manual(values = c(1, 0.35), guide = "none") +
+    viridis::scale_fill_viridis(discrete = TRUE) +
+    theme_minimal() +
+    labs(
+      x = paste(id),
+      y = paste(test_value),
+      fill = paste(group),
+      caption = "*Translucent bars indicate statistically insignificant results"
+    ) +
+    theme_bw(base_size = 12) +
+    theme(legend.position = "top")
+}
+
+barplot_trends <- barplot_trend_results(data = data_list_subgroups,
+                      id = "polygon_id",
+                      test_value = "Tau_Value",
+                      p_value = "P_Value",
+                      p_value_threshold = "0.05",
+                      group = "season")
+
+## Output: Now need to store output:
+print(paste0('Write result to csv file: ', out_result_path))
+ggsave(barplot_trends , file = out_result_path, dpi = 300) 
+
+
+### 6.3. trend result map ####
+# plot a map of trend results
+### interactive map
+args <- commandArgs(trailingOnly = TRUE)
+print(paste0('R Command line args: ', args))
+in_shp_path = "shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp"
+in_trend_results_path = "mk_trend_analysis_results.csv"
+in_id_trend_col = "polygon_id"
+in_id_shp_col = "HELCOM_ID"
+in_group = "season"
+in_p_value_col = "P_Value"
+in_p_value_threshold = "0.05"
+
+out_result_path_url = "map_trend_results.html"
+out_result_path_png = "map_trend_results.png"
+
+data <- data.table::fread(in_trend_results_path)
+shp <- sf::st_read(in_shp_path)
+
+library(tmap)
+library(tmaptools)
+
+map_trends_interactive <- function(shp, data, 
+                       id_trend_col = "id",
+                       id_shp_col = "id",
+                       p_value_threshold = 0.05,
+                       p_value_col = "p_value",
+                       group = "group") {
+
+    if (!requireNamespace("sf", quietly = TRUE)) {
+    stop("Package \"sf\" must be installed to use this function.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("tmap", quietly = TRUE)) {
+    stop("Package \"tmap\" must be installed to use this function.",
+         call. = FALSE)
+  }
+  if (missing(shp))
+    stop("missing shp")
+  if (missing(data))
+    stop("missing data")
+
+  shp_subset <- 
+    shp[subset(shp, select = names(shp) == id_shp_col)[[1]] %in% subset(data, select = names(data) == id_trend_col)[[1]],]
+  
+  names(shp_subset)[which(names(shp_subset) == id_shp_col)] <- "polygon_id"
+  names(data)[which(names(data) == id_trend_col)] <- "polygon_id"
+  
+  
+  shp_trend <- merge(shp_subset, data)
+  shp_trend$significant <- shp_trend$P_Value <= p_value_threshold
+  shp_trend$decreasing_trend <- shp_trend$Tau_Value <= 0
+  shp_trend$trend_res <- "insig.trend"
+
+  for (each in seq(nrow(shp_trend))){
+    if (shp_trend[each,]$significant == TRUE & shp_trend[each,]$Tau_Value <= 0) {
+      shp_trend[each,]$trend_res <- "sig.decrease"
+    }else if(shp_trend[each,]$significant == TRUE & shp_trend[each,]$Tau_Value > 0){
+      shp_trend[each,]$trend_res <- "sig.increase"} 
+  }
+
+  tmap_mode("view")
+  tm_basemap(server = providers$Esri)+
+    tm_shape(shp_trend)+
+    tm_polygons("trend_res", 
+              alpha = 0.85, 
+              title = "result of trend analysis",
+              colorNA = NULL, 
+              colorNULL = NULL, 
+              textNA = "not tested") +
+    tm_facets(by = in_group, sync = TRUE)+
+    tm_tiles("Stamen.TonerLabels")
+
+}
+
+
+
+map_out <- map_trends_interactive(shp = shp, 
+                                  data = data,
+                                  id_trend_col = in_id_trend_col,
+                                  id_shp_col = in_id_shp_col,
+                                  p_value_threshold = in_p_value_threshold,
+                                  p_value_col = in_p_value_col,
+                                  group = in_group)
+
+## I cannot find a way how to save faceted interactive maps..
+## Output: Now need to store output:
+print(paste0('Save map to html: ', out_result_path_url))
+#saveWidget(map_out, out_result_path_url) # not working
+#tmap_save(map_out, out_result_path_url) # not working
+#mapview::mapshot(map_out, out_result_path_url) # not working
+#htmltools::save_html(map_out, out_result_path_url) #not working
+
+###
+### static map
+###
+
+args <- commandArgs(trailingOnly = TRUE)
+print(paste0('R Command line args: ', args))
+in_shp_path = "shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp"
+in_trend_results_path = "mk_trend_analysis_results.csv"
+in_id_trend_col = "polygon_id"
+in_id_shp_col = "HELCOM_ID"
+in_group = "season"
+in_p_value_col = "P_Value"
+in_p_value_threshold = "0.05"
+
+out_result_path_url = "map_trend_results.html"
+out_result_path_png = "map_trend_results.png"
+
+data <- data.table::fread(in_trend_results_path)
+shp <- sf::st_read(in_shp_path)
+
+library(tmap)
+library(tmaptools)
+library(rosm)
+library(sf)
+
+
+map_trends_static <- function(shp, data, 
+                                   id_trend_col = "id",
+                                   id_shp_col = "id",
+                                   p_value_threshold = 0.05,
+                                   p_value_col = "p_value",
+                                   group = "group") {
+  
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    stop("Package \"sf\" must be installed to use this function.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("tmap", quietly = TRUE)) {
+    stop("Package \"tmap\" must be installed to use this function.",
+         call. = FALSE)
+  }
+  if (missing(shp))
+    stop("missing shp")
+  if (missing(data))
+    stop("missing data")
+  
+  shp_subset <- 
+    shp[subset(shp, select = names(shp) == id_shp_col)[[1]] %in% subset(data, select = names(data) == id_trend_col)[[1]],]
+  
+  names(shp_subset)[which(names(shp_subset) == id_shp_col)] <- "polygon_id"
+  names(data)[which(names(data) == id_trend_col)] <- "polygon_id"
+  
+  shp_trend <- merge(shp_subset, data)
+  shp_trend$significant <- shp_trend$P_Value <= p_value_threshold
+  shp_trend$decreasing_trend <- shp_trend$Tau_Value <= 0
+  shp_trend$trend_res <- "insig.trend"
+  
+  for (each in seq(nrow(shp_trend))){
+    if (shp_trend[each,]$significant == TRUE & shp_trend[each,]$Tau_Value <= 0) {
+      shp_trend[each,]$trend_res <- "sig.decrease"
+    }else if(shp_trend[each,]$significant == TRUE & shp_trend[each,]$Tau_Value > 0){
+      shp_trend[each,]$trend_res <- "sig.increase"} 
+  }
+  
+  shp_trend <- sf::st_transform(shp_trend, 4326)
+  
+  bg = rosm::osm.raster(shp_trend, zoomin = -1, crop = TRUE)
+  tmap_mode("plot")
+  tm_shape(bg) +
+    tm_rgb() +
+    tm_shape(shp_trend)+
+    tm_polygons("trend_res", 
+                alpha = 0.85, 
+                title = "result of trend analysis",
+                colorNA = NULL, 
+                colorNULL = NULL, 
+                textNA = "not tested") +
+    tm_facets(by = in_group, sync = TRUE)+
+    tm_tiles("Stamen.TonerLabels")
+}
+
+
+map_out <- map_trends_static(shp = shp, 
+                                  data = data,
+                                  id_trend_col = in_id_trend_col,
+                                  id_shp_col = in_id_shp_col,
+                                  p_value_threshold = in_p_value_threshold,
+                                  p_value_col = in_p_value_col,
+                                  group = in_group)
+
+
+## Output: Now need to store output:
+print(paste0('Save map to html: ', out_result_path_url))
+tmap_save(map_out_static, out_result_path_png)
+
+
+########################################.
+
+
+
+
+
 
