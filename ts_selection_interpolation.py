@@ -11,12 +11,12 @@ curl --location 'http://localhost:5000/processes/ts-selection-interpolation/exec
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "in_data_path": "data_out_seasonal_means.csv",
-        "in_rel_cols": "group_labels,HELCOM_ID",
-        "in_missing_threshold_percentage": "40",
-        "in_year_colname": "Year_adj_generated",
-        "in_value_colname": "Secchi_m_mean_annual",
-        "in_min_data_point": "10"
+        "input_data": "mean_by_group.csv",
+        "rel_cols": "group_labels,HELCOM_ID",
+        "missing_threshold_percentage": "40",
+        "year_colname": "Year_adj_generated",
+        "value_colname": "Secchi_m_mean_annual",
+        "min_data_point": "10"
     } 
 }'
 '''
@@ -49,15 +49,15 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_data_path = data.get('in_data_path', 'mean_by_group.csv')
-        in_rel_cols = data.get('in_rel_cols', '')
+        in_data_path = data.get('input_data', 'mean_by_group.csv')
+        in_rel_cols = data.get('rel_cols', '')
         in_missing_threshold_percentage = data.get('in_missing_threshold_percentage', '')
-        in_year_colname = data.get('in_year_colname', '')
-        in_value_colname = data.get('in_value_colname', '')
-        in_min_data_point = data.get('in_min_data_point', '')
+        in_year_colname = data.get('year_colname', '')
+        in_value_colname = data.get('value_colname', '')
+        in_min_data_point = data.get('min_data_point', '')
 
         # Where to store output data
-        downloadfilename = 'ts_selection_interpolation-%s.csv' % self.my_job_id
+        downloadfilename = 'ts_selection_interpolation-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Where to look for input data

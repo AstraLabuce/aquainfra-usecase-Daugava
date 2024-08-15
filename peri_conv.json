@@ -80,8 +80,11 @@
     },
     "example": {
         "inputs": {
-            "name": "World",
-            "message": "An optional message."
+            "input_data": "points_att_polygon.csv",
+            "column": "visit date",
+            "dates": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
+            "periods": "winter,spring,summer,autumn",
+            "someBoolean": "True"
         }
     }
 }

@@ -17,9 +17,9 @@
         "hreflang": "en-US"
     }],
     "inputs": {
-        "in_data_path": {
-            "title": "Regions Shapefile",
-            "description": "TODO",
+        "input_data": {
+            "title": "Input table (result from ts_selection_interpolation)",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
@@ -27,9 +27,9 @@
             "maxOccurs": 1,
             "keywords": ["table", "csv"]
         },
-        "in_rel_cols": {
-            "title": "Points excel",
-            "description": "TODO",
+        "rel_cols": {
+            "title": "Column names I guess",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
@@ -37,9 +37,9 @@
             "maxOccurs": 1,
             "keywords": ["TODO"]
         },
-        "in_time_colname": {
-            "title": "Column name for longitude",
-            "description": "TODO",
+        "time_colname": {
+            "title": "Column name for time",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
@@ -47,9 +47,9 @@
             "maxOccurs": 1,
             "keywords": ["TODO"]
         },
-        "in_value_colname": {
-            "title": "Column name for latiitude",
-            "description": "TODO",
+        "value_colname": {
+            "title": "Column name for some value",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
@@ -70,8 +70,10 @@
     },
     "example": {
         "inputs": {
-            "name": "World",
-            "message": "An optional message."
+            "input_data": "ts_selection_interpolation.csv",
+            "rel_cols": "season,polygon_id",
+            "time_colname": "Year_adj_generated",
+            "value_colname": "Secchi_m_mean_annual"
         }
     }
 }

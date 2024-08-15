@@ -11,10 +11,10 @@ curl --location 'http://localhost:5000/processes/trend-analysis-mk/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "in_data_path": "data_out_selected_interpolated.csv",
-        "in_rel_cols": "season,polygon_id",
-        "in_time_colname": "Year_adj_generated",
-        "in_value_colname": "Secchi_m_mean_annual"
+        "input_data": "ts_selection_interpolation.csv",
+        "rel_cols": "season,polygon_id",
+        "time_colname": "Year_adj_generated",
+        "value_colname": "Secchi_m_mean_annual"
     } 
 }'
 '''
@@ -47,13 +47,13 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_data_path = data.get('in_data_path', 'ts_selection_interpolation.csv')
-        in_rel_cols = data.get('in_rel_cols', '')
-        in_time_colname = data.get('in_time_colname', '')
-        in_value_colname = data.get('in_value_colname', '')
+        in_data_path = data.get('input_data', 'ts_selection_interpolation.csv') # or selected_interpolated.csv ?
+        in_rel_cols = data.get('rel_cols', '') # TODO empty or error? min occurs 0 or 1?
+        in_time_colname = data.get('time_colname', '')
+        in_value_colname = data.get('value_colname', '')
 
         # Where to store output data
-        downloadfilename = 'trend_analysis_mk-%s.csv' % self.my_job_id
+        downloadfilename = 'trend_analysis_mk-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Where to look for input data

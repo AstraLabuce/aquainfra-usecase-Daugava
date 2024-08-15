@@ -11,7 +11,7 @@ curl --location 'http://localhost:5000/processes/peri-conv/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "data_out_point_att_polygon.csv",
+        "input_data": "point_att_polygon.csv",
         "column": "visit_date",
         "dates": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "periods": "winter,spring,summer,autumn",

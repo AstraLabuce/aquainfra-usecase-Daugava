@@ -11,7 +11,7 @@ curl --location 'http://localhost:5000/processes/mean-by-group/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "data_out_peri_conv.csv"
+        "input_data": "peri_conv.csv"
     } 
 }'
 '''
@@ -47,7 +47,7 @@ class MeanByGroupProcessor(BaseProcessor):
         input_data = data.get('input_data', 'peri_conv.csv')
 
         # Where to store output data
-        downloadfilename = 'mean_by_group_%s.csv' % self.my_job_id
+        downloadfilename = 'mean_by_group_%s.csv' % self.my_job_id # or seasonal_means.csv?
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Where to look for input data

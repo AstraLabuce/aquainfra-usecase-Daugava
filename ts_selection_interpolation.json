@@ -17,9 +17,9 @@
         "hreflang": "en-US"
     }],
     "inputs": {
-        "in_data_path": {
-            "title": "Regions Shapefile",
-            "description": "TODO",
+        "input_data": {
+            "title": "Input table (result from mean_by_group)",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
@@ -27,7 +27,7 @@
             "maxOccurs": 1,
             "keywords": ["table", "csv"]
         },
-        "in_rel_cols": {
+        "rel_cols": {
             "title": "Points excel",
             "description": "TODO must ask astra what this is",
             "schema": {
@@ -37,7 +37,7 @@
             "maxOccurs": 1,
             "keywords": ["points"]
         },
-        "in_missing_threshold_percentage": {
+        "missing_threshold_percentage": {
             "title": "Column name for longitude",
             "description": "TODO must ask astra what this is",
             "schema": {
@@ -47,7 +47,7 @@
             "maxOccurs": 1,
             "keywords": ["percent"]
         },
-        "in_year_colname": {
+        "year_colname": {
             "title": "Column name for latiitude",
             "description": "TODO must ask astra what this is",
             "schema": {
@@ -57,9 +57,9 @@
             "maxOccurs": 1,
             "keywords": ["year", "column"]
         },
-        "in_value_colname": {
-            "title": "Column name for latiitude",
-            "description": "TODO",
+        "value_colname": {
+            "title": "Column name for some value",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
@@ -67,9 +67,9 @@
             "maxOccurs": 1,
             "keywords": ["column"]
         },
-        "in_min_data_point": {
-            "title": "Column name for latiitude",
-            "description": "TODO",
+        "min_data_point": {
+            "title": "Some min data point",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
@@ -90,8 +90,12 @@
     },
     "example": {
         "inputs": {
-            "name": "World",
-            "message": "An optional message."
+            "input_data": "mean_by_group.csv",
+            "rel_cols": "group_labels,HELCOM_ID",
+            "missing_threshold_percentage": "40",
+            "year_colname": "Year_adj_generated",
+            "value_colname": "Secchi_m_mean_annual",
+            "min_data_point": "10"
         }
     }
 }

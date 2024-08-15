@@ -59,7 +59,7 @@
         }
     },
     "outputs": {
-        "point_att_polygon": {
+        "points_att_polygon": {
             "title": "point_att_polygon result table",
             "description": "TODO must ask astra what this is",
             "schema": {
@@ -70,8 +70,10 @@
     },
     "example": {
         "inputs": {
-            "name": "World",
-            "message": "An optional message."
+            "regions": "https://www.example.xyz",
+            "points": "https://www.example.xyz",
+            "long_col_name": "long",
+            "lat_col_name": "lat"
         }
     }
 }

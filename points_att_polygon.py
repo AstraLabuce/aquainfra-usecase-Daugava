@@ -75,7 +75,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "point_att_polygon": {
+                    "points_att_polygon": {
                         "title": "point_att_polygon result table",
                         "description": "TODO must ask astra what this is",
                         "href": downloadlink
@@ -90,6 +90,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
 
 
 def call_r_script(num, LOGGER, r_file_name, path_rscripts, r_args):
+    # TODO: Move function to some module, same in all processes
 
     LOGGER.debug('Now calling bash which calls R: %s' % r_file_name)
     r_file = path_rscripts.rstrip('/')+os.sep+r_file_name

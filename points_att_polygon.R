@@ -17,7 +17,7 @@ config_file_path <- Sys.getenv("DAUGAVA_CONFIG_FILE", "./config.json")
 print(paste0("Path to config file: ", config_file_path))
 
 # Get input data directory:
-# If config json exists, read from there, otherwise ./
+# If config json exists, read from there, otherwise input data dir set to ./
 if (file.exists(config_file_path)) {
   config_data <- fromJSON(config_file_path)
   print("Config file loaded successfully.")

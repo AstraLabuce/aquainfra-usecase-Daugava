@@ -108,12 +108,12 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/ts-selection-interpolation/execution'
 inputs = {
     "inputs": {
-        "in_data_path": intermediate_result or "mean_by_group_fa098084-5b28-11ef-b00a-df74de895c41.csv",
-        "in_rel_cols": "group_labels,HELCOM_ID",
-        "in_missing_threshold_percentage": "40",
-        "in_year_colname": "Year_adj_generated",
-        "in_value_colname": "Secchi_m_mean_annual",
-        "in_min_data_point": "10"
+        "input_data": intermediate_result or "mean_by_group_fa098084-5b28-11ef-b00a-df74de895c41.csv",
+        "rel_cols": "group_labels,HELCOM_ID",
+        "missing_threshold_percentage": "40",
+        "year_colname": "Year_adj_generated",
+        "value_colname": "Secchi_m_mean_annual",
+        "min_data_point": "10"
     }
 }
 resp = session.post(url, headers=headers, json=inputs)
@@ -136,10 +136,10 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/trend-analysis-mk/execution'
 inputs = {
     "inputs": {
-        "in_data_path": intermediate_result or "ts_selection_interpolation-22a36618-5b29-11ef-b00a-df74de895c41.csv",
-        "in_rel_cols": "season,polygon_id",
-        "in_time_colname": "Year_adj_generated",
-        "in_value_colname": "Secchi_m_mean_annual"
+        "input_data": intermediate_result or "ts_selection_interpolation-22a36618-5b29-11ef-b00a-df74de895c41.csv",
+        "rel_cols": "season,polygon_id",
+        "time_colname": "Year_adj_generated",
+        "value_colname": "Secchi_m_mean_annual"
     }
 }
 resp = session.post(url, headers=headers, json=inputs)
