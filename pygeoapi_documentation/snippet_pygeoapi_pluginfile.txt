@@ -1,0 +1,10 @@
+
+    'process': {
+        'HelloWorld': 'pygeoapi.process.hello_world.HelloWorldProcessor',
+        [...],
+        'PointsAttPolygonProcessor': 'pygeoapi.process.aquainfra-usecase-Daugava.points_att_polygon.PointsAttPolygonProcessor',
+        'PeriConvProcessor': 'pygeoapi.process.aquainfra-usecase-Daugava.peri_conv.PeriConvProcessor',
+        'MeanByGroupProcessor': 'pygeoapi.process.aquainfra-usecase-Daugava.mean_by_group.MeanByGroupProcessor',
+        'TsSelectionInterpolationProcessor': 'pygeoapi.process.aquainfra-usecase-Daugava.ts_selection_interpolation.TsSelectionInterpolationProcessor',
+        'TrendAnalysisMkProcessor': 'pygeoapi.process.aquainfra-usecase-Daugava.trend_analysis_mk.TrendAnalysisMkProcessor'
+    },

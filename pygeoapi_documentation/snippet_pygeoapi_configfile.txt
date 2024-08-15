@@ -1,0 +1,30 @@
+
+
+resources:
+
+    [...]
+
+    points-att-polygon:
+        type: process
+        processor:
+            name: PointsAttPolygonProcessor
+
+    peri-conv:
+        type: process
+        processor:
+            name: PeriConvProcessor
+
+    mean-by-group:
+        type: process
+        processor:
+            name: MeanByGroupProcessor
+
+    ts-selection-interpolation:
+        type: process
+        processor:
+            name: TsSelectionInterpolationProcessor
+
+    trend-analysis-mk:
+        type: process
+        processor:
+            name: TrendAnalysisMkProcessor
