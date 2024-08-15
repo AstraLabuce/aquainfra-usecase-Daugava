@@ -12,8 +12,8 @@
     "links": [{
         "type": "text/html",
         "rel": "about",
-        "title": "information",
-        "href": "https://example.org/process",
+        "title": "GitHub repo",
+        "href": "https://github.com/AstraLabuce/aquainfra-usecase-Daugava",
         "hreflang": "en-US"
     }],
     "inputs": {
@@ -25,7 +25,7 @@
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["table", "csv"]
         },
         "in_rel_cols": {
             "title": "Points excel",
@@ -35,7 +35,7 @@
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["TODO"]
         },
         "in_time_colname": {
             "title": "Column name for longitude",
@@ -45,7 +45,7 @@
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["TODO"]
         },
         "in_value_colname": {
             "title": "Column name for latiitude",
@@ -55,7 +55,7 @@
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["TODO"]
         }
     },
     "outputs": {

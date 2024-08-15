@@ -12,56 +12,56 @@
     "links": [{
         "type": "text/html",
         "rel": "about",
-        "title": "information",
-        "href": "https://example.org/process",
+        "title": "GitHub repo",
+        "href": "https://github.com/AstraLabuce/aquainfra-usecase-Daugava",
         "hreflang": "en-US"
     }],
     "inputs": {
         "regions": {
             "title": "regions",
-            "description": "astra",
+            "description": "Shapefile. TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["shapefile"]
         },
         "points": {
             "title": "points",
-            "description": "astra",
+            "description": "Excel file. TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["table", "excel file"]
         },
         "long_col_name": {
             "title": "Column name for longitude",
-            "description": "astra",
+            "description": "Name of the column that contains longitude values.",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["longitude", "column"]
         },
         "lat_col_name": {
             "title": "Column name for latiitude",
-            "description": "astra",
+            "description": "Name of the column that contains latitude values.",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["latitude", "column"]
         }
     },
     "outputs": {
         "data_out_point_att_polygon": {
             "title": "data_out_point_att_polygon",
-            "description": "astra",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/csv"

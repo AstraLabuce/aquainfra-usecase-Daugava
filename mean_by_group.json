@@ -12,20 +12,20 @@
     "links": [{
         "type": "text/html",
         "rel": "about",
-        "title": "information",
-        "href": "https://example.org/process",
+        "title": "GitHub repo",
+        "href": "https://github.com/AstraLabuce/aquainfra-usecase-Daugava",
         "hreflang": "en-US"
     }],
     "inputs": {
         "input_data": {
-            "title": "Regions Shapefile",
-            "description": "TODO",
+            "title": "Input table (result from peri_conv)",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["csv"]
         }
     },
     "outputs": {

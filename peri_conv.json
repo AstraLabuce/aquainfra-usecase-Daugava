@@ -12,66 +12,66 @@
     "links": [{
         "type": "text/html",
         "rel": "about",
-        "title": "information",
-        "href": "https://example.org/process",
+        "title": "GitHub repo",
+        "href": "https://github.com/AstraLabuce/aquainfra-usecase-Daugava",
         "hreflang": "en-US"
     }],
     "inputs": {
         "input_data": {
-            "title": "Regions Shapefile",
-            "description": "TODO",
+            "title": "Input table (result from point_att_polygon)",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["table", "csv"]
         },
         "column": {
-            "title": "Points excel",
-            "description": "TODO",
+            "title": "Column",
+            "description": "Example: visit date. TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["column"]
         },
         "dates": {
-            "title": "Column name for longitude",
-            "description": "TODO",
+            "title": "Dates",
+            "description": "Example: Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30. TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["date"]
         },
         "periods": {
-            "title": "Column name for latiitude",
-            "description": "TODO",
+            "title": "Periods",
+            "description": "Example: winter,spring,summer,autumn. TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["period"]
         },
         "someBoolean": {
-            "title": "Column name for latiitude",
-            "description": "TODO",
+            "title": "Boolean",
+            "description": "year_starts_at_Dec1. TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["year"]
         }
     },
     "outputs": {
         "data_out_peri_conv": {
             "title": "data_out_peri_conv",
-            "description": "...",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/json"

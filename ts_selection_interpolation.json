@@ -12,8 +12,8 @@
     "links": [{
         "type": "text/html",
         "rel": "about",
-        "title": "information",
-        "href": "https://example.org/process",
+        "title": "GitHub repo",
+        "href": "https://github.com/AstraLabuce/aquainfra-usecase-Daugava",
         "hreflang": "en-US"
     }],
     "inputs": {
@@ -25,37 +25,37 @@
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["table", "csv"]
         },
         "in_rel_cols": {
             "title": "Points excel",
-            "description": "TODO",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["points"]
         },
         "in_missing_threshold_percentage": {
             "title": "Column name for longitude",
-            "description": "TODO",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["percent"]
         },
         "in_year_colname": {
             "title": "Column name for latiitude",
-            "description": "TODO",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["year", "column"]
         },
         "in_value_colname": {
             "title": "Column name for latiitude",
@@ -65,7 +65,7 @@
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["column"]
         },
         "in_min_data_point": {
             "title": "Column name for latiitude",
@@ -75,7 +75,7 @@
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": ["point"]
         }
     },
     "outputs": {
