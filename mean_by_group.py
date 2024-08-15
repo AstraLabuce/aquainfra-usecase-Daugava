@@ -48,6 +48,7 @@ class MeanByGroupProcessor(BaseProcessor):
         downloadfilepath = DOWNLOAD_DIR.rstrip('/')+os.sep+downloadfilename
 
         # Where to look for input data
+        # TODO: This ONLY allows for inputs from previously run processes, not for users own data...
         input_data_in_download_dir = DOWNLOAD_DIR.rstrip('/')+os.sep+input_data
         if not os.path.isfile(input_data_in_download_dir):
             err_msg = 'File %s does not exist.' % input_data_in_download_dir

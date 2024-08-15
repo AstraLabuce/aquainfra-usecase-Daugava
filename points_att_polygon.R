@@ -55,6 +55,7 @@ if (!dir.exists(shp_dir_zipped)) {
 }
 
 # Download shapefile if it doesn't exist:
+# TODO: Problem: If someone wants to use a shapefile that happens to have the same name! Should use PIDs.
 if (!file.exists(shp_file_path)) {
   tryCatch(
     {
@@ -101,6 +102,7 @@ if (!dir.exists(in_situ_directory)) {
 }
 
 # Download excel if it doesn't exist:
+# TODO: Problem: If someone wants to use an excelfile that happens to have the same name! Should use PIDs.
 print(paste0('Checking if excel file exists: ', excel_file_path))
 if (!file.exists(excel_file_path)) {
   tryCatch(
