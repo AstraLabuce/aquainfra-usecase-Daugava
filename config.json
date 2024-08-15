@@ -1,7 +1,7 @@
 {
-    "DOWNLOAD_DIR": "./pygeoapi/process/",
-    "OWN_URL": "https://aqua.igb-berlin.de/download/",
-    "R_SCRIPT_DIR": "./pygeoapi/process/",
+    "download_dir": "./pygeoapi/process/",
+    "own_url": "https://aqua.igb-berlin.de/download/",
+    "r_script_dir": "./pygeoapi/process/",
     "step_1": "points_att_polygon.R",
     "step_2": "peri_conv.R",
     "step_3": "mean_by_group.R",

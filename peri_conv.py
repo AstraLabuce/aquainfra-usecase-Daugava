@@ -37,14 +37,17 @@ class PeriConvProcessor(BaseProcessor):
         self.my_job_id = job_id
 
     def execute(self, data, outputs=None):
+
+        # Get config
         config_file_path = os.environ.get('DAUGAVA_CONFIG_FILE', "./config.json")
         with open(config_file_path) as configFile:
             configJSON = json.load(configFile)
 
-        DOWNLOAD_DIR = configJSON["DOWNLOAD_DIR"]
-        OWN_URL = configJSON["OWN_URL"]
-        R_SCRIPT_DIR = configJSON["R_SCRIPT_DIR"]
+        download_dir = configJSON["download_dir"]
+        own_url = configJSON["own_url"]
+        r_script_dir = configJSON["r_script_dir"]
 
+        # Get user inputs
         input_data = data.get('input_data', 'point_att_polygon.csv')
         column = data.get('column', 'visit date')
         dates = data.get('dates', 'Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30')
@@ -53,34 +56,31 @@ class PeriConvProcessor(BaseProcessor):
 
         # Where to store output data
         downloadfilename = 'peri_conv_%s.csv' % self.my_job_id
-        downloadfilepath = DOWNLOAD_DIR.rstrip('/')+os.sep+downloadfilename
+        downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Where to look for input data
         # TODO: This ONLY allows for inputs from previously run processes, not for users own data...
-        input_data_in_download_dir = DOWNLOAD_DIR.rstrip('/')+os.sep+input_data
+        input_data_in_download_dir = download_dir.rstrip('/')+os.sep+input_data
         if not os.path.isfile(input_data_in_download_dir):
             err_msg = 'File %s does not exist.' % input_data_in_download_dir
             LOGGER.error(err_msg)
             raise ProcessorExecuteError(user_msg=err_msg)
 
+        # Run the R script:
         R_SCRIPT_NAME = configJSON["step_2"]
         r_args = [input_data_in_download_dir, column, dates, periods, someBoolean, downloadfilepath]
-
-        LOGGER.error('RUN R SCRIPT AND STORE TO %s!!!' % downloadfilepath)
-        LOGGER.error('R ARGS %s' % r_args)
-        exit_code, err_msg = call_r_script('1', LOGGER, R_SCRIPT_NAME, R_SCRIPT_DIR, r_args)
-        LOGGER.error('RUN R SCRIPT DONE: CODE %s, MSG %s' % (exit_code, err_msg))
+        LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
+        LOGGER.debug('R args: %s' % r_args)
+        exit_code, err_msg = call_r_script('1', LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
+        LOGGER.info('Running R script done: Exit code %s, msg %s' % (exit_code, err_msg))
 
         if not exit_code == 0:
             LOGGER.error(err_msg)
             raise ProcessorExecuteError(user_msg="R script failed with exit code %s" % exit_code)
 
         else:
-            LOGGER.error('CODE 0 SUCCESS!')
-
             # Create download link:
-            downloadlink = OWN_URL.rstrip('/')+os.sep+downloadfilename
-            # TODO: Again, carefully consider permissions of that directory!
+            downloadlink = own_url.rstrip('/')+os.sep+downloadfilename
 
             # Return link to file:
             response_object = {

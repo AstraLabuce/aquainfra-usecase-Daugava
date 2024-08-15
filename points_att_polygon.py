@@ -36,14 +36,17 @@ class PointsAttPolygonProcessor(BaseProcessor):
         self.my_job_id = job_id
 
     def execute(self, data, outputs=None):
+
+        # Get config
         config_file_path = os.environ.get('DAUGAVA_CONFIG_FILE', "./config.json")
         with open(config_file_path, 'r') as configFile:
             configJSON = json.load(configFile)
 
-        DOWNLOAD_DIR = configJSON["DOWNLOAD_DIR"]
-        OWN_URL = configJSON["OWN_URL"]
-        R_SCRIPT_DIR = configJSON["R_SCRIPT_DIR"]
+        download_dir = configJSON["download_dir"]
+        own_url = configJSON["own_url"]
+        r_script_dir = configJSON["r_script_dir"]
 
+        # Get user inputs
         in_long_col_name = data.get('long_col_name', 'longitude')
         in_lat_col_name = data.get('lat_col_name', 'latitude')
         in_regions_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
@@ -51,26 +54,23 @@ class PointsAttPolygonProcessor(BaseProcessor):
 
         # Where to store output data
         downloadfilename = 'points_att_polygon-%s.csv' % self.my_job_id
-        downloadfilepath = DOWNLOAD_DIR.rstrip('/')+os.sep+downloadfilename
+        downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
+        # Run the R script:
         R_SCRIPT_NAME = configJSON["step_1"]
         r_args = [in_regions_url, in_dpoints_url, in_long_col_name, in_lat_col_name, downloadfilepath]
-
-        LOGGER.error('RUN R SCRIPT AND STORE TO %s!!!' % downloadfilepath)
-        LOGGER.error('R ARGS %s' % r_args)
-        exit_code, err_msg = call_r_script('1', LOGGER, R_SCRIPT_NAME, R_SCRIPT_DIR, r_args)
-        LOGGER.error('RUN R SCRIPT DONE: CODE %s, MSG %s' % (exit_code, err_msg))
+        LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
+        LOGGER.debug('R args: %s' % r_args)
+        exit_code, err_msg = call_r_script('1', LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
+        LOGGER.info('Running R script done: Exit code %s, msg %s' % (exit_code, err_msg))
 
         if not exit_code == 0:
             LOGGER.error(err_msg)
             raise ProcessorExecuteError(user_msg="R script failed with exit code %s" % exit_code)
 
         else:
-            LOGGER.error('CODE 0 SUCCESS!')
-
             # Create download link:
-            downloadlink = OWN_URL.rstrip('/')+os.sep+downloadfilename
-            # TODO: Again, carefully consider permissions of that directory!
+            downloadlink = own_url.rstrip('/')+os.sep+downloadfilename
 
             # Return link to file:
             response_object = {
