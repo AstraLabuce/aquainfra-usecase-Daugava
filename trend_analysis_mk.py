@@ -53,7 +53,7 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         in_value_colname = data.get('in_value_colname', '')
 
         # Where to store output data
-        downloadfilename = 'ts_selection_interpolation-%s.csv' % self.my_job_id
+        downloadfilename = 'trend_analysis_mk-%s.csv' % self.my_job_id
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Where to look for input data
@@ -83,9 +83,9 @@ class TrendAnalysisMkProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "first_result": {
-                        "title": "Astras and Natalijas First Result",
-                        "description": "must ask astra what this is",
+                    "trend_analysis_mk": {
+                        "title": "trend_analysis_mk result table",
+                        "description": "TODO must ask astra what this is",
                         "href": downloadlink
                     }
                 }

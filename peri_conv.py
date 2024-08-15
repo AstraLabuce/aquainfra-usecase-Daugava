@@ -85,9 +85,9 @@ class PeriConvProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "first_result": {
-                        "title": "Astras and Natalijas First Result",
-                        "description": "must ask astra what this is",
+                    "peri_conv": {
+                        "title": "peri_conv result table",
+                        "description": "TODO must ask astra what this is",
                         "href": downloadlink
                     }
                 }

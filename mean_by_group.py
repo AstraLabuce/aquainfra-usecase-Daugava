@@ -77,9 +77,9 @@ class MeanByGroupProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "first_result": {
-                        "title": "Astras and Natalijas First Result",
-                        "description": "must ask astra what this is",
+                    "mean_by_group": {
+                        "title": "mean_by_group result table",
+                        "description": "TODO must ask astra what this is",
                         "href": downloadlink
                     }
                 }

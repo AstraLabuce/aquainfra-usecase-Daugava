@@ -87,9 +87,9 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "first_result": {
-                        "title": "Astras and Natalijas First Result",
-                        "description": "must ask astra what this is",
+                    "ts_selection_interpolation": {
+                        "title": "ts_selection_interpolation result table",
+                        "description": "TODO must ask astra what this is",
                         "href": downloadlink
                     }
                 }

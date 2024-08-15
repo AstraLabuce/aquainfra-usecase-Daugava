@@ -69,8 +69,8 @@
         }
     },
     "outputs": {
-        "data_out_peri_conv": {
-            "title": "data_out_peri_conv",
+        "peri_conv": {
+            "title": "peri_conv result table",
             "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "object",

@@ -59,9 +59,9 @@
         }
     },
     "outputs": {
-        "echo": {
-            "title": "Hello, world",
-            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+        "trend_analysis_mk": {
+            "title": "trend_analysis_mk result table",
+            "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/json"

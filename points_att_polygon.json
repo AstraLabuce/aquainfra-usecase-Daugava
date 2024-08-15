@@ -59,8 +59,8 @@
         }
     },
     "outputs": {
-        "data_out_point_att_polygon": {
-            "title": "data_out_point_att_polygon",
+        "point_att_polygon": {
+            "title": "point_att_polygon result table",
             "description": "TODO must ask astra what this is",
             "schema": {
                 "type": "object",
