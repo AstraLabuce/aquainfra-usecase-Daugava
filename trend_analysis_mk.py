@@ -53,8 +53,15 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         downloadfilename = 'ts_selection_interpolation-%s.csv' % self.my_job_id
         downloadfilepath = DOWNLOAD_DIR.rstrip('/')+os.sep+downloadfilename
 
+        # Where to look for input data
+        input_data_in_download_dir = DOWNLOAD_DIR.rstrip('/')+os.sep+in_data_path
+        if not os.path.isfile(input_data_in_download_dir):
+            err_msg = 'File %s does not exist.' % input_data_in_download_dir
+            LOGGER.error(err_msg)
+            raise ProcessorExecuteError(user_msg=err_msg)
+
         R_SCRIPT_NAME = configJSON["step_5"]
-        r_args = [DOWNLOAD_DIR.rstrip('/')+os.sep+in_data_path, in_rel_cols, in_time_colname, in_value_colname, downloadfilepath]
+        r_args = [input_data_in_download_dir, in_rel_cols, in_time_colname, in_value_colname, downloadfilepath]
 
         LOGGER.error('RUN R SCRIPT AND STORE TO %s!!!' % downloadfilepath)
         LOGGER.error('R ARGS %s' % r_args)

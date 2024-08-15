@@ -47,8 +47,15 @@ class MeanByGroupProcessor(BaseProcessor):
         downloadfilename = 'mean_by_group_%s.csv' % self.my_job_id
         downloadfilepath = DOWNLOAD_DIR.rstrip('/')+os.sep+downloadfilename
 
+        # Where to look for input data
+        input_data_in_download_dir = DOWNLOAD_DIR.rstrip('/')+os.sep+input_data
+        if not os.path.isfile(input_data_in_download_dir):
+            err_msg = 'File %s does not exist.' % input_data_in_download_dir
+            LOGGER.error(err_msg)
+            raise ProcessorExecuteError(user_msg=err_msg)
+
         R_SCRIPT_NAME = configJSON["step_3"]
-        r_args = [DOWNLOAD_DIR.rstrip('/')+os.sep+input_data, downloadfilepath]
+        r_args = [input_data_in_download_dir, downloadfilepath]
 
         LOGGER.error('RUN R SCRIPT AND STORE TO %s!!!' % downloadfilepath)
         LOGGER.error('R ARGS %s' % r_args)
