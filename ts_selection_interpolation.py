@@ -46,7 +46,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         OWN_URL = configJSON["OWN_URL"]
         R_SCRIPT_DIR = configJSON["R_SCRIPT_DIR"]
 
-        in_data_path = data.get('in_data_path', '')
+        in_data_path = data.get('in_data_path', 'mean_by_group.csv')
         in_rel_cols = data.get('in_rel_cols', '')
         in_missing_threshold_percentage = data.get('in_missing_threshold_percentage', '')
         in_year_colname = data.get('in_year_colname', '')

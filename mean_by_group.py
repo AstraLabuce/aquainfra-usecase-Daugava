@@ -41,7 +41,7 @@ class MeanByGroupProcessor(BaseProcessor):
         OWN_URL = configJSON["OWN_URL"]
         R_SCRIPT_DIR = configJSON["R_SCRIPT_DIR"]
 
-        input_data = data.get('input_data', 'data_out_peri_conv.csv')
+        input_data = data.get('input_data', 'peri_conv.csv')
 
         # Where to store output data
         downloadfilename = 'mean_by_group_%s.csv' % self.my_job_id

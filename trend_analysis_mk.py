@@ -44,7 +44,7 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         OWN_URL = configJSON["OWN_URL"]
         R_SCRIPT_DIR = configJSON["R_SCRIPT_DIR"]
 
-        in_data_path = data.get('in_data_path', '')
+        in_data_path = data.get('in_data_path', 'ts_selection_interpolation.csv')
         in_rel_cols = data.get('in_rel_cols', '')
         in_time_colname = data.get('in_time_colname', '')
         in_value_colname = data.get('in_value_colname', '')

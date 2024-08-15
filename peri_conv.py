@@ -45,7 +45,7 @@ class PeriConvProcessor(BaseProcessor):
         OWN_URL = configJSON["OWN_URL"]
         R_SCRIPT_DIR = configJSON["R_SCRIPT_DIR"]
 
-        input_data = data.get('input_data', 'data_out_point_att_polygon.csv')
+        input_data = data.get('input_data', 'point_att_polygon.csv')
         column = data.get('column', 'visit date')
         dates = data.get('dates', 'Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30')
         periods = data.get('periods', 'winter,spring,summer,autumn')
