@@ -45,7 +45,7 @@ in_long_col_name_vis = "longitude"
 in_lat_col_name_vis = "latitude"
 in_value_name_vis = "transparency_m"
 in_region_col_name = "HELCOM_ID"
-result_path_map_shapefile_points = "map_shapefile_insitu.html"
+result_url_map_shapefile_points = "map_shapefile_insitu.html"
 # 6.2 vis: barplot_trend_results
 in_id_col = "polygon_id"
 in_test_value = "Tau_Value"
@@ -285,10 +285,10 @@ map_out <- map_shapefile_points(shp = shapefile,
                                  region_col_name = in_region_col_name)
 
 
-# Write the result to csv file:
-print(paste0('Save map to html: ', out_result_path_url))
-mapview::mapshot(map_out, url = out_result_path_url)
-#browseURL(out_result_path_url)
+# Write the result to url file (!?):
+print(paste0('Save map to html: ', result_url_map_shapefile_points))
+mapview::mapshot(map_out, url = result_url_map_shapefile_points)
+#browseURL(result_url_map_shapefile_points)
 
 
 
