@@ -40,6 +40,12 @@ in_rel_cols_mk = c("season", "polygon_id")
 in_time_colname = "Year_adj_generated"
 in_value_colname = "Secchi_m_mean_annual"
 result_path_trend_analysis_mk = "mk_trend_analysis_results.csv"
+# 6.1 vis: map_shapefile_points
+in_long_col_name_vis = "longitude"
+in_lat_col_name_vis = "latitude"
+in_value_name_vis = "transparency_m"
+in_region_col_name = "HELCOM_ID"
+result_path_map_shapefile_points = "map_shapefile_insitu.html"
 
 ## Imports
 #library(rgdal) # Outdated! See: https://cloud.r-project.org/web/packages/rgdal/index.html
@@ -50,7 +56,7 @@ library(dplyr)
 ## Read input files
 ## TODO: Make more format agnostic??
 #shapefile <- rgdal::readOGR(in_shp_path) #"SpatialPolygonsDataFrame"
-shapefile <- st_read(in_shp_path)
+shapefile <- sf::st_read(in_shp_path)
 
 # locate in situ data set manually
 # load in situ data and respective metadata (geolocation and date are mandatory metadata)
@@ -249,99 +255,32 @@ data.table::fwrite(out_mk , file = result_path_trend_analysis_mk)
 ################################################################################.
 ## 6. visualization ####
 ################################################################################.
+
 ### 6.1. map: shp + dpoints ####
-in_shp_path = "shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp"
-in_dpoints_path = "data_out_point_att_polygon.csv"
-in_long_col_name = "longitude"
-in_lat_col_name = "latitude"
-in_value_name = "transparency_m"
-in_region_col_name = "HELCOM_ID"
-out_result_path_url = "map_shapefile_insitu.html"
 
-dpoints <- data.table::fread(in_dpoints_path)
-shapefile <- sf::st_read(in_shp_path)
+dpoints <- data.table::fread(result_path_point_att_polygon)
+#shapefile <- sf::st_read(in_shp_path) # not required to repeat if run in one long script.
 
-
-map_shapefile_points <- function(shp, dpoints, 
-                                 long_col_name="long", 
-                                 lat_col_name="lat",
-                                 value_name = NULL,
-                                 region_col_name = NULL) {
-
-  if (!requireNamespace("sp", quietly = TRUE)) {
-    stop("Package \"sp\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  if (!requireNamespace("sf", quietly = TRUE)) {
-    stop("Package \"sf\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  if (!requireNamespace("mapview", quietly = TRUE)) {
-    stop("Package \"mapview\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  if (missing(shp))
-    stop("missing shp")
-  if (missing(dpoints))
-    stop("missing dpoints")
-  if (! long_col_name %in% colnames(dpoints))
-    stop(paste0("input data does not have column ", long_col_name))
-  if (! lat_col_name %in% colnames(dpoints))
-    stop(paste0("input data does not have column ", lat_col_name))
-  
-  err = paste0("Error: `", long_col_name, "` is not numeric.")
-  stopifnot(err =
-              is.numeric(as.data.frame(dpoints)[, names(dpoints) == long_col_name]))
-  err = paste0("Error: `", lat_col_name, "` is not numeric.")
-  stopifnot(err =
-              is.numeric(as.data.frame(dpoints)[, names(dpoints) == lat_col_name]))
-  
-  #dpoints to spatial
-  print('Making input data spatial based on long, lat...')
-  data_spatial <- sf::st_as_sf(dpoints, coords = c(long_col_name, lat_col_name))
-  # set to WGS84 projection
-  print('Setting to WGS84 CRS...')
-  sf::st_crs(data_spatial) <- 4326
-  
-  ## First, convert from WGS84-Pseudo-Mercator to pure WGS84
-  print('Setting geometry data to same CRS...')
-  shp_wgs84 <- sf::st_transform(shp, sf::st_crs(data_spatial))
-  
-  ## Check and fix geometry validity
-  print('Check if geometries are valid...')# TODO: Check actually needed? Maybe just make valid!
-  if (!all(sf::st_is_valid(shp_wgs84))) { # many are not (in the example data)!
-    print('They are not! Making valid...')
-    shp_wgs84 <- sf::st_make_valid(shp_wgs84)  # slowish...
-    print('Making valid done.')
-  }
-  ## Overlay shapefile and in situ locations
-  print(paste0('Drawing map...'))
-  shp_wgs84 <- sf::st_filter(shp_wgs84, data_spatial) 
-
-  mapview::mapview(shp_wgs84, 
-                   alpha.region = 0.3, 
-                   legend = FALSE, 
-                   zcol = region_col_name) + 
-    mapview::mapview(data_spatial, 
-                     zcol = value_name,
-                     legend = TRUE, 
-                     alpha = 0.8)
-  
+# Read the function "map_shapefile_points" from current working directory:
+if ("map_shapefile_points.R" %in% list.files()){
+  source("map_shapefile_points.R")
+} else {
+  warning('Could not find file "map_shapefile_points.R" in current working dir!')
 }
 
-
+# Call the function:
+print('Running map_shapefile_points...')
 map_out <- map_shapefile_points(shp = shapefile, 
                                  dpoints = dpoints,
-                                 long_col_name = in_long_col_name,
-                                 lat_col_name = in_lat_col_name,
-                                 value_name = in_value_name, 
+                                 long_col_name = in_long_col_name_vis,
+                                 lat_col_name = in_lat_col_name_vis,
+                                 value_name = in_value_name_vis, 
                                  region_col_name = in_region_col_name)
 
 
-## Output: Now need to store output:
+# Write the result to csv file:
 print(paste0('Save map to html: ', out_result_path_url))
-mapview::mapshot(map_out, 
-                 url = out_result_path_url)
+mapview::mapshot(map_out, url = out_result_path_url)
 #browseURL(out_result_path_url)
 
 
