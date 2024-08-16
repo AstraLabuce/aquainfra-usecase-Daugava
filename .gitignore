@@ -13,3 +13,7 @@ __pycache__
 OLD
 config.json
 *.csv
+*.png
+*.html
+rosm.cache
+map_shapefile_insitu_files
