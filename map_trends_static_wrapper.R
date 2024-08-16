@@ -35,7 +35,7 @@ if ("map_trends_static.R" %in% list.files()){
   source(file.path(r_script_dir, 'map_trends_static.R'))
 }
 
-map_out <- map_trends_static(shp = shapefile, 
+map_out_static <- map_trends_static(shp = shapefile, 
                                   data = data,
                                   id_trend_col = in_id_trend_col,
                                   id_shp_col = in_id_shp_col,
