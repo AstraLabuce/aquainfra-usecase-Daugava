@@ -36,17 +36,18 @@ Rscript ts_selection_interpolation_wrapper.R "data_out_seasonal_means.csv" "grou
 # 5
 Rscript trend_analysis_mk_wrapper.R "data_out_selected_interpolated.csv" "season,polygon_id" "Year_adj_generated" "Secchi_m_mean_annual" "mk_trend_analysis_results.csv"
 
-# 6.1
-TODO
+# 6.1: map_shapefile_points
+Rscript map_shapefile_points_wrapper.R "shp/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp" "data_out_point_att_polygon.csv" "longitude" "latitude" "transparency_m" "HELCOM_ID" "map_shapefile_insitu.html"
 
-# 6.2
-TODO
+# 6.2: barplot_trend_results
+Rscript barplot_trend_results_wrapper.R "mk_trend_analysis_results.csv" "polygon_id" "Tau_Value" "P_Value" "0.05" "season" "barplot_trend_results.png"
 
-# 6.3
-TODO
+# 6.3: map_trends_interactive
+Rscript map_trends_interactive_wrapper.R "shp/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp" "mk_trend_analysis_results.csv" "polygon_id" "HELCOM_ID" "season" "P_Value" "0.05" "map_trends_interactive.html"
 
-# 6.4
-TODO
+# 6.4: map_trends_static
+Rscript map_trends_static_wrapper.R "shp/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp" "mk_trend_analysis_results.csv" "polygon_id" "HELCOM_ID" "season" "P_Value" "0.05" "map_trend_results.png"
+
 ```
 
 For this, you should have a `config.json` in your current working directory that
@@ -99,6 +100,9 @@ at the location given in the environment variable `DAUGAVA_CONFIG_FILE` which ca
 be set using `export DAUGAVA_CONFIG_FILE=/home/something/myconfig.json`. If that
 environment variable is not set, the program looks in its current working dir
 (`./config.json`)
+
+To test an instance of this, you can use the
+python script `pygeoapi_documentation/test_post_requests.py` .
 
 For help and more details, please contact the AquaINFRA project.
 

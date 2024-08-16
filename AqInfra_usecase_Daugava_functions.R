@@ -378,9 +378,10 @@ map_out <- map_trends_interactive(shp = shapefile,
                                   p_value_col = in_p_value_col,
                                   group = in_group)
 
-## I cannot find a way how to save faceted interactive maps..
+## TODO: I cannot find a way how to save faceted interactive maps..
 ## Output: Now need to store output:
 print(paste0('Save map to html: ', result_path_map_trends_interactive))
+print('NOT STORING THIS RESULT. TODO.')
 #saveWidget(map_out, result_path_map_trends_interactive) # not working
 #tmap_save(map_out, result_path_map_trends_interactive) # not working
 #mapview::mapshot(map_out, result_path_map_trends_interactive) # not working

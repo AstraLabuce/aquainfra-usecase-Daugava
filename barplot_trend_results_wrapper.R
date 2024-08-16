@@ -1,5 +1,11 @@
 ### 6.2. barplot of trend analysis ####
 
+library(ggplot2)
+
+## Run:
+## Rscript barplot_trend_results_wrapper.R "mk_trend_analysis_results.csv" "polygon_id" "Tau_Value" "P_Value" "0.05" "season" "barplot_trend_results.png"
+
+# Retrieve command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
 in_data_path <- args[1] # e.g. "mk_trend_analysis_results.csv"
@@ -11,7 +17,6 @@ in_group <- args[6] # e.g. "season"
 out_result_path <- args[7] # e.g. "barplot_trend_results.png"
 
 data_list_subgroups <- data.table::fread(in_data_path)
-library(ggplot2)
 
 # Read the function "barplot_trend_results" either from current working directory,
 # or read the directory from config!
