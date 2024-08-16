@@ -28,6 +28,16 @@ install.packages("sp")
 install.packages("readxl")
 install.packages("zoo")
 install.packages("Kendall")
+
+# For the visualisations:
+install.packages("mapview")
+install.packages("webshot")
+install.packages("pandoc")
+install.packages("viridis")
+install.packages("tmap")
+install.packages("rosm")
+
+
 ```
 
 ## OGC processes

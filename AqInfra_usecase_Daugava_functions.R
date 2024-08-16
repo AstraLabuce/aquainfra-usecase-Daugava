@@ -270,7 +270,12 @@ data.table::fwrite(out_mk , file = result_path_trend_analysis_mk)
 ## 6. visualization ####
 ################################################################################.
 
+print('Running visualisations...')
+
+
 ### 6.1. map: shp + dpoints ####
+
+print('Running visualisation 1: map_shapefile_points ...')
 
 dpoints <- data.table::fread(result_path_point_att_polygon)
 #shapefile <- sf::st_read(in_shp_path) # not required to repeat if run in one long script.
@@ -301,6 +306,8 @@ mapview::mapshot(map_out, url = result_url_map_shapefile_points)
 
 ### 6.2. barplot of trend analysis ####
 
+print('Running visualisation 2: barplot_trend_results ...')
+
 data_list_subgroups <- data.table::fread(result_path_trend_analysis_mk)
 library(ggplot2)
 
@@ -326,6 +333,9 @@ ggsave(barplot_trends , file = result_path_barplot_trend_results, dpi = 300)
 
 
 ### 6.3. trend result map ####
+
+print('Running visualisation 3: map_trends_interactive ...')
+
 # plot a map of trend results
 ### interactive map
 
@@ -363,6 +373,8 @@ print(paste0('Save map to html: ', result_path_map_trends_interactive))
 ### static map
 ###
 
+print('Running visualisation 4: map_trends_static ...')
+
 data <- data.table::fread(result_path_trend_analysis_mk)
 #shapefile <- sf::st_read(in_shp_path) # not required to repeat if run in one long script.
 
@@ -392,6 +404,7 @@ map_out <- map_trends_static(shp = shapefile,
 print(paste0('Save map to png: ', result_path_static_map_png))
 tmap_save(map_out_static, result_path_static_map_png)
 
+print('Done!')
 
 ########################################.
 
