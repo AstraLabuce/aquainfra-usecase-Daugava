@@ -11,19 +11,35 @@
 #setwd(dirname(current_path))
 
 ## Args <- args use is not clear for me (Comment by Astra)
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
+##args <- commandArgs(trailingOnly = TRUE)
+##print(paste0('R Command line args: ', args))
+# 1. point att polygon:
 in_shp_path = "shp/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp"
 in_dpoints_path = "in_situ_data/in_situ_example.xlsx"
 in_long_col_name = "longitude"
 in_lat_col_name = "latitude"
-out_result_path = "data_out_point_att_polygon.csv"
-
-## How to call this from command line:
-#PATH_SHP="/home/.../test_inputs/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp"
-#PATH_XLSX="/home/.../test_inputs/in_situ_example.xlsx"
-#PATH_OUT="/home/.../test_outputs/mytestoutput.csv"
-#/usr/bin/Rscript --vanilla /home/.../points_att_polygon.R ${PATH_SHP} ${PATH_XLSX} "longitude" "latitude" ${PATH_OUT}
+result_path_point_att_polygon <- "data_out_point_att_polygon.csv"
+# 2. peri_conv
+in_date_col_name = "visit_date"
+in_group_to_periods = c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30")
+#default season division; # do not put Feb-29th, if needed then choose Mar-01
+in_group_labels = c("winter", "spring", "summer", "autumn")
+in_year_starts_at_Dec1 = TRUE
+result_path_peri_conv <- "data_out_peri_conv.csv"
+# 3. mean by group / seasonal means:
+result_path_seasonal_means <- "data_out_seasonal_means.csv"
+# 4. ts_selection_interpolation
+in_rel_cols_ts = c("group_labels", "HELCOM_ID")
+in_missing_threshold_percentage = 40
+in_year_colname = "Year_adj_generated"
+in_value_colname = "Secchi_m_mean_annual"
+in_min_data_point = 10
+result_path_selected_interpolated = "data_out_selected_interpolated.csv"
+# 5. mk_trend_analysis
+in_rel_cols_mk = c("season", "polygon_id")
+in_time_colname = "Year_adj_generated"
+in_value_colname = "Secchi_m_mean_annual"
+result_path_trend_analysis_mk = "mk_trend_analysis_results.csv"
 
 ## Imports
 #library(rgdal) # Outdated! See: https://cloud.r-project.org/web/packages/rgdal/index.html
@@ -101,6 +117,7 @@ if ("points_att_polygon.R" %in% list.files()){
 
 #test the function points_att_polygon
 ## Call the function:
+print('Running points_att_polygon')
 out_points_att_polygon <- points_att_polygon(
   shp = shapefile, 
   dpoints = data_rel, 
@@ -108,8 +125,8 @@ out_points_att_polygon <- points_att_polygon(
   lat_col_name = in_lat_col_name)
 
 ## Output: Now need to store output:
-print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_points_att_polygon, file = out_result_path) 
+print(paste0('Write result to csv file: ', result_path_point_att_polygon))
+data.table::fwrite(out_points_att_polygon, file = result_path_point_att_polygon) 
 
 
 ##############################################################################################.
@@ -119,19 +136,7 @@ data.table::fwrite(out_points_att_polygon, file = out_result_path)
                             # generates num variable 'Year_adjusted' to show change;
                             # generates chr variable 'season' to allow grouping the data based on season.
 
-## Args <- Args use is not clear for me (comment by Astra)
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-in_data_path = "data_out_point_att_polygon.csv"
-in_date_col_name = "visit_date"
-in_group_to_periods = #default season division; # do not put Feb-29th, if needed then choose Mar-01
-  c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30")
-in_group_labels = c("winter", "spring", "summer", "autumn")
-in_year_starts_at_Dec1 = TRUE
-out_result_path = "data_out_peri_conv.csv"
-
-
-data_peri_conv <- data.table::fread(in_data_path)
+data_peri_conv <- data.table::fread(result_path_point_att_polygon)
 
 # Read the function "peri_conv" from current working directory:
 if ("peri_conv.R" %in% list.files()){
@@ -141,6 +146,7 @@ if ("peri_conv.R" %in% list.files()){
 }
 
 #test the function peri_conv
+print('Running peri_conv...')
 out_peri_conv <-
   peri_conv(
     data = data_peri_conv,
@@ -151,8 +157,8 @@ out_peri_conv <-
   )
 
 ## Output: Now need to store output:
-print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_peri_conv , file = out_result_path) 
+print(paste0('Write result to csv file: ', result_path_peri_conv))
+data.table::fwrite(out_peri_conv , file = result_path_peri_conv) 
 
 ##############################################################################################.
 ## 3. mean_by_group ####
@@ -161,19 +167,16 @@ data.table::fwrite(out_peri_conv , file = out_result_path)
 ## if we cannot - I will work more on this. ##################################################.
 ## At the moment, quick and easy version, just to continue the data analysis##################.
 ##############################################################################################.
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-in_data_path = "data_out_peri_conv.csv"
-out_result_path = "data_out_seasonal_means.csv"
 
 library(magrittr)
 library(dplyr)
 
-data_mean_by_group <- data.table::fread(in_data_path)
+data_mean_by_group <- data.table::fread(result_path_peri_conv)
 
 
 data_mean_by_group$transparency_m <- as.numeric(data_mean_by_group$transparency_m)
 
+print('Running mean by group...')
 out_seasonal_means <- data_mean_by_group %>%
   group_by(longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID) %>%
   summarise(Secchi_m_mean = mean(transparency_m)) %>%
@@ -184,25 +187,15 @@ out_seasonal_means <- data_mean_by_group %>%
 
 
 ## Output: Now need to store output:
-print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_seasonal_means , file = out_result_path) 
+print(paste0('Write result to csv file: ', result_path_seasonal_means))
+data.table::fwrite(out_seasonal_means , file = result_path_seasonal_means) 
 
 
 ##############################################################################################.
 ## 4. TimeSeries selection and interpolation of NAs ####
 ##############################################################################################.
 
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-in_data_path = "data_out_seasonal_means.csv"
-in_rel_cols = c("group_labels", "HELCOM_ID")
-in_missing_threshold_percentage = 40
-in_year_colname = "Year_adj_generated"
-in_value_colname = "Secchi_m_mean_annual"
-in_min_data_point = 10
-out_result_path = "data_out_selected_interpolated.csv"
-
-data_list_subgroups <- data.table::fread(in_data_path)
+data_list_subgroups <- data.table::fread(result_path_seasonal_means)
 
 # split data into sub-tables for each season and HELCOM_ID separately
 # Create a list to store sub-tables of transparency
@@ -214,32 +207,25 @@ if ("ts_selection_interpolation.R" %in% list.files()){
   warning('Could not find file "ts_selection_interpolation.R" in current working dir!')
 }
 
+print('Running ts_selection_interpolation...')
 out_ts <- ts_selection_interpolation(
   data = data_list_subgroups, 
-  rel_cols = in_rel_cols, 
+  rel_cols = in_rel_cols_ts, 
   missing_threshold = in_missing_threshold_percentage, 
   year_col = in_year_colname,
   value_col = in_value_colname,
   min_data_point = in_min_data_point)
 
 ## Output: Now need to store output:
-print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_ts , file = out_result_path) 
+print(paste0('Write result to csv file: ', result_path_selected_interpolated))
+data.table::fwrite(out_ts , file = result_path_selected_interpolated) 
 
 
 ##############################################################################################.
 ## 5. trend_analysis Mann Kendall ####
 ##############################################################################################.
 
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-in_data_path = "data_out_selected_interpolated.csv"
-in_rel_cols = c("season", "polygon_id")
-in_time_colname = "Year_adj_generated"
-in_value_colname = "Secchi_m_mean_annual"
-out_result_path = "mk_trend_analysis_results.csv"
-
-data_list_subgroups <- data.table::fread(in_data_path)
+data_list_subgroups <- data.table::fread(result_path_selected_interpolated)
 
 
 # Read the function "trend_analysis_mk" from current working directory:
@@ -249,15 +235,15 @@ if ("trend_analysis_mk.R" %in% list.files()){
   warning('Could not find file "trend_analysis_mk.R" in current working dir!')
 }
 
-  
+print('Running trend_analysis_mk...')
 out_mk <- trend_analysis_mk(data = data_list_subgroups,
-                  rel_cols = in_rel_cols,
+                  rel_cols = in_rel_cols_mk,
                   value_col = in_value_colname,
                   time_colname = in_time_colname)
 
 ## Output: Now need to store output:
-print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_mk , file = out_result_path) 
+print(paste0('Write result to csv file: ', result_path_trend_analysis_mk))
+data.table::fwrite(out_mk , file = result_path_trend_analysis_mk) 
     
 ################################################################################.
 ## 6. visualization ####

@@ -12,3 +12,4 @@ shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shx
 __pycache__
 OLD
 config.json
+*.csv
