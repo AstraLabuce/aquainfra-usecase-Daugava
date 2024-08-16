@@ -43,7 +43,7 @@ print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
 # Get input for next from output of last
-href = resp.json()['outputs']['first_result']['href']
+href = resp.json()['outputs']['points_att_polygon']['href']
 intermediate_result = href.split('/')[-1]
 print('Output: %s' % href)
 print('Next input: %s' % intermediate_result)
@@ -69,7 +69,7 @@ print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
 # Get input for next from output of last
-href = resp.json()['outputs']['first_result']['href']
+href = resp.json()['outputs']['peri_conv']['href']
 intermediate_result = href.split('/')[-1]
 print('Output: %s' % href)
 print('Next input: %s' % intermediate_result)
@@ -93,7 +93,7 @@ print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
 # Get input for next from output of last
-href = resp.json()['outputs']['first_result']['href']
+href = resp.json()['outputs']['mean_by_group']['href']
 intermediate_result = href.split('/')[-1]
 print('Output: %s' % href)
 print('Next input: %s' % intermediate_result)
@@ -121,7 +121,7 @@ print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
 # Get input for next from output of last
-href = resp.json()['outputs']['first_result']['href']
+href = resp.json()['outputs']['ts_selection_interpolation']['href']
 intermediate_result = href.split('/')[-1]
 print('Output: %s' % href)
 print('Next input: %s' % intermediate_result)
@@ -147,7 +147,7 @@ print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
 # Get input for next from output of last
-href = resp.json()['outputs']['first_result']['href']
+href = resp.json()['outputs']['trend_analysis_mk']['href']
 intermediate_result = href.split('/')[-1]
 print('Output: %s' % href)
 print('Next input: %s' % intermediate_result)
