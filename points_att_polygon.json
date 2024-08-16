@@ -5,7 +5,7 @@
         "en": "points-att-polygon"
     },
     "description": {
-        "en": "points-att-polygon"
+        "en": "data points merged with polygon attributes based on data point location"
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["astra"],

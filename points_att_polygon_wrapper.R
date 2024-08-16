@@ -83,6 +83,7 @@ if (!dir.exists(shp_dir_unzipped)) {
 }
 
 # Read shapefile
+## TODO: Make more format agnostic??
 shapefile <- st_read(shp_dir_unzipped)
 
 # Define the directory and local file path for the Excel file
@@ -122,19 +123,24 @@ if (!file.exists(excel_file_path)) {
 }
 
 # Read excel file
+# load in situ data and respective metadata (geolocation and date are mandatory metadata)
+# in_situ_data/in_situ_example.xlsx : example data from https://latmare.lhei.lv/
+# in_situ_data/Latmare_20240111_secchi_color.xlsx : # data from LIAE data base from https://latmare.lhei.lv/
 data_raw <- readxl::read_excel(excel_file_path) %>%
   janitor::clean_names()
 
+# list relevant columns: geolocation (lat and lon), date and values for data points are mandatory
 rel_columns <- c(
   "longitude",
   "latitude",
   "visit_date",
   "transparency_m",
-  "color_id"
+  "color_id" #water color hue in Furel-Ule (categories)
 )
 
 data_rel <- data_raw %>%
   dplyr::select(all_of(rel_columns)) %>%
+  # remove cases when Secchi depth, water colour were not measured
   filter(
     !is.na(`transparency_m`) &
       !is.na(`color_id`) &
@@ -142,6 +148,7 @@ data_rel <- data_raw %>%
       !is.na(`latitude`)
   )
 
+# set coordinates ad numeric (in case they are read as chr variables)
 data_rel <- data_rel %>%
   mutate(
     longitude  = as.numeric(longitude),

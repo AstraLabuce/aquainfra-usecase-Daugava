@@ -5,7 +5,7 @@
         "en": "mean-by-group"
     },
     "description": {
-        "en": "mean-by-group"
+        "en": "Calculate data average per site, per year, per season and per HELCOM_ID."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],

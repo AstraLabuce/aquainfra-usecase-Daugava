@@ -115,8 +115,7 @@ if ("points_att_polygon.R" %in% list.files()){
   warning('Could not find file "points_att_polygon.R" in current working dir!')
 }
 
-#test the function points_att_polygon
-## Call the function:
+# Call the function:
 print('Running points_att_polygon')
 out_points_att_polygon <- points_att_polygon(
   shp = shapefile, 
@@ -124,7 +123,7 @@ out_points_att_polygon <- points_att_polygon(
   long_col_name = in_long_col_name, 
   lat_col_name = in_lat_col_name)
 
-## Output: Now need to store output:
+# Write the result to csv file:
 print(paste0('Write result to csv file: ', result_path_point_att_polygon))
 data.table::fwrite(out_points_att_polygon, file = result_path_point_att_polygon) 
 
@@ -145,7 +144,7 @@ if ("peri_conv.R" %in% list.files()){
   warning('Could not find file "peri_conv.R" in current working dir!')
 }
 
-#test the function peri_conv
+# Call the function:
 print('Running peri_conv...')
 out_peri_conv <-
   peri_conv(
@@ -156,7 +155,7 @@ out_peri_conv <-
     year_starts_at_Dec1 = in_year_starts_at_Dec1
   )
 
-## Output: Now need to store output:
+# Write the result to csv file:
 print(paste0('Write result to csv file: ', result_path_peri_conv))
 data.table::fwrite(out_peri_conv , file = result_path_peri_conv) 
 
@@ -173,9 +172,9 @@ library(dplyr)
 
 data_mean_by_group <- data.table::fread(result_path_peri_conv)
 
-
 data_mean_by_group$transparency_m <- as.numeric(data_mean_by_group$transparency_m)
 
+# Call the function:
 print('Running mean by group...')
 out_seasonal_means <- data_mean_by_group %>%
   group_by(longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID) %>%
@@ -186,7 +185,7 @@ out_seasonal_means <- data_mean_by_group %>%
   ungroup()
 
 
-## Output: Now need to store output:
+# Write the result to csv file:
 print(paste0('Write result to csv file: ', result_path_seasonal_means))
 data.table::fwrite(out_seasonal_means , file = result_path_seasonal_means) 
 
@@ -207,6 +206,7 @@ if ("ts_selection_interpolation.R" %in% list.files()){
   warning('Could not find file "ts_selection_interpolation.R" in current working dir!')
 }
 
+# Call the function:
 print('Running ts_selection_interpolation...')
 out_ts <- ts_selection_interpolation(
   data = data_list_subgroups, 
@@ -216,7 +216,7 @@ out_ts <- ts_selection_interpolation(
   value_col = in_value_colname,
   min_data_point = in_min_data_point)
 
-## Output: Now need to store output:
+# Write the result to csv file:
 print(paste0('Write result to csv file: ', result_path_selected_interpolated))
 data.table::fwrite(out_ts , file = result_path_selected_interpolated) 
 
@@ -235,13 +235,14 @@ if ("trend_analysis_mk.R" %in% list.files()){
   warning('Could not find file "trend_analysis_mk.R" in current working dir!')
 }
 
+# Call the function:
 print('Running trend_analysis_mk...')
 out_mk <- trend_analysis_mk(data = data_list_subgroups,
                   rel_cols = in_rel_cols_mk,
                   value_col = in_value_colname,
                   time_colname = in_time_colname)
 
-## Output: Now need to store output:
+# Write the result to csv file:
 print(paste0('Write result to csv file: ', result_path_trend_analysis_mk))
 data.table::fwrite(out_mk , file = result_path_trend_analysis_mk) 
     

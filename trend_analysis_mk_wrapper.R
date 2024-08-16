@@ -10,10 +10,11 @@ library(jsonlite)
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
 in_data_path = args[1]
-in_rel_cols = strsplit(args[2], ",")[[1]] #todo: remove spaces if available. otherwise can result in subscript out of bounds error
-in_time_colname = args[3]
-in_value_colname = args[4]
-out_result_path = args[5]
+in_rel_cols = strsplit(args[2], ",")[[1]] # e.g. "season,polygon_id"
+#todo: remove spaces if available. otherwise can result in subscript out of bounds error
+in_time_colname = args[3]  # e.g. "Year_adj_generated"
+in_value_colname = args[4] # e.g. "Secchi_m_mean_annual"
+out_result_path = args[5]  # e.g. "mk_trend_analysis_results.csv"
 
 # Read the input data from file:
 data_list_subgroups <- data.table::fread(in_data_path)

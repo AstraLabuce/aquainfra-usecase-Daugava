@@ -5,7 +5,7 @@
         "en": "peri-conv"
     },
     "description": {
-        "en": "peri-conv"
+        "en": "adds December to the next year (all winter months together). in the result every year starts at Dec-01. and ends Nov-30; generates num variable 'Year_adjusted' to show change; generates chr variable 'season' to allow grouping the data based on season."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["astra"],

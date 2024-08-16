@@ -1,6 +1,9 @@
 ##############################################################################################.
 ## 3. mean_by_group ####
 ## calculate data average per site, per year, per season and per HELCOM_ID ###################.
+## Can we use Datamash function for this in Galaxy workflows? ################################.
+## if we cannot - I will work more on this. ##################################################.
+## At the moment, quick and easy version, just to continue the data analysis##################.
 ##############################################################################################.
 ## RUN WITH
 ## Rscript mean_by_group.R "data_out_peri_conv.csv" "data_out_seasonal_means.csv"

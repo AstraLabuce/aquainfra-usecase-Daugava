@@ -5,7 +5,7 @@
         "en": "ts-selection-interpolation"
     },
     "description": {
-        "en": "ts-selection-interpolation"
+        "en": "Split data into sub-tables for each season and HELCOM_ID separately. Create a list to store sub-tables of transparency."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],
