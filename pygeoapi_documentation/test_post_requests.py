@@ -58,10 +58,10 @@ url = base_url+'/processes/peri-conv/execution'
 inputs = {
     "inputs": {
         "input_data": intermediate_result or "points_att_polygon-84f3986a-5b1f-11ef-b00a-df74de895c41.csv",
-        "column": "visit_date",
-        "dates": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
-        "periods": "winter,spring,summer,autumn",
-        "someBoolean": "True"
+        "date_col_name": "visit_date",
+        "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
+        "group_labels": "winter,spring,summer,autumn",
+        "year_starts_at_Dec1": "True"
     }
 }
 resp = session.post(url, headers=headers, json=inputs)
