@@ -299,7 +299,24 @@ map_out <- map_shapefile_points(shp = shapefile,
 
 # Write the result to url file (!?):
 print(paste0('Save map to html: ', result_url_map_shapefile_points))
-mapview::mapshot(map_out, url = result_url_map_shapefile_points)
+tryCatch(
+  {
+    mapview::mapshot(map_out, url = result_url_map_shapefile_points)
+    print(paste0("Map saved to ", result_url_map_shapefile_points))
+  },
+  warning = function(warn) {
+    message(paste("Saving HTML failed, reason: ", warn[1]))
+    print('Trying with selfcontained=FALSE:')
+    mapview::mapshot(map_out, url = result_url_map_shapefile_points, selfcontained=FALSE)
+    print(paste0("Map saved to ", result_url_map_shapefile_points))
+  },
+  error = function(err) {
+    message(paste("Saving HTML failed, reason: ", err[1]))
+    print('Trying with selfcontained=FALSE:')
+    mapview::mapshot(map_out, url = result_url_map_shapefile_points, selfcontained=FALSE)
+    print(paste0("Map saved to ", result_url_map_shapefile_points))
+  }
+)
 #browseURL(result_url_map_shapefile_points)
 
 
