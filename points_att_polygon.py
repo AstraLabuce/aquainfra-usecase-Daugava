@@ -57,7 +57,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
-        R_SCRIPT_NAME = configJSON["step_1"]
+        R_SCRIPT_NAME = 'points_att_polygon.R'
         r_args = [in_regions_url, in_dpoints_url, in_long_col_name, in_lat_col_name, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)

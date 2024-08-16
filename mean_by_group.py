@@ -59,7 +59,7 @@ class MeanByGroupProcessor(BaseProcessor):
             raise ProcessorExecuteError(user_msg=err_msg)
 
         # Run the R script:
-        R_SCRIPT_NAME = configJSON["step_3"]
+        R_SCRIPT_NAME = 'mean_by_group.R'
         r_args = [input_data_in_download_dir, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)

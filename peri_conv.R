@@ -23,8 +23,7 @@ out_result_path = args[6]
 
 data_peri_conv <- data.table::fread(in_data_path)
 
-peri_conv <-
-  function(data,
+peri_conv <- function(data,
            date_col_name,
            group_to_periods = #default season division; # do not put Feb-29th, if needed then choose Mar-01
              c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30"),

@@ -1,11 +1,6 @@
 {
     "download_dir": "./pygeoapi/process/",
-    "own_url": "https://aqua.igb-berlin.de/download/",
+    "input_data_dir": "./pygeoapi/process/",
     "r_script_dir": "./pygeoapi/process/",
-    "step_1": "points_att_polygon.R",
-    "step_2": "peri_conv.R",
-    "step_3": "mean_by_group.R",
-    "step_4": "ts_selection_interpolation.R",
-    "step_5": "trend_analysis_mk.R",
-    "input_data_dir": "./pygeoapi/process/"
+    "own_url": "https://aqua.igb-berlin.de/download/"
 }
