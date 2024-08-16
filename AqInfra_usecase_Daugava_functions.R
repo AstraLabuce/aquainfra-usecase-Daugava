@@ -92,70 +92,11 @@ data_rel <- data_rel %>%
 # function points_att_polygon - data points merged with polygon attributes based on data point location
 
 
-points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name="lat") {
-  #shp - shapefile
-  #dpoints - dataframe with values and numeric variables for coordinates:
-  #long - longitude column name in dpoints; default "long"
-  #lat - latitude column name in dpoints; default "lat"
-  
-  if (!requireNamespace("sp", quietly = TRUE)) {
-    stop("Package \"sp\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  if (!requireNamespace("sf", quietly = TRUE)) {
-    stop("Package \"sf\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  
-  if (missing(shp))
-    stop("missing shp")
-  if (missing(dpoints))
-    stop("missing dpoints")
-  if (! long_col_name %in% colnames(dpoints))
-    stop(paste0("input data does not have column ", long_col_name))
-  if (! lat_col_name %in% colnames(dpoints))
-    stop(paste0("input data does not have column ", lat_col_name))
-  
-  err = paste0("Error: `", long_col_name, "` is not numeric.")
-  stopifnot(err =
-              is.numeric(as.data.frame(dpoints)[, names(dpoints) == long_col_name]))
-  err = paste0("Error: `", lat_col_name, "` is not numeric.")
-  stopifnot(err =
-              is.numeric(as.data.frame(dpoints)[, names(dpoints) == lat_col_name]))
-  
-  #dpoints to spatial
-  print('Making input data spatial based on long, lat...')
-  data_spatial <- sf::st_as_sf(dpoints, coords = c(long_col_name, lat_col_name))
-  # set to WGS84 projection
-  print('Setting to WGS84 CRS...')
-  sf::st_crs(data_spatial) <- 4326
-
-  ## First, convert from WGS84-Pseudo-Mercator to pure WGS84
-  print('Setting geometry data to same CRS...')
-  shp_wgs84 <- st_transform(shp, st_crs(data_spatial))
-  
-  ## Check and fix geometry validity
-  print('Check if geometries are valid...')# TODO: Check actually needed? Maybe just make valid!
-  if (!all(st_is_valid(shp_wgs84))) { # many are not (in the example data)!
-    print('They are not! Making valid...')
-    shp_wgs84 <- st_make_valid(shp_wgs84)  # slowish...
-    print('Making valid done.')
-  }
-  
-  ## Overlay shapefile and in situ locations
-  print(paste0('Computing the intersection... This will take a while. ',
-               'Starting at ', Sys.time()))
-  shp_wgs84 <- st_filter(shp_wgs84, data_spatial) 
-  data_shp <- st_join(shp_wgs84, data_spatial)
-  #drop geometry to faster use of the object
-  data_shp <- sf::st_drop_geometry(data_shp)
-  print(paste0('Done computing the intersection... Finished at ', Sys.time()))
-  
-  # merge shapefile attributes to in situ data.frame - as geometry dropped, coordinates are lacking
-  res <- full_join(dpoints, data_shp)
-  rm(data_spatial)
-  res
-
+# Read the function "points_att_polygon" from current working directory:
+if ("points_att_polygon.R" %in% list.files()){
+  source("points_att_polygon.R")
+} else {
+  warning('Could not find file "points_att_polygon.R" in current working dir!')
 }
 
 #test the function points_att_polygon
@@ -192,175 +133,12 @@ out_result_path = "data_out_peri_conv.csv"
 
 data_peri_conv <- data.table::fread(in_data_path)
 
-
-peri_conv <-
-  function(data,
-           date_col_name,
-           group_to_periods = #default season division; # do not put Feb-29th, if needed then choose Mar-01
-             c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30"),
-           group_labels = #default = group_to_periods
-             group_to_periods, #if defined, should be the same length as group_to_periods
-           year_starts_at_Dec1 = TRUE #default
-           ) {
-    #data - dataset with columns for Year and Month (all the rest variables stays the same)
-    #Date - column name to Date in format YYYY-MM-DD; Year, Month, Day, Year_adj - will be generated
-    #group_to_periods <- group into periods: define the periods, e.g., mmm-DD:mmm-DD, Mar-15:Jun-01.
-    if (!requireNamespace("lubridate", quietly = TRUE)) {
-      stop("Package \"lubridate\" must be installed to use this function.",
-           call. = FALSE)
-    }
-  
-    if (missing(data))
-      stop("missing data")
-    suppressWarnings(if (!unique(!is.na(as.Date(
-      get(date_col_name, data), "%Y-%m-%d"
-    ))))
-      stop("Error: Date is not in format YYYY-MM-DD"))
-    
-    print(paste0('Generating required date format'))
-    
-    data$Day_generated <-
-      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%d"))
-    data$Month_generated <-
-      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%m"))
-    data$Year_generated <-
-      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%Y"))
-    data$Year_adj_generated <-
-      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%Y"))
-    
-    if(year_starts_at_Dec1 == TRUE ){
-    data[data$Month_generated == 12,]$Year_adj_generated <-
-      data[data$Month_generated == 12,]$Year_generated + 1}
-    
-    print(paste0('Generating defined period labels'))
-    
-    data$period_label <- "NA" #making period_label column as 'character'
-    data$dayoy <-
-      as.numeric(format(as.Date(data$visit_date, format = "%Y-%m-%d"), "%j"))
-    data$leap_year <- lubridate::leap_year(data$visit_date)
-    
-    period <-
-      expand.grid(periods = group_to_periods,
-                  Year_generated = unique(data$Year_adj_generated))
-    
-    period$group_date_from <- NA
-    period$group_date_to <- NA
-    period$group_month_from <- NA
-    period$group_month_to <- NA
-    period$group_day_from <- NA
-    period$group_day_to <- NA
-    
-    for (row in 1:length(period$periods)) {
-      period[row, ]$group_date_from <-
-        strsplit(as.character(period[row, ]$periods), "[:]")[[1]][1]
-      period[row, ]$group_date_to <-
-        strsplit(as.character(period[row, ]$periods), "[:]")[[1]][2]
-      
-      period[row, ]$group_month_from <-
-        strsplit(as.character(period[row, ]$group_date_from), "[-]")[[1]][1]
-      period[row, ]$group_day_from <-
-        strsplit(as.character(period[row, ]$group_date_from), "[-]")[[1]][2]
-      
-      period[row, ]$group_month_to <-
-        strsplit(as.character(period[row, ]$group_date_to), "[-]")[[1]][1]
-      period[row, ]$group_day_to <-
-        strsplit(as.character(period[row, ]$group_date_to), "[-]")[[1]][2]
-    }
-    period$group_month_from <-
-      match(period$group_month_from, month.abb)
-    period$group_month_to <- match(period$group_month_to, month.abb)
-    
-    period$group_date_from_fin <-
-      paste0(period$Year_generated,
-             "-",
-             period$group_month_from,
-             "-",
-             period$group_day_from)
-    period$group_date_to_fin <-
-      paste0(period$Year_generated,
-             "-",
-             period$group_month_to,
-             "-",
-             period$group_day_to)
-    
-    period$group_date_from_dayoy <-
-      as.numeric(format(as.Date(period$group_date_from_fin, format = "%Y-%m-%d"), "%j"))
-    period$leap_year <-
-      lubridate::leap_year(period$group_date_from_fin)
-    
-    period$group_date_to_dayoy <-
-      as.numeric(format(as.Date(period$group_date_to_fin, format = "%Y-%m-%d"), "%j"))
-    
-    period_fin <-
-      unique(period[c(
-        "periods",
-        "group_date_from",
-        "group_date_to",
-        "group_month_from",
-        "group_month_to",
-        "group_day_from",
-        "group_day_to",
-        "group_date_from_dayoy",
-        "group_date_to_dayoy",
-        "leap_year"
-      )])
-    
-    print(paste0('Considering leap years'))
-    
-    period_leap <- subset(period_fin, leap_year == TRUE)
-    period_leap[period_leap$group_month_from == 12,]$group_date_from_dayoy <-
-      period_leap[period_leap$group_month_from == 12,]$group_date_from_dayoy - 366
-    
-    data_leap <- subset(data, leap_year == TRUE)
-    data_leap[data_leap$Month_generated == 12,]$dayoy <-
-      data_leap[data_leap$Month_generated == 12,]$dayoy - 366
-    
-    for (each in seq(data_leap$dayoy)) {
-      for (row in 1:length(period_leap$periods)) {
-        if (data_leap[each,]$dayoy >= period_leap[row, ]$group_date_from_dayoy &
-            data_leap[each,]$dayoy <= period_leap[row, ]$group_date_to_dayoy) {
-          data_leap[each,]$period_label <-
-            as.character(period_leap[row, ]$periods)
-        }
-      }
-    }
-    
-    print(paste0('Finalizing results'))
-    
-    period_regular <- subset(period_fin, leap_year == FALSE)
-    period_regular[period_regular$group_month_from == 12,]$group_date_from_dayoy <-
-      period_regular[period_regular$group_month_from == 12,]$group_date_from_dayoy - 365
-    
-    data_regular <- subset(data, leap_year == FALSE)
-    data_regular[data_regular$Month_generated == 12,]$dayoy <-
-      data_regular[data_regular$Month_generated == 12,]$dayoy - 365
-    
-    for (each in seq(data_regular$dayoy)) {
-      for (row in 1:length(period_regular$periods)) {
-        if (data_regular[each,]$dayoy >= period_regular[row, ]$group_date_from_dayoy &
-            data_regular[each,]$dayoy <= period_regular[row, ]$group_date_to_dayoy) {
-          data_regular[each,]$period_label <-
-            as.character(period_regular[row, ]$periods)
-        }
-      }
-    }
-    res <- rbind(data_leap, data_regular)
-    labels <-
-      data.frame(period_label = group_to_periods, group_labels)
-    res <- dplyr::full_join(res, labels, by = "period_label")
-    
-    rm(
-      data,
-      period,
-      period_fin,
-      period_leap,
-      period_regular,
-      data_leap,
-      data_regular,
-      labels
-    )
-    res[, -"dayoy"]
-  }
+# Read the function "peri_conv" from current working directory:
+if ("peri_conv.R" %in% list.files()){
+  source("peri_conv.R")
+} else {
+  warning('Could not find file "peri_conv.R" in current working dir!')
+}
 
 #test the function peri_conv
 out_peri_conv <-
@@ -428,119 +206,12 @@ data_list_subgroups <- data.table::fread(in_data_path)
 
 # split data into sub-tables for each season and HELCOM_ID separately
 # Create a list to store sub-tables of transparency
-ts_selection_interpolation <- function(
-    data,
-    rel_cols,
-    missing_threshold = 30,
-    year_col = "Year",
-    value_col = "value",
-    min_data_point = 10){
-  
-  if (!requireNamespace("tidyr", quietly = TRUE)) {
-    stop("Package \"tidyr\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  if (!requireNamespace("zoo", quietly = TRUE)) {
-    stop("Package \"zoo\" must be installed to use this function.",
-         call. = FALSE)
-  }
 
-  list_groups <-  vector("list", length(rel_cols))
-  
-  for (each in seq(rel_cols)){
-    list_groups[[each]] <- as.factor(subset(data, select = names(data) == rel_cols[each])[[1]])
-  }
-  sub_tables <- split(data, list_groups, sep = ";")
-  
-  # Some tables have too many missing years, therefore it is necessary to remove them from the analysis. 
-  # In the example, the treshold for the removal is 40% of timeseries years missing.
-  
-  sub_tables_subset <- lapply(sub_tables, function(table) {
-    
-    #create a function for which will calculate a percentage of missing years
-    calculate_missing_percentage <- function(table) {
-      # Extract the years from the table
-      years <- as.numeric(as.character(table$Year_adj_generated))
-      # Remove missing values
-      years <- years[!is.na(years)]
-      # Calculate the total number of years
-      total_years <- length(years)
-      # Check if there are enough years for calculation
-      if (total_years < 2) {
-        return(100)  # Return 100% missing if there are not enough years
-      }
-      
-      # Calculate the difference between consecutive years
-      year_diff <- diff(years)
-      # Calculate the number of consecutive years
-      consecutive_years <- sum(year_diff == 1) + 1
-      # Calculate the expected number of rows
-      expected_rows <- max(years, na.rm = TRUE) - min(years, na.rm = TRUE) + 1
-      # Calculate the percentage of missing rows
-      missing_percentage <- ((expected_rows - consecutive_years) / expected_rows) * 100
-      
-      return(missing_percentage)
-    }
-    
-    missing_percentage <- calculate_missing_percentage(table)
-    
-    if (missing_percentage <= missing_threshold) {
-      return(table)
-    } else {
-      return(NULL)
-    }
-  })
-  
-  # Remove NULL elements from the list
-  sub_tables_subset <- Filter(Negate(is.null), sub_tables_subset)
-  
-  # Loop through each table in sub_tables_subset a function for extending 
-  # the dataframes by missing years
-  # object for results
-  sub_tables_subset_out <- list()
-  
-  for (table_name in names(sub_tables_subset)) {
-    
-    # Extract the table
-    table_data <-
-      as.data.frame(sub_tables_subset[[table_name]])
-    
-    # Convert Year_corrected to numeric
-    table_data$Year_d <-
-      as.numeric(as.character(table_data[, which(names(table_data) == year_col)]))
-    
-    # Assign the extended table back to the list
-    processed_table <- 
-      as.data.frame(tidyr::complete(table_data, Year_d = min(table_data$Year_d):max(table_data$Year_d)))
-    
-  ## interpolate NAs
-  # Loop through each table in sub_tables_subset_out
-  
-  #for (table_name in names(sub_tables_subset_out)) {
-    #processed_table <- sub_tables_subset_out[[table_name]]
-    processed_table <- 
-      subset(processed_table, select = names(processed_table) %in% c(year_col, value_col), drop = FALSE)
-
-    # Apply zoo::na.approx() to fill gaps if there are at least two non-NA values
-    if (sum(!is.na(subset(processed_table, select = names(processed_table) == value_col)[[1]])) >= 2) {
-      filled_table <- as.data.frame(zoo::na.approx(processed_table))
-      filled_table$ID <- rep(table_name, dim(filled_table)[1])
-      sub_tables_subset_out[[table_name]] <- as.data.frame(filled_table)
-    } else {
-      sub_tables_subset_out[[table_name]] <-
-        paste("Insufficient non-NA values to interpolate")
-    }
-  }
-  
-  #Remove datasets that has less than set threshold time-period points (default 10)
-  short_datasets <- lapply(sub_tables_subset_out, dim)
-  sub_tables_subset_out <- 
-    sub_tables_subset_out[unname(unlist(sapply(short_datasets, function(i) lapply(i, "[[", 1))[1,]) > min_data_point)]
-  # transform list to data.frame
-  res <- data.frame(Reduce(rbind, sub_tables_subset_out))
-  res <- tidyr::separate(res, ID, c("season", "polygon_id"), sep = ";")
-  
-  return(res)
+# Read the function "ts_selection_interpolation" from current working directory:
+if ("ts_selection_interpolation.R" %in% list.files()){
+  source("ts_selection_interpolation.R")
+} else {
+  warning('Could not find file "ts_selection_interpolation.R" in current working dir!')
 }
 
 out_ts <- ts_selection_interpolation(
@@ -571,75 +242,14 @@ out_result_path = "mk_trend_analysis_results.csv"
 data_list_subgroups <- data.table::fread(in_data_path)
 
 
-trend_analysis_mk <- function(
-    data,
-    rel_cols,
-    time_colname = "year",
-    value_colname = "value"){
+# Read the function "trend_analysis_mk" from current working directory:
+if ("trend_analysis_mk.R" %in% list.files()){
+  source("trend_analysis_mk.R")
+} else {
+  warning('Could not find file "trend_analysis_mk.R" in current working dir!')
+}
+
   
-  if (!requireNamespace("Kendall", quietly = TRUE)) {
-    stop("Package \"Kendall\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  if (!requireNamespace("tidyr", quietly = TRUE)) {
-    stop("Package \"tidyr\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  
-  err = paste0("Error: `", value_colname, "` is not numeric.")
-  stopifnot(err =
-              is.numeric(as.data.frame(data)[, names(data) == value_colname]))
-  err = paste0("Error: `", in_time_colname, "` is not numeric.")
-  stopifnot(err =
-              is.numeric(as.data.frame(data)[, names(data) == time_colname]))
-  
-  # Create empty vectors to store data
-  table_names <- c()
-  tau_values <- c()
-  p_values <- c()
-  period <- c()
-  
-  list_groups <-  vector("list", length(rel_cols))
-  
-  for (each in seq(rel_cols)){
-    list_groups[[each]] <- 
-      as.factor(subset(data, select = names(data) == rel_cols[each])[[1]])
-  }
-  data <- split(data, list_groups, sep = ";")
-  # Remove elements with 0 rows from the list
-  data <- data[sapply(data, function(x) dim(x)[1]) > 0]
-  
-    # Loop through each table in sub_tables_subset
-    for (table_name in names(data)) {
-      # Extract the current table
-      current_table <- data[[table_name]]
-      time <- subset(current_table, select = names(current_table) == time_colname)
-      values <- subset(current_table, select = names(current_table) == value_colname)
-      # Create time series object
-      time_series_object <- ts(values, frequency = 1, start = c(min(time), 1))
-      
-      # Perform Mann-Kendall test
-      mann_kendall_test_results <- Kendall::MannKendall(time_series_object)
-      
-      # Extract tau-value and p-value
-      tau <- mann_kendall_test_results$tau
-      p_value <- mann_kendall_test_results$sl
-      
-      # Append data to vectors
-      table_names <- c(table_names, table_name)
-      tau_values <- c(tau_values, tau)
-      p_values <- c(p_values, p_value)
-      period <- c(period, paste0(min(time), ":", max(time)))
-    }
-    
-    # Combine data into a data frame
-    results_table <- data.frame(ID = table_names, period = period, Tau_Value = tau_values, P_Value = p_values)
-    results_table <- tidyr::separate(results_table, ID, c("season", "polygon_id"), sep = ";")
-    
-    # Print the results table
-    return(results_table)
-}   
-    
 out_mk <- trend_analysis_mk(data = data_list_subgroups,
                   rel_cols = in_rel_cols,
                   value_col = in_value_colname,
