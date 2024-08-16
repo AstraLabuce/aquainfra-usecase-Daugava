@@ -53,6 +53,10 @@ in_p_value = "P_Value"
 in_p_value_threshold = "0.05"
 in_group = "season"
 result_path_barplot_trend_results = "barplot_trend_results.png"
+# 6.3 vis: map_trends_interactive
+in_id_trend_col = "polygon_id"
+in_id_shp_col = "HELCOM_ID"
+result_path_map_trends_interactive = "map_trend_results.html"
 
 ## Imports
 #library(rgdal) # Outdated! See: https://cloud.r-project.org/web/packages/rgdal/index.html
@@ -321,95 +325,36 @@ ggsave(barplot_trends , file = result_path_barplot_trend_results, dpi = 300)
 ### 6.3. trend result map ####
 # plot a map of trend results
 ### interactive map
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-in_shp_path = "shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp"
-in_trend_results_path = "mk_trend_analysis_results.csv"
-in_id_trend_col = "polygon_id"
-in_id_shp_col = "HELCOM_ID"
-in_group = "season"
-in_p_value_col = "P_Value"
-in_p_value_threshold = "0.05"
 
-out_result_path_url = "map_trend_results.html"
-out_result_path_png = "map_trend_results.png"
-
-data <- data.table::fread(in_trend_results_path)
-shp <- sf::st_read(in_shp_path)
+data <- data.table::fread(result_path_trend_analysis_mk)
+#shapefile <- sf::st_read(in_shp_path) # not required to repeat if run in one long script.
 
 library(tmap)
 library(tmaptools)
 
-map_trends_interactive <- function(shp, data, 
-                       id_trend_col = "id",
-                       id_shp_col = "id",
-                       p_value_threshold = 0.05,
-                       p_value_col = "p_value",
-                       group = "group") {
-
-    if (!requireNamespace("sf", quietly = TRUE)) {
-    stop("Package \"sf\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  if (!requireNamespace("tmap", quietly = TRUE)) {
-    stop("Package \"tmap\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  if (missing(shp))
-    stop("missing shp")
-  if (missing(data))
-    stop("missing data")
-
-  shp_subset <- 
-    shp[subset(shp, select = names(shp) == id_shp_col)[[1]] %in% subset(data, select = names(data) == id_trend_col)[[1]],]
-  
-  names(shp_subset)[which(names(shp_subset) == id_shp_col)] <- "polygon_id"
-  names(data)[which(names(data) == id_trend_col)] <- "polygon_id"
-  
-  
-  shp_trend <- merge(shp_subset, data)
-  shp_trend$significant <- shp_trend$P_Value <= p_value_threshold
-  shp_trend$decreasing_trend <- shp_trend$Tau_Value <= 0
-  shp_trend$trend_res <- "insig.trend"
-
-  for (each in seq(nrow(shp_trend))){
-    if (shp_trend[each,]$significant == TRUE & shp_trend[each,]$Tau_Value <= 0) {
-      shp_trend[each,]$trend_res <- "sig.decrease"
-    }else if(shp_trend[each,]$significant == TRUE & shp_trend[each,]$Tau_Value > 0){
-      shp_trend[each,]$trend_res <- "sig.increase"} 
-  }
-
-  tmap_mode("view")
-  tm_basemap(server = providers$Esri)+
-    tm_shape(shp_trend)+
-    tm_polygons("trend_res", 
-              alpha = 0.85, 
-              title = "result of trend analysis",
-              colorNA = NULL, 
-              colorNULL = NULL, 
-              textNA = "not tested") +
-    tm_facets(by = in_group, sync = TRUE)+
-    tm_tiles("Stamen.TonerLabels")
-
+# Read the function "map_trends_interactive" from current working directory:
+if ("map_trends_interactive.R" %in% list.files()){
+  source("map_trends_interactive.R")
+} else {
+  warning('Could not find file "map_trends_interactive.R" in current working dir!')
 }
 
-
-
-map_out <- map_trends_interactive(shp = shp, 
+# Call the function:
+map_out <- map_trends_interactive(shp = shapefile, 
                                   data = data,
                                   id_trend_col = in_id_trend_col,
                                   id_shp_col = in_id_shp_col,
                                   p_value_threshold = in_p_value_threshold,
-                                  p_value_col = in_p_value_col,
+                                  p_value_col = in_p_value,
                                   group = in_group)
 
 ## I cannot find a way how to save faceted interactive maps..
 ## Output: Now need to store output:
-print(paste0('Save map to html: ', out_result_path_url))
-#saveWidget(map_out, out_result_path_url) # not working
-#tmap_save(map_out, out_result_path_url) # not working
-#mapview::mapshot(map_out, out_result_path_url) # not working
-#htmltools::save_html(map_out, out_result_path_url) #not working
+print(paste0('Save map to html: ', result_path_map_trends_interactive))
+#saveWidget(map_out, result_path_map_trends_interactive) # not working
+#tmap_save(map_out, result_path_map_trends_interactive) # not working
+#mapview::mapshot(map_out, result_path_map_trends_interactive) # not working
+#htmltools::save_html(map_out, result_path_map_trends_interactive) #not working
 
 ###
 ### static map
