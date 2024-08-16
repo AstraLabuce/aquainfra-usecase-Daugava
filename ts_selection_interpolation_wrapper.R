@@ -9,12 +9,16 @@ library(jsonlite)
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
 in_data_path = args[1]
-in_rel_cols = strsplit(args[2], ",")[[1]] #todo: remove spaces if available. otherwise can result in subscript out of bounds error
+in_rel_cols = args[2] # e.g. "season, polygon_id"
 in_missing_threshold_percentage = as.numeric(args[3])
 in_year_colname = args[4]
 in_value_colname = args[5]
 in_min_data_point = as.numeric(args[6])
 out_result_path = args[7]
+
+# Remove spaces and split:
+in_rel_cols = gsub(" ", "", in_rel_cols, fixed = TRUE) # e.g. "season, polygon_id"
+in_rel_cols = strsplit(in_rel_cols, ",")[[1]]
 
 # Read the input data from file:
 data_list_subgroups <- data.table::fread(in_data_path)

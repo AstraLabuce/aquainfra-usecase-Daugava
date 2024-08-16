@@ -16,12 +16,20 @@ library(jsonlite)
 ## Args
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
-in_data_path = args[1]
-in_date_col_name = args[2]
-in_group_to_periods = strsplit(args[3], ",")[[1]]
-in_group_labels = strsplit(args[4], ",")[[1]]
-in_year_starts_at_Dec1 = args[5]
+in_data_path = args[1] # e.g. "data_out_point_att_polygon.csv"
+in_date_col_name = args[2] # e.g. "visit_date"
+#in_group_to_periods = strsplit(args[3], ",")[[1]] # e.g. "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30"
+in_group_to_periods = args[3] # e.g. "Dec-01:Mar-01, Mar-02:May-30, Jun-01:Aug-30, Sep-01:Nov-30"
+#in_group_labels = strsplit(args[4], ",")[[1]] # e.g. "winter,spring,summer,autumn"
+in_group_labels = args[4] # e.g. "winter, spring, summer, autumn"
+in_year_starts_at_Dec1 = args[5] # e.g. "True" or "TRUE" or "true", will be parsed to Boolean
 out_result_path = args[6]
+
+# Remove spaces and split:
+in_group_to_periods = gsub(" ", "", in_group_to_periods, fixed = TRUE) # e.g. "Dec-01:Mar-01, Mar-02:May-30, Jun-01:Aug-30, Sep-01:Nov-30"
+in_group_to_periods = strsplit(in_group_to_periods, ",")[[1]]
+in_group_labels = gsub(" ", "", in_group_labels, fixed = TRUE) # e.g. "winter, spring, summer, autumn"
+in_group_labels = strsplit(in_group_labels, ",")[[1]]
 
 # Read the input data from file:
 data_peri_conv <- data.table::fread(in_data_path)
