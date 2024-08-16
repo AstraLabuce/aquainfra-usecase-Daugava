@@ -23,6 +23,11 @@ peri_conv <- function(data,
       stop("Package \"lubridate\" must be installed to use this function.",
            call. = FALSE)
     }
+
+    if (!is.logical(year_starts_at_Dec1)) {
+      stop(paste0('The parameter "year_starts_at_Dec1" is not a boolean value, but a ',
+        typeof(year_starts_at_Dec1), ' value (', year_starts_at_Dec1, ')!'))
+    }
   
     if (missing(data))
       stop("missing data")

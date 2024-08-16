@@ -26,6 +26,16 @@ out_result_path = args[6]
 # Read the input data from file:
 data_peri_conv <- data.table::fread(in_data_path)
 
+# Parse string to boolean:
+if (tolower(in_year_starts_at_Dec1) == 'true') {
+  in_year_starts_at_Dec1 <- TRUE
+} else if (tolower(in_year_starts_at_Dec1) == 'false') {
+  in_year_starts_at_Dec1 <- FALSE
+} else {
+  stop('Could not understand the value for "year_starts_at_Dec1" ("',
+    in_year_starts_at_Dec1, '"), please provide "true" or "false".')
+}
+
 # Read the function "peri_conv" either from current working directory,
 # or read the directory from config!
 if ("peri_conv.R" %in% list.files()){
