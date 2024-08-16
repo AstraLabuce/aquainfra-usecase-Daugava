@@ -56,7 +56,9 @@ if (!dir.exists(shp_dir_zipped)) {
 
 # Download shapefile if it doesn't exist:
 # TODO: Problem: If someone wants to use a shapefile that happens to have the same name! Should use PIDs.
-if (!file.exists(shp_file_path)) {
+if (file.exists(shp_file_path)) {
+  print(paste0("File ", shp_file_path, " already exists. Skipping download."))
+} else {
   tryCatch(
     {
       download.file(in_shp_url, shp_file_path, mode = "wb")
@@ -69,13 +71,13 @@ if (!file.exists(shp_file_path)) {
       stop(paste("Download of shapefile failed, reason: ", err[1]))
     }
   )
-} else {
-  print(paste0("File ", shp_file_path, " already exists. Skipping download."))
 }
 
 # Unzip shapefile if it is not unzipped yet:
 shp_dir_unzipped <- paste0(shp_dir_zipped, sub("\\.zip$", "", shp_file_name))
-if (!dir.exists(shp_dir_unzipped)) {
+if (dir.exists(shp_dir_unzipped)) {
+    print(paste0("Directory ", shp_dir_unzipped, " already exists. Skipping unzip."))
+} else {
   tryCatch(
     {
       unzip(shp_file_path, exdir = shp_dir_unzipped)
@@ -88,8 +90,6 @@ if (!dir.exists(shp_dir_unzipped)) {
       message(paste("Unzipping ", shp_file_path, " failed, reason: ", warn[1]))
     }
   )
-} else {
-  print(paste0("Directory ", shp_dir_unzipped, " already exists. Skipping unzip."))
 }
 
 # Read shapefile
