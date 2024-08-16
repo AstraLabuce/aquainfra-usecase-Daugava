@@ -50,7 +50,7 @@ if (!dir.exists(shp_dir_zipped)) {
   if (success) {
     print(paste0("Directory ", shp_dir_zipped, " created."))
   } else {
-    print(paste0("Directory ", shp_dir_zipped, " not created."))
+    stop(paste0("Directory ", shp_dir_zipped, " not created (failed)."))
   }
 }
 
@@ -63,10 +63,10 @@ if (!file.exists(shp_file_path)) {
       print(paste0("File ", shp_file_path, " downloaded."))
     },
     warning = function(warn) {
-      message(paste("Download of shapefile failed, reason: ", warn[1]))
+      stop(paste("Download of shapefile failed, reason: ", warn[1]))
     },
     error = function(err) {
-      message(paste("Download of shapefile failed, reason: ", err[1]))
+      stop(paste("Download of shapefile failed, reason: ", err[1]))
     }
   )
 } else {
@@ -76,8 +76,18 @@ if (!file.exists(shp_file_path)) {
 # Unzip shapefile if it is not unzipped yet:
 shp_dir_unzipped <- paste0(shp_dir_zipped, sub("\\.zip$", "", shp_file_name))
 if (!dir.exists(shp_dir_unzipped)) {
-  unzip(shp_file_path, exdir = shp_dir_unzipped)
-  print(paste0("Unzipped to directory ", shp_dir_unzipped))
+  tryCatch(
+    {
+      unzip(shp_file_path, exdir = shp_dir_unzipped)
+      print(paste0("Unzipped to directory ", shp_dir_unzipped))
+    },
+    warning = function(warn) {
+      message(paste("Unzipping ", shp_file_path, " failed, reason: ", warn[1]))
+    },
+    error = function(err) {
+      message(paste("Unzipping ", shp_file_path, " failed, reason: ", warn[1]))
+    }
+  )
 } else {
   print(paste0("Directory ", shp_dir_unzipped, " already exists. Skipping unzip."))
 }
