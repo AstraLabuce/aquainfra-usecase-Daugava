@@ -40,7 +40,7 @@
     },
     "example": {
         "inputs": {
-            "input_data": "peri_conv.csv",
+            "input_data": "peri_conv.csv"
         }
     }
 }
