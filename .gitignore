@@ -8,3 +8,7 @@ shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp
 shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shx
 .Rhistory
 .Rproj.user
+
+__pycache__
+OLD
+config.json
