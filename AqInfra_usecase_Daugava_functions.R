@@ -46,6 +46,13 @@ in_lat_col_name_vis = "latitude"
 in_value_name_vis = "transparency_m"
 in_region_col_name = "HELCOM_ID"
 result_path_map_shapefile_points = "map_shapefile_insitu.html"
+# 6.2 vis: barplot_trend_results
+in_id_col = "polygon_id"
+in_test_value = "Tau_Value"
+in_p_value = "P_Value"
+in_p_value_threshold = "0.05"
+in_group = "season"
+result_path_barplot_trend_results = "barplot_trend_results.png"
 
 ## Imports
 #library(rgdal) # Outdated! See: https://cloud.r-project.org/web/packages/rgdal/index.html
@@ -286,80 +293,29 @@ mapview::mapshot(map_out, url = out_result_path_url)
 
 
 ### 6.2. barplot of trend analysis ####
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-in_data_path = "mk_trend_analysis_results.csv"
-in_id_col = "polygon_id"
-in_test_value = "Tau_Value"
-in_p_value = "P_Value"
-in_p_value_threshold = "0.05"
-in_group = "season"
-out_result_path = "barplot_trend_results.png"
 
-data_list_subgroups <- data.table::fread(in_data_path)
+data_list_subgroups <- data.table::fread(result_path_trend_analysis_mk)
 library(ggplot2)
 
-#plot the result for transparency
-barplot_trend_results <- function(data, 
-                            id = "polygon_id", 
-                            test_value = "value",
-                            p_value = "p_value",
-                            p_value_threshold = 0.05,
-                            group = "group"){
-  
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package \"ggplot2\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  if (!requireNamespace("viridis", quietly = TRUE)) {
-    stop("Package \"viridis\" must be installed to use this function.",
-         call. = FALSE)
-  }
-  # ggplot(aes(x=data[,which(names(data) == id)], #why which is not working properly??
-  #            y=data[,which(names(data) == test_value)]), 
-  #        data=data)+
-  #   geom_bar(aes(fill = data[,which(names(data) == group)], 
-  #                alpha = data[,which(names(data) == p_value)] > p_value_threshold),
-  #            width=0.6,
-  #            position = position_dodge(width=0.6),
-  #            stat = "identity")+
-    
-  ggplot(aes(
-    x = subset(data, select = names(data) == id)[[1]],
-    y = subset(data, select = names(data) == test_value)[[1]]
-  ), data = data) +
-    geom_bar(
-      aes(
-        fill = subset(data, select = names(data) == group)[[1]],
-        alpha = subset(data, select = names(data) == p_value)[[1]] > p_value_threshold
-      ),
-      width = 0.6,
-      position = position_dodge(width = 0.6),
-      stat = "identity"
-    ) +
-    scale_alpha_manual(values = c(1, 0.35), guide = "none") +
-    viridis::scale_fill_viridis(discrete = TRUE) +
-    theme_minimal() +
-    labs(
-      x = paste(id),
-      y = paste(test_value),
-      fill = paste(group),
-      caption = "*Translucent bars indicate statistically insignificant results"
-    ) +
-    theme_bw(base_size = 12) +
-    theme(legend.position = "top")
+# Read the function "barplot_trend_results" from current working directory:
+if ("barplot_trend_results.R" %in% list.files()){
+  source("barplot_trend_results.R")
+} else {
+  warning('Could not find file "barplot_trend_results.R" in current working dir!')
 }
 
+# Call the function:
+#plot the result for transparency
 barplot_trends <- barplot_trend_results(data = data_list_subgroups,
-                      id = "polygon_id",
-                      test_value = "Tau_Value",
-                      p_value = "P_Value",
-                      p_value_threshold = "0.05",
-                      group = "season")
+                      id = in_id_col,
+                      test_value = in_test_value,
+                      p_value = in_p_value,
+                      p_value_threshold = in_p_value_threshold,
+                      group = in_group)
 
-## Output: Now need to store output:
-print(paste0('Write result to csv file: ', out_result_path))
-ggsave(barplot_trends , file = out_result_path, dpi = 300) 
+# Write the result to csv file:
+print(paste0('Write result to image file: ', result_path_barplot_trend_results))
+ggsave(barplot_trends , file = result_path_barplot_trend_results, dpi = 300) 
 
 
 ### 6.3. trend result map ####
