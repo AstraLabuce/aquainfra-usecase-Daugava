@@ -67,7 +67,7 @@ class PeriConvProcessor(BaseProcessor):
             raise ProcessorExecuteError(user_msg=err_msg)
 
         # Run the R script:
-        R_SCRIPT_NAME = 'peri_conv.R'
+        R_SCRIPT_NAME = 'peri_conv_wrapper.R'
         r_args = [input_data_in_download_dir, date_col_name, group_to_periods, group_labels, year_starts_at_Dec1, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)

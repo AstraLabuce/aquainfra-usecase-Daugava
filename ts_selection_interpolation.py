@@ -69,7 +69,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
             raise ProcessorExecuteError(user_msg=err_msg)
 
         # Run the R script:
-        R_SCRIPT_NAME = 'ts_selection_interpolation.R'
+        R_SCRIPT_NAME = 'ts_selection_interpolation_wrapper.R'
         r_args = [input_data_in_download_dir, in_rel_cols, in_missing_threshold_percentage, in_year_colname, in_value_colname, in_min_data_point, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)

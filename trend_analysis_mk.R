@@ -4,17 +4,6 @@
 #RUN WITH
 #Rscript trend_analysis_mk.R "data_out_selected_interpolated.csv" "season, polygon_id" "Year_adj_generated" "Secchi_m_mean_annual" "mk_trend_analysis_results.csv"
 
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-in_data_path = args[1]
-in_rel_cols = strsplit(args[2], ",")[[1]] #todo: remove spaces if available. otherwise can result in subscript out of bounds error
-in_time_colname = args[3]
-in_value_colname = args[4]
-out_result_path = args[5]
-
-data_list_subgroups <- data.table::fread(in_data_path)
-
-
 trend_analysis_mk <- function(
     data,
     rel_cols,
@@ -80,15 +69,6 @@ trend_analysis_mk <- function(
     results_table <- data.frame(ID = table_names, period = period, Tau_Value = tau_values, P_Value = p_values)
     results_table <- tidyr::separate(results_table, ID, c("season", "polygon_id"), sep = ";")
     
-    # Print the results table
+    # Return the results table
     return(results_table)
 }   
-    
-out_mk <- trend_analysis_mk(data = data_list_subgroups,
-                  rel_cols = in_rel_cols,
-                  value_col = in_value_colname,
-                  time_colname = in_time_colname)
-
-## Output: Now need to store output:
-print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_mk , file = out_result_path) 

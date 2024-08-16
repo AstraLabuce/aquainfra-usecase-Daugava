@@ -5,23 +5,8 @@
                             # generates num variable 'Year_adjusted' to show change;
                             # generates chr variable 'season' to allow grouping the data based on season.
 
-#RUN WITH
-#Rscript peri_conv.R "data_out_point_att_polygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" TRUE "data_out_peri_conv.csv"
-
 library(lubridate)
 library(dplyr)
-
-## Args
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-in_data_path = args[1]
-in_date_col_name = args[2]
-in_group_to_periods = strsplit(args[3], ",")[[1]]
-in_group_labels = strsplit(args[4], ",")[[1]]
-in_year_starts_at_Dec1 = args[5]
-out_result_path = args[6]
-
-data_peri_conv <- data.table::fread(in_data_path)
 
 peri_conv <- function(data,
            date_col_name,
@@ -188,18 +173,6 @@ peri_conv <- function(data,
       data_regular,
       labels
     )
-    res[, -"dayoy"]
+    return(res[, -"dayoy"])
   }
 
-#test the function peri_conv
-out_peri_conv <-
-  peri_conv(
-    data = data_peri_conv,
-    date_col_name = in_date_col_name,
-    group_to_periods = in_group_to_periods,
-    group_labels = in_group_labels,
-    year_starts_at_Dec1 = in_year_starts_at_Dec1
-  )
-
-print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_peri_conv , file = out_result_path) 

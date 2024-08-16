@@ -65,7 +65,7 @@ class TrendAnalysisMkProcessor(BaseProcessor):
             raise ProcessorExecuteError(user_msg=err_msg)
 
         # Run the R script:
-        R_SCRIPT_NAME = 'trend_analysis_mk.R'
+        R_SCRIPT_NAME = 'trend_analysis_mk_wrapper.R'
         r_args = [input_data_in_download_dir, in_rel_cols, in_time_colname, in_value_colname, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)

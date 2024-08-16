@@ -7,18 +7,6 @@
 library(zoo)
 library(tidyr)
 
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-in_data_path = args[1]
-in_rel_cols = strsplit(args[2], ",")[[1]] #todo: remove spaces if available. otherwise can result in subscript out of bounds error
-in_missing_threshold_percentage = as.numeric(args[3])
-in_year_colname = args[4]
-in_value_colname = args[5]
-in_min_data_point = as.numeric(args[6])
-out_result_path = args[7]
-
-data_list_subgroups <- data.table::fread(in_data_path)
-
 # split data into sub-tables for each season and HELCOM_ID separately
 # Create a list to store sub-tables of transparency
 ts_selection_interpolation <- function(
@@ -135,15 +123,3 @@ ts_selection_interpolation <- function(
   
   return(res)
 }
-
-out_ts <- ts_selection_interpolation(
-  data = data_list_subgroups, 
-  rel_cols = in_rel_cols, 
-  missing_threshold = in_missing_threshold_percentage, 
-  year_col = in_year_colname,
-  value_col = in_value_colname,
-  min_data_point = in_min_data_point)
-
-## Output: Now need to store output:
-print(paste0('Write result to csv file: ', out_result_path))
-data.table::fwrite(out_ts , file = out_result_path) 
