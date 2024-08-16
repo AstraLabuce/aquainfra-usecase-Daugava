@@ -2,7 +2,7 @@
 ## 4. TimeSeries selection and interpolation of NAs ####
 ##############################################################################################.
 ## RUN WITH
-## Rscript ts_selection_interpolation.R "data_out_seasonal_means.csv" "group_labels,HELCOM_ID" 40 "Year_adj_generated" "Secchi_m_mean_annual" 10 "data_out_selected_interpolated.csv"
+## Rscript ts_selection_interpolation_wrapper.R "data_out_seasonal_means.csv" "group_labels,HELCOM_ID" 40 "Year_adj_generated" "Secchi_m_mean_annual" 10 "data_out_selected_interpolated.csv"
 
 library(jsonlite)
 

@@ -13,6 +13,51 @@ of one function is used as the input to the next one.
 1. mean_by_group
 1. ts_selection_interpolation
 1. trend_analysis_mk
+1. Some visualisations...
+
+The main script is `AqInfra_usecase_Daugava_functions.R`, which you can run
+after adapting the paths to inputs/ouputs inside the file.
+
+You can also run each function separately from command line, like this:
+
+```
+# 1
+Rscript points_att_polygon_wrapper.R "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip" "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx" "longitude" "latitude" "data_out_point_att_polygon.csv"
+
+# 2
+Rscript peri_conv_wrapper.R "data_out_point_att_polygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" TRUE "data_out_peri_conv.csv"
+
+# 3
+Rscript mean_by_group.R "data_out_peri_conv.csv" "data_out_seasonal_means.csv"
+
+# 4
+Rscript ts_selection_interpolation_wrapper.R "data_out_seasonal_means.csv" "group_labels,HELCOM_ID" 40 "Year_adj_generated" "Secchi_m_mean_annual" 10 "data_out_selected_interpolated.csv"
+
+# 5
+Rscript trend_analysis_mk_wrapper.R "data_out_selected_interpolated.csv" "season,polygon_id" "Year_adj_generated" "Secchi_m_mean_annual" "mk_trend_analysis_results.csv"
+
+# 6.1
+TODO
+
+# 6.2
+TODO
+
+# 6.3
+TODO
+
+# 6.4
+TODO
+```
+
+For this, you should have a `config.json` in your current working directory that
+points the script to the input data directory:
+
+```
+cat config.json
+{
+    "input_data_dir": "/home/donaldduck/example_inputs/",
+}
+```
 
 
 These R packages must be installed in order to run the functionality in

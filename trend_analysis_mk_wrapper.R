@@ -2,7 +2,7 @@
 ## 5. trend_analysis Mann Kendall ####
 ##############################################################################################.
 #RUN WITH
-#Rscript trend_analysis_mk.R "data_out_selected_interpolated.csv" "season, polygon_id" "Year_adj_generated" "Secchi_m_mean_annual" "mk_trend_analysis_results.csv"
+#Rscript trend_analysis_mk_wrapper.R "data_out_selected_interpolated.csv" "season, polygon_id" "Year_adj_generated" "Secchi_m_mean_annual" "mk_trend_analysis_results.csv"
 
 library(jsonlite)
 
