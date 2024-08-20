@@ -35,11 +35,13 @@ inputs = {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "long_col_name": "longitude",
         "lat_col_name": "latitude",
-        "points": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx"
+        #"points": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx"
+        "points": "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv"
     } 
 }
 resp = session.post(url, headers=headers, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
+print('Result: %s' % resp.content)
 print('Result: %s' % resp.json())
 
 # Get input for next from output of last

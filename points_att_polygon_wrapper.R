@@ -136,8 +136,20 @@ if (!file.exists(excel_file_path)) {
 # load in situ data and respective metadata (geolocation and date are mandatory metadata)
 # in_situ_data/in_situ_example.xlsx : example data from https://latmare.lhei.lv/
 # in_situ_data/Latmare_20240111_secchi_color.xlsx : # data from LIAE data base from https://latmare.lhei.lv/
+if ( endsWith(excel_file_path, 'xlsx')) {
+print('FOUND XLSX PATH')
 data_raw <- readxl::read_excel(excel_file_path) %>%
   janitor::clean_names()
+
+} else if (endsWith(excel_file_path, 'csv')) {
+print('FOUND CSV PATH')
+data_raw <- read.csv(excel_file_path) %>%
+  janitor::clean_names()
+
+  # Apparently col names are shortened when loading from csv:
+  colnames(data_raw)[colnames(data_raw)=="transparen"] <- "transparency_m"
+
+}
 
 # list relevant columns: geolocation (lat and lon), date and values for data points are mandatory
 rel_columns <- c(
