@@ -37,6 +37,9 @@ in_long_col_name <- args[3]
 in_lat_col_name <- args[4]
 out_result_path <- args[5]
 
+
+## input 1/2: shapefile
+
 # Define the directory and local file path for the shape file
 url_parts_shp <- strsplit(in_shp_url, "/")[[1]]
 shp_file_name <- url_parts_shp[length(url_parts_shp)]
@@ -96,11 +99,16 @@ if (dir.exists(shp_dir_unzipped)) {
 ## TODO: Make more format agnostic??
 shapefile <- st_read(shp_dir_unzipped)
 
+
+## input 2/2: Table
+
 # Define the directory and local file path for the Excel file
 in_situ_directory <- paste0(input_data_dir, "in_situ_data/")
 url_parts_excel <- strsplit(in_dpoints_url, "/")[[1]]
 excel_file_name <- url_parts_excel[length(url_parts_excel)]
 excel_file_path <- paste0(in_situ_directory, excel_file_name)
+# TODO: This leads to a filename "items?f=csv&limit=3000"
+# when downloading from DDAS URL: https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000
 
 # Ensure the in_situ_data directory exists, create if not
 if (!dir.exists(in_situ_directory)) {
@@ -136,22 +144,23 @@ if (!file.exists(excel_file_path)) {
 # load in situ data and respective metadata (geolocation and date are mandatory metadata)
 # in_situ_data/in_situ_example.xlsx : example data from https://latmare.lhei.lv/
 # in_situ_data/Latmare_20240111_secchi_color.xlsx : # data from LIAE data base from https://latmare.lhei.lv/
-  tryCatch(
-    {
-      data_raw <- readxl::read_excel(excel_file_path) %>%
-        janitor::clean_names()
-      print(paste0("Excel file ", excel_file_path, " read"))
-    },
-    error = function(err) {
-      data_raw <- read.csv(excel_file_path) %>%
-        janitor::clean_names()
-      # Apparently col names are shortened when loading from csv:
-      # TODO (Astra?): This depends on the column names the user passes/ the rel_columns. How to make this generic...
-      colnames(data_raw)[colnames(data_raw)=="transparen"] <- "transparency_m"
-      print(paste0("CSV file ", excel_file_path, " read"))
-    }
-  )
+data_raw <-tryCatch(
+  {
+    data_raw <- readxl::read_excel(excel_file_path) %>%
+      janitor::clean_names()
+    print(paste0("Excel file ", excel_file_path, " read"))
+    data_raw # this is needed so it is stored in data_raw! return(data_raw) does not work!
+  },
+  error = function(err) {
+    data_raw <- read.csv(excel_file_path) %>% janitor::clean_names()
 
+    # Apparently col names are shortened when loading from csv:
+    # TODO (Astra?): This depends on the column names the user passes/ the rel_columns. How to make this generic...
+    colnames(data_raw)[colnames(data_raw)=="transparen"] <- "transparency_m"
+    print(paste0("CSV file ", excel_file_path, " read"))
+    return(data_raw)
+  }
+)
 
 # list relevant columns: geolocation (lat and lon), date and values for data points are mandatory
 rel_columns <- c(
