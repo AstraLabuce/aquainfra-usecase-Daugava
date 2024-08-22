@@ -119,6 +119,7 @@ ts_selection_interpolation <- function(
     sub_tables_subset_out[unname(unlist(sapply(short_datasets, function(i) lapply(i, "[[", 1))[1,]) > min_data_point)]
   # transform list to data.frame
   res <- data.frame(Reduce(rbind, sub_tables_subset_out))
+  # TODO Check (Astra?): Are we sure season and polygon_id are here?
   res <- tidyr::separate(res, ID, c("season", "polygon_id"), sep = ";")
   
   return(res)

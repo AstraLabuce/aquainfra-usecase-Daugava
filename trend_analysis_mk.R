@@ -67,6 +67,7 @@ trend_analysis_mk <- function(
     
     # Combine data into a data frame
     results_table <- data.frame(ID = table_names, period = period, Tau_Value = tau_values, P_Value = p_values)
+    # TODO Check (Astra?): Are we sure season and polygon_id are here?
     results_table <- tidyr::separate(results_table, ID, c("season", "polygon_id"), sep = ";")
     
     # Return the results table

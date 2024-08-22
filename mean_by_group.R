@@ -17,6 +17,7 @@ input_data_path = args[1]
 output_data_path = args[2]
 
 data_mean_by_group <- data.table::fread(input_data_path)
+# TODO Astra: The column names "transparency_m", "Seechi_m_mean", "Secchi_m_mean_annual" are hard-coded here --> Make "arg" (1 or several?) and let user pass it!
 data_mean_by_group$transparency_m <- as.numeric(data_mean_by_group$transparency_m)
 
 out_seasonal_means <- data_mean_by_group %>%
