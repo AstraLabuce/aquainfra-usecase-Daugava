@@ -104,9 +104,9 @@ shapefile <- st_read(shp_dir_unzipped)
 
 # Define the directory and local file path for the Excel file
 in_situ_directory <- paste0(input_data_dir, "in_situ_data/")
-url_parts_excel <- strsplit(in_dpoints_url, "/")[[1]]
-excel_file_name <- url_parts_excel[length(url_parts_excel)]
-excel_file_path <- paste0(in_situ_directory, excel_file_name)
+url_parts_table <- strsplit(in_dpoints_url, "/")[[1]]
+table_file_name <- url_parts_table[length(url_parts_table)]
+table_file_path <- paste0(in_situ_directory, table_file_name)
 # TODO: This leads to a filename "items?f=csv&limit=3000"
 # when downloading from DDAS URL: https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000
 
@@ -120,44 +120,45 @@ if (!dir.exists(in_situ_directory)) {
   }
 }
 
-# Download excel if it doesn't exist:
-# TODO: Problem: If someone wants to use an excelfile that happens to have the same name! Should use PIDs.
-print(paste0('Checking if excel file exists: ', excel_file_path))
-if (!file.exists(excel_file_path)) {
+# Download excel/csv if it doesn't exist:
+# TODO: Problem: If someone wants to use an xls/csv file that happens to have the same name! Should use PIDs.
+print(paste0('Checking if input table file exists: ', table_file_path))
+if (!file.exists(table_file_path)) {
   tryCatch(
     {
-      download.file(in_dpoints_url, excel_file_path, mode = "wb")
-      print(paste0("File ", excel_file_path, " downloaded."))
+      download.file(in_dpoints_url, table_file_path, mode = "wb")
+      print(paste0("File ", table_file_path, " downloaded."))
     },
     warning = function(warn) {
-      message(paste("Download of excel failed, reason: ", warn[1]))
+      message(paste("Download of input table failed, reason: ", warn[1]))
     },
     error = function(err) {
-      message(paste("Download of excel failed, reason: ", err[1]))
+      message(paste("Download of input table failed, reason: ", err[1]))
     }
   )
 } else {
-  print(paste0("File ", excel_file_path, " already exists. Skipping download."))
+  print(paste0("File ", table_file_path, " already exists. Skipping download."))
 }
 
-# Read excel file
+# Read excel or CSV file
 # load in situ data and respective metadata (geolocation and date are mandatory metadata)
+# from DDAS: https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=10000
 # in_situ_data/in_situ_example.xlsx : example data from https://latmare.lhei.lv/
 # in_situ_data/Latmare_20240111_secchi_color.xlsx : # data from LIAE data base from https://latmare.lhei.lv/
 data_raw <-tryCatch(
   {
-    data_raw <- readxl::read_excel(excel_file_path) %>%
+    data_raw <- readxl::read_excel(table_file_path) %>%
       janitor::clean_names()
-    print(paste0("Excel file ", excel_file_path, " read"))
+    print(paste0("Excel file ", table_file_path, " read"))
     data_raw # this is needed so it is stored in data_raw! return(data_raw) does not work!
   },
   error = function(err) {
-    data_raw <- read.csv(excel_file_path) %>% janitor::clean_names()
+    data_raw <- read.csv(table_file_path) %>% janitor::clean_names()
 
     # Apparently col names are shortened when loading from csv:
     # TODO (Astra?): This depends on the column names the user passes/ the rel_columns. How to make this generic...
     colnames(data_raw)[colnames(data_raw)=="transparen"] <- "transparency_m"
-    print(paste0("CSV file ", excel_file_path, " read"))
+    print(paste0("CSV file ", table_file_path, " read"))
     return(data_raw)
   }
 )
