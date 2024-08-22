@@ -22,7 +22,7 @@ trend_analysis_mk <- function(
   err = paste0("Error: `", value_colname, "` is not numeric.")
   stopifnot(err =
               is.numeric(as.data.frame(data)[, names(data) == value_colname]))
-  err = paste0("Error: `", in_time_colname, "` is not numeric.")
+  err = paste0("Error: `", time_colname, "` is not numeric.")
   stopifnot(err =
               is.numeric(as.data.frame(data)[, names(data) == time_colname]))
   
