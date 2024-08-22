@@ -75,8 +75,24 @@ shapefile <- sf::st_read(in_shp_path)
 # locate in situ data set manually
 # load in situ data and respective metadata (geolocation and date are mandatory metadata)
 # example data
-data_raw <- readxl::read_excel(in_dpoints_path) %>% #example data from https://latmare.lhei.lv/
-  janitor::clean_names() # makes column names clean for R
+#data_raw <- readxl::read_excel(in_dpoints_path) %>% #example data from https://latmare.lhei.lv/
+#  janitor::clean_names() # makes column names clean for R
+tryCatch(
+  {
+    data_raw <- readxl::read_excel(in_dpoints_path) %>%
+      janitor::clean_names()
+    print(paste0("Excel file ", in_dpoints_path, " read"))
+  },
+  error = function(err) {
+    data_raw <- read.csv(in_dpoints_path) %>%
+      janitor::clean_names()
+    # Apparently col names are shortened when loading from csv:
+    # TODO (Astra?): This depends on the column names the user passes/ the rel_columns. How to make this generic...
+    colnames(data_raw)[colnames(data_raw)=="transparen"] <- "transparency_m"
+    print(paste0("CSV file ", in_dpoints_path, " read"))
+  }
+)
+
 
 #############.
 # this is for our local full data set
