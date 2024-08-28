@@ -2,11 +2,6 @@
 ### static map
 ###
 
-library(tmap)
-library(tmaptools)
-library(rosm)
-library(sf)
-
 map_trends_static <- function(shp, data, 
                                    id_trend_col = "id",
                                    id_shp_col = "id",

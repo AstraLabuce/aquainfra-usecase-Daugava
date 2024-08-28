@@ -7,6 +7,7 @@ library(tmap)
 library(tmaptools)
 library(rosm)
 library(sf)
+library(jsonlite)
 
 ## Run:
 ## Rscript map_trends_static_wrapper.R "shp/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp" "mk_trend_analysis_results.csv" "polygon_id" "HELCOM_ID" "season" "P_Value" "0.05" "map_trend_results.png"
