@@ -16,8 +16,8 @@ curl --location 'http://localhost:5000/processes/map-trends-static/execution' \
         "id_trend_col": "polygon_id",
         "id_shp_col": "HELCOM_ID",
         "group": "season",
-        "p_value_threshold": "0.05",
-        "p_value": "P_Value"
+        "p_value_col": "P_Value"
+        "p_value_threshold": "0.05"
     } 
 }'
 '''
@@ -55,7 +55,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
         in_id_shp_col = data.get('id_shp_col', 'P_Value')
         in_group = data.get('group', '0.05')
         in_p_value_threshold = data.get('p_value_threshold', 'season')
-        in_p_value = data.get('p_value', 'season')
+        in_p_value_col = data.get('p_value_col', 'season')
         
         # Where to store output data
         downloadfilename = 'map_trends_static-%s.png' % self.my_job_id
@@ -63,7 +63,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
 
         # Run the R script:
         R_SCRIPT_NAME = 'map_trends_static_wrapper.R'
-        r_args = [in_shp_url, in_trend_results_path, in_id_trend_col, in_id_shp_col, in_group, in_p_value, in_p_value_threshold, downloadfilepath]
+        r_args = [in_shp_url, in_trend_results_path, in_id_trend_col, in_id_shp_col, in_group, in_p_value_col, in_p_value_threshold, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script('1', LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
