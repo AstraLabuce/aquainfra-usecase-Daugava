@@ -1,6 +1,7 @@
 ### 6.2. barplot of trend analysis ####
 
 library(ggplot2)
+library(jsonlite)
 
 ## Run:
 ## Rscript barplot_trend_results_wrapper.R "mk_trend_analysis_results.csv" "polygon_id" "Tau_Value" "P_Value" "0.05" "season" "barplot_trend_results.png"

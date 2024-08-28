@@ -1,0 +1,97 @@
+{
+    "version": "0.1.0",
+    "id": "barplot-trend-analysis",
+    "title": {
+        "en": "barplot-trend-analysis"
+    },
+    "description": {
+        "en": "barplot-trend-analysis"
+    },
+    "jobControlOptions": ["sync-execute", "async-execute"],
+    "keywords": ["hello world", "example", "echo"],
+    "links": [{
+        "type": "text/html",
+        "rel": "about",
+        "title": "information",
+        "href": "https://example.org/process",
+        "hreflang": "en-US"
+    }],
+    "inputs": {
+        "data": {
+            "title": "data",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "id_col": {
+            "title": "id_col",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "test_value": {
+            "title": "test_value",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "p_value": {
+            "title": "p_value",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "p_value_threshold": {
+            "title": "p_value_threshold",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "group": {
+            "title": "group",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        }
+    },
+    "outputs": {
+        "echo": {
+            "title": "Hello, world",
+            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+            "schema": {
+                "type": "object",
+                "contentMediaType": "application/html"
+            }
+        }
+    },
+    "example": {
+        "inputs": {
+            "name": "World",
+            "message": "An optional message."
+        }
+    }
+}
