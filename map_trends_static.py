@@ -49,13 +49,13 @@ class MapTrendsStaticProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_shp_url = data.get('shp_url', 'https://.../mk_trend_analysis_results.csv')
-        in_trend_results_path = data.get('trend_results_path', 'polygon_id')
-        in_id_trend_col = data.get('id_trend_col', 'Tau_Value')
-        in_id_shp_col = data.get('id_shp_col', 'P_Value')
-        in_group = data.get('group', '0.05')
-        in_p_value_threshold = data.get('p_value_threshold', 'season')
-        in_p_value_col = data.get('p_value_col', 'season')
+        in_shp_url = data.get('shp_url', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
+        in_trend_results_path = data.get('trend_results_path', 'https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv')
+        in_id_trend_col = data.get('id_trend_col', 'polygon_id')
+        in_id_shp_col = data.get('id_shp_col', 'HELCOM_ID')
+        in_group = data.get('group', 'season')
+        in_p_value_threshold = data.get('p_value_threshold', '0.05')
+        in_p_value_col = data.get('p_value_col', 'P_Value')
         
         # Where to store output data
         downloadfilename = 'map_trends_static-%s.png' % self.my_job_id
