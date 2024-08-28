@@ -38,10 +38,7 @@ class MapShapefilePointsProcessor(BaseProcessor):
         self.my_job_id = job_id
 
     def execute(self, data, outputs=None):
-
-        # Get config
-        config_file_path = os.environ.get('DAUGAVA_CONFIG_FILE', "./config.json")
-        with open(config_file_path, 'r') as configFile:
+        with open("./pygeoapi/process/config.json") as configFile:
             configJSON = json.load(configFile)
 
         download_dir = configJSON["download_dir"]
@@ -50,7 +47,7 @@ class MapShapefilePointsProcessor(BaseProcessor):
 
         # Get user inputs
         in_shp_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
-        in_dpoints_url = data.get('points', 'https://raw.githubusercontent.com/AstraLabuce/aquainfra-usecase-Daugava/main/in_situ_data/in_situ_example.xlsx')
+        in_dpoints_url = data.get('points', 'https://...data_out_point_att_polygon.csv')
         in_long_col_name = data.get('long_col_name', 'longitude')
         in_lat_col_name = data.get('lat_col_name', 'latitude')
         in_value_name = data.get('value_name', 'transparency_m')
