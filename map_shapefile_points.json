@@ -1,0 +1,97 @@
+{
+    "version": "0.1.0",
+    "id": "map-shapefile-points",
+    "title": {
+        "en": "map-shapefile-points"
+    },
+    "description": {
+        "en": "map-shapefile-points"
+    },
+    "jobControlOptions": ["sync-execute", "async-execute"],
+    "keywords": ["hello world", "example", "echo"],
+    "links": [{
+        "type": "text/html",
+        "rel": "about",
+        "title": "information",
+        "href": "https://example.org/process",
+        "hreflang": "en-US"
+    }],
+    "inputs": {
+        "regions": {
+            "title": "regions",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "points": {
+            "title": "points",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "long_col_name": {
+            "title": "Column name for longitude",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "lat_col_name": {
+            "title": "Column name for latiitude",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "value_name": {
+            "title": "Value name",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        },
+        "region_col_name": {
+            "title": "region name",
+            "description": "astra",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["full name", "personal"]
+        }
+    },
+    "outputs": {
+        "echo": {
+            "title": "Hello, world",
+            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+            "schema": {
+                "type": "object",
+                "contentMediaType": "application/html"
+            }
+        }
+    },
+    "example": {
+        "inputs": {
+            "name": "World",
+            "message": "An optional message."
+        }
+    }
+}
