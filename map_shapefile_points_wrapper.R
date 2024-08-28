@@ -18,7 +18,7 @@ library(jsonlite)
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
 in_shp_url <- args[1]      # e.g. "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip"
-in_dpoints_path <- args[2]  # e.g. "data_out_point_att_polygon.csv"
+in_dpoints_path <- args[2]  # e.g. "https://..../data_out_point_att_polygon.csv"
 in_long_col_name <- args[3] # e.g. "longitude"
 in_lat_col_name <- args[4]  # e.g. "latitude"
 in_value_name <- args[5]    # e.g. "transparency_m"
