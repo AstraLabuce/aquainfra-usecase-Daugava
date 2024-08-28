@@ -1,11 +1,11 @@
 {
     "version": "0.1.0",
-    "id": "map_trends_static",
+    "id": "map-trends-static",
     "title": {
-        "en": "map_trends_static"
+        "en": "map-trends-static"
     },
     "description": {
-        "en": "map_trends_static"
+        "en": "map-trends-static"
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],

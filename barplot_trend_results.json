@@ -1,11 +1,11 @@
 {
     "version": "0.1.0",
-    "id": "barplot-trend-analysis",
+    "id": "barplot-trend-results",
     "title": {
-        "en": "barplot-trend-analysis"
+        "en": "barplot-trend-results"
     },
     "description": {
-        "en": "barplot-trend-analysis"
+        "en": "barplot-trend-results"
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],

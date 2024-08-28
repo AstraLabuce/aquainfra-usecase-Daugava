@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
-curl --location 'http://localhost:5000/processes/map_shapefile_points/execution' \
+curl --location 'http://localhost:5000/processes/map-shapefile-points/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {

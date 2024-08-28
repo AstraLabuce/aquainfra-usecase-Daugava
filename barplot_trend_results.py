@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
-curl --location 'http://localhost:5000/processes/barplot_trend_results/execution' \
+curl --location 'http://localhost:5000/processes/barplot-trend-results/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
