@@ -14,7 +14,7 @@ curl --location 'http://localhost:5000/processes/map-shapefile-points/execution'
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "long_col_name": "longitude",
         "lat_col_name": "latitude",
-        "points": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx",
+        "points": "https://aqua.igb-berlin.de/download/testinputs/point_att_polygon.csv",
         "value_name": "transparency_m",
         "region_col_name": "HELCOM_ID"
     } 
