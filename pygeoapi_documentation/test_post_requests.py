@@ -26,6 +26,9 @@ result_peri_conv = None
 result_mean_by_group = None
 result_trend_analysis = None
 result_ts_selection_interpolation = None
+result_map_shapefile_points = None
+result_map_trends_static = None
+result_barplot_trend_results = None
 
 
 ##########################
@@ -160,9 +163,97 @@ print('Next input: %s' % result_trend_analysis)
 
 
 
+############################
+### map_shapefile_points ### 6.1
+############################
+name = "map_shapefile_points"
+print('\nCalling %s...' % name)
+url = base_url+'/processes/map-shapefile-points/execution'
+inputs = {
+    "inputs": {
+        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "long_col_name": "longitude",
+        "lat_col_name": "latitude",
+        "points": result_points_att_polygon or "https://aqua.igb-berlin.de/download/points_att_polygon-84f3986a-5b1f-11ef-b00a-df74de895c41.csv",
+        "value_name": "transparency_m",
+        "region_col_name": "HELCOM_ID"
+    }
+}
+resp = session.post(url, headers=headers, json=inputs)
+print('Calling %s... done. HTTP %s' % (name, resp.status_code))
+print('Result: %s' % resp.json())
+
+# Get input for next from output of last
+href = resp.json()['outputs']['map_shapefile_points']['href']
+result_map_shapefile_points = href.split('/')[-1]
+print('Output: %s' % href)
+print('Next input: %s' % result_map_shapefile_points)
+
+
+#############################
+### barplot_trend_results ### 6.2
+#############################
+name = "barplot_trend_results"
+print('\nCalling %s...' % name)
+url = base_url+'/processes/barplot-trend-results/execution'
+inputs = {
+    "inputs": {
+        "data": result_trend_analysis or "https://aqua.igb-berlin.de/download/trend_analysis_mk-0aaf4a34-5bb7-11ef-b00a-df74de895c41.csv",
+        "id_col": "polygon_id",
+        "test_value": "Tau_Value",
+        "p_value": "P_Value",
+        "p_value_threshold": "0.05",
+        "group": "season"
+    }
+}
+resp = session.post(url, headers=headers, json=inputs)
+print('Calling %s... done. HTTP %s' % (name, resp.status_code))
+print('Result: %s' % resp.json())
+
+# Get input for next from output of last
+href = resp.json()['outputs']['batplot_trend_results']['href']
+result_barplot_trend_results = href.split('/')[-1]
+print('Output: %s' % href)
+print('Next input: %s' % result_barplot_trend_results)
+
+
+##############################
+### map_trends_interactive ### 6.3
+##############################
+
+## Not implemented!
+
+#########################
+### map_trends_static ### 6.4
+#########################
+name = "map_trends_static"
+print('\nCalling %s...' % name)
+url = base_url+'/processes/map-trends-static/execution'
+inputs = {
+    "inputs": {
+        "shp_url": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "trend_results_path": result_trend_analysis or "https://aqua.igb-berlin.de/download/trend_analysis_mk-0aaf4a34-5bb7-11ef-b00a-df74de895c41.csv",
+        "id_trend_col": "polygon_id",
+        "id_shp_col": "HELCOM_ID",
+        "group": "season",
+        "p_value_threshold": "0.05",
+        "p_value": "P_Value"
+    }
+}
+resp = session.post(url, headers=headers, json=inputs)
+print('Calling %s... done. HTTP %s' % (name, resp.status_code))
+print('Result: %s' % resp.json())
+
+# Get input for next from output of last
+href = resp.json()['outputs']['map_trends_static']['href']
+result_map_trends_static = href.split('/')[-1]
+print('Output: %s' % href)
+print('Next input: %s' % result_map_trends_static)
+
+
 ###################
 ### Finally ... ###
 ###################
-print('Final output: %s' % result_trend_analysis)
+print('Final output: %s' % 'which is the final one? TODO')
 print('Done!')
 
