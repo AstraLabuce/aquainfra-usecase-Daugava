@@ -14,8 +14,8 @@ library(sf)
 # Retrieve command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
-in_shp_path <- args[1] # e.g. "shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp"
-in_trend_results_path <- args[2] # e.g. "mk_trend_analysis_results.csv"
+in_shp_url <- args[1]      # e.g. "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip"
+in_trend_results_path <- args[2] # e.g. "https://..../mk_trend_analysis_results.csv"
 in_id_trend_col <- args[3] # e.g. "polygon_id"
 in_id_shp_col <- args[4] # e.g. "HELCOM_ID"
 in_group <- args[5] # e.g. "season"
@@ -43,8 +43,64 @@ if (file.exists(config_file_path)) {
 
 # Read input data
 data <- data.table::fread(in_trend_results_path)
-in_shp_path <- paste0(input_data_dir, in_shp_path)
-shapefile <- sf::st_read(in_shp_path)
+# Define the directory and local file path for the shape file
+url_parts_shp <- strsplit(in_shp_url, "/")[[1]]
+shp_file_name <- url_parts_shp[length(url_parts_shp)]
+shp_dir_zipped <- paste0(input_data_dir, "shp/")
+shp_file_path <- paste0(shp_dir_zipped, shp_file_name)
+
+# Ensure the shapefile directory exists, create if not
+print(paste0('Checking whether this file exists: ', shp_file_path))
+if (!dir.exists(shp_dir_zipped)) {
+  success <- dir.create(shp_dir_zipped, recursive = TRUE)
+  if (success) {
+    print(paste0("Directory ", shp_dir_zipped, " created."))
+  } else {
+    stop(paste0("Directory ", shp_dir_zipped, " not created (failed)."))
+  }
+}
+
+# Download shapefile if it doesn't exist:
+# TODO: Problem: If someone wants to use a shapefile that happens to have the same name! Should use PIDs.
+if (file.exists(shp_file_path)) {
+  print(paste0("File ", shp_file_path, " already exists. Skipping download."))
+} else {
+  tryCatch(
+    {
+      download.file(in_shp_url, shp_file_path, mode = "wb")
+      print(paste0("File ", shp_file_path, " downloaded."))
+    },
+    warning = function(warn) {
+      stop(paste("Download of shapefile failed, reason: ", warn[1]))
+    },
+    error = function(err) {
+      stop(paste("Download of shapefile failed, reason: ", err[1]))
+    }
+  )
+}
+
+# Unzip shapefile if it is not unzipped yet:
+shp_dir_unzipped <- paste0(shp_dir_zipped, sub("\\.zip$", "", shp_file_name))
+if (dir.exists(shp_dir_unzipped)) {
+    print(paste0("Directory ", shp_dir_unzipped, " already exists. Skipping unzip."))
+} else {
+  tryCatch(
+    {
+      unzip(shp_file_path, exdir = shp_dir_unzipped)
+      print(paste0("Unzipped to directory ", shp_dir_unzipped))
+    },
+    warning = function(warn) {
+      message(paste("Unzipping ", shp_file_path, " failed, reason: ", warn[1]))
+    },
+    error = function(err) {
+      message(paste("Unzipping ", shp_file_path, " failed, reason: ", warn[1]))
+    }
+  )
+}
+
+# Read shapefile
+## TODO: Make more format agnostic??
+shapefile <- st_read(shp_dir_unzipped)
 
 # Read the function "map_trends_static" either from current working directory,
 # or read the directory from config!
