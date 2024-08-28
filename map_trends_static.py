@@ -63,7 +63,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
 
         # Run the R script:
         R_SCRIPT_NAME = 'map_trends_static_wrapper.R'
-        r_args = [in_shp_url, in_trend_results_path, in_id_trend_col, in_id_shp_col, in_group, in_p_value_threshold, in_p_value, downloadfilepath]
+        r_args = [in_shp_url, in_trend_results_path, in_id_trend_col, in_id_shp_col, in_group, in_p_value, in_p_value_threshold, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script('1', LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
