@@ -21,14 +21,22 @@ headers = {'Content-Type': 'application/json'}
 
 # Get started...
 session = requests.Session()
-result_points_att_polygon = None
-result_peri_conv = None
-result_mean_by_group = None
-result_trend_analysis = None
-result_ts_selection_interpolation = None
-result_map_shapefile_points = None
-result_map_trends_static = None
-result_barplot_trend_results = None
+result_points_att_polygon_local = None
+result_points_att_polygon_url = None
+result_peri_conv_local = None
+result_peri_conv_url = None
+result_mean_by_group_local = None
+result_mean_by_group_url = None
+result_trend_analysis_local = None
+result_trend_analysis_url = None
+result_ts_selection_interpolation_local = None
+result_ts_selection_interpolation_url = None
+result_map_shapefile_points_local = None
+result_map_shapefile_points_url = None
+result_map_trends_static_local = None
+result_map_trends_static_url = None
+result_barplot_trend_results_local = None
+result_barplot_trend_results_url = None
 
 
 ##########################
@@ -53,9 +61,10 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['points_att_polygon']['href']
-result_points_att_polygon = href.split('/')[-1]
+result_points_att_polygon_local = href.split('/')[-1] # TODO: At the moment, peri conv expects data on server, not URL!
+result_points_att_polygon_url = href
 print('Output: %s' % href)
-print('Next input: %s' % result_points_att_polygon)
+print('Next input: %s' % result_points_att_polygon_url)
 
 
 #################
@@ -66,7 +75,8 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/peri-conv/execution'
 inputs = {
     "inputs": {
-        "input_data": result_points_att_polygon or "https://aqua.igb-berlin.de/download/points_att_polygon-84f3986a-5b1f-11ef-b00a-df74de895c41.csv",
+        #"input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
+        "input_data": result_points_att_polygon_local or "testinputs/points_att_polygon.csv",
         "date_col_name": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
@@ -79,9 +89,10 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['peri_conv']['href']
-result_peri_conv = href.split('/')[-1]
+result_peri_conv_local = href.split('/')[-1] # TODO: At the moment, mean by group expects data on server, not URL!
+result_peri_conv_url = href
 print('Output: %s' % href)
-print('Next input: %s' % result_peri_conv)
+print('Next input: %s' % result_peri_conv_url)
 
 
 
@@ -93,7 +104,8 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/mean-by-group/execution'
 inputs = {
     "inputs": {
-        "input_data": result_peri_conv or "https://aqua.igb-berlin.de/download/peri_conv_63349a0a-5b27-11ef-b00a-df74de895c41.csv"
+        #"input_data": result_peri_conv_url or "https://aqua.igb-berlin.de/download/testinputs/peri_conv.csv"
+        "input_data": result_peri_conv_local or "testinputs/peri_conv.csv"
 
     }
 }
@@ -103,9 +115,10 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['mean_by_group']['href']
-result_mean_by_group = href.split('/')[-1]
+result_mean_by_group_local = href.split('/')[-1]
+result_mean_by_group_url = href
 print('Output: %s' % href)
-print('Next input: %s' % result_mean_by_group)
+print('Next input: %s' % result_mean_by_group_url)
 
 
 
@@ -117,7 +130,8 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/ts-selection-interpolation/execution'
 inputs = {
     "inputs": {
-        "input_data": result_mean_by_group or "https://aqua.igb-berlin.de/download/mean_by_group_fa098084-5b28-11ef-b00a-df74de895c41.csv",
+        #"input_data": result_mean_by_group_url or "https://aqua.igb-berlin.de/download/testinputs/mean_by_group.csv",
+        "input_data": result_mean_by_group_local or "testinputs/mean_by_group.csv",
         "rel_cols": "group_labels,HELCOM_ID",
         "missing_threshold_percentage": "40",
         "year_colname": "Year_adj_generated",
@@ -131,9 +145,10 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['ts_selection_interpolation']['href']
-result_ts_selection_interpolation = href.split('/')[-1]
+result_ts_selection_interpolation_local = href.split('/')[-1]
+result_ts_selection_interpolation_url = href  # TODO: At the moment, ts_selection expects data on server, not URL!
 print('Output: %s' % href)
-print('Next input: %s' % result_ts_selection_interpolation)
+print('Next input: %s' % result_ts_selection_interpolation_url)
 
 
 
@@ -145,7 +160,8 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/trend-analysis-mk/execution'
 inputs = {
     "inputs": {
-        "input_data": result_ts_selection_interpolation or "https://aqua.igb-berlin.de/download/ts_selection_interpolation-22a36618-5b29-11ef-b00a-df74de895c41.csv",
+        #"input_data": result_ts_selection_interpolation_url or "https://aqua.igb-berlin.de/download/testinputs/ts_selection_interpolation.csv",
+        "input_data": result_ts_selection_interpolation_local or "testinputs/ts_selection_interpolation.csv",
         "rel_cols": "season,polygon_id",
         "time_colname": "Year_adj_generated",
         "value_colname": "Secchi_m_mean_annual"
@@ -157,9 +173,10 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['trend_analysis_mk']['href']
-result_trend_analysis = href.split('/')[-1]
+result_trend_analysis_local = href.split('/')[-1]
+result_trend_analysis_url = href #  # TODO: At the moment, mean by group expects data on server, not URL!
 print('Output: %s' % href)
-print('Next input: %s' % result_trend_analysis)
+print('Next input: %s' % result_trend_analysis_url)
 
 
 
@@ -174,7 +191,7 @@ inputs = {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "long_col_name": "longitude",
         "lat_col_name": "latitude",
-        "points": result_points_att_polygon or "https://aqua.igb-berlin.de/download/points_att_polygon-84f3986a-5b1f-11ef-b00a-df74de895c41.csv",
+        "points": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
         "value_name": "transparency_m",
         "region_col_name": "HELCOM_ID"
     }
@@ -185,9 +202,10 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['map_shapefile_points']['href']
-result_map_shapefile_points = href.split('/')[-1]
+result_map_shapefile_points_local = href.split('/')[-1]
+result_map_shapefile_points_url = href
 print('Output: %s' % href)
-print('Next input: %s' % result_map_shapefile_points)
+print('Next input: %s' % result_map_shapefile_points_url)
 
 
 #############################
@@ -198,7 +216,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/barplot-trend-results/execution'
 inputs = {
     "inputs": {
-        "data": result_trend_analysis or "https://aqua.igb-berlin.de/download/trend_analysis_mk-0aaf4a34-5bb7-11ef-b00a-df74de895c41.csv",
+        "data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
         "id_col": "polygon_id",
         "test_value": "Tau_Value",
         "p_value": "P_Value",
@@ -212,9 +230,10 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['batplot_trend_results']['href']
-result_barplot_trend_results = href.split('/')[-1]
+result_barplot_trend_results_local = href.split('/')[-1]
+result_barplot_trend_results_url = href
 print('Output: %s' % href)
-print('Next input: %s' % result_barplot_trend_results)
+print('Next input: %s' % result_barplot_trend_results_url)
 
 
 ##############################
@@ -232,7 +251,7 @@ url = base_url+'/processes/map-trends-static/execution'
 inputs = {
     "inputs": {
         "shp_url": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "trend_results_path": result_trend_analysis or "https://aqua.igb-berlin.de/download/trend_analysis_mk-0aaf4a34-5bb7-11ef-b00a-df74de895c41.csv",
+        "trend_results_path": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
         "id_trend_col": "polygon_id",
         "id_shp_col": "HELCOM_ID",
         "group": "season",
@@ -246,14 +265,14 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['map_trends_static']['href']
-result_map_trends_static = href.split('/')[-1]
+result_map_trends_static_local = href.split('/')[-1]
+result_map_trends_static_url = href
 print('Output: %s' % href)
-print('Next input: %s' % result_map_trends_static)
+print('Next input: %s' % result_map_trends_static_url)
 
 
 ###################
 ### Finally ... ###
 ###################
-print('Final output: %s' % 'which is the final one? TODO')
 print('Done!')
 

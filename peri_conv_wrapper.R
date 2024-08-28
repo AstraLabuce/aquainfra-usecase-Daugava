@@ -31,6 +31,8 @@ in_group_to_periods = strsplit(in_group_to_periods, ",")[[1]]
 in_group_labels = gsub(" ", "", in_group_labels, fixed = TRUE) # e.g. "winter, spring, summer, autumn"
 in_group_labels = strsplit(in_group_labels, ",")[[1]]
 
+# TODO: Download file...
+
 # Read the input data from file:
 data_peri_conv <- data.table::fread(in_data_path)
 

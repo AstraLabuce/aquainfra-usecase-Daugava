@@ -12,7 +12,7 @@ curl --location 'http://localhost:5000/processes/map-trends-static/execution' \
 --data '{ 
     "inputs": {
         "shp_url": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "trend_results_path": "https://....mk_trend_analysis_results.csv",
+        "trend_results_path": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
         "id_trend_col": "polygon_id",
         "id_shp_col": "HELCOM_ID",
         "group": "season",

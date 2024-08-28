@@ -14,7 +14,7 @@ curl --location 'http://localhost:5000/processes/map-shapefile-points/execution'
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "long_col_name": "longitude",
         "lat_col_name": "latitude",
-        "points": "https://aqua.igb-berlin.de/download/testinputs/point_att_polygon.csv",
+        "points": "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
         "value_name": "transparency_m",
         "region_col_name": "HELCOM_ID"
     } 
@@ -49,7 +49,7 @@ class MapShapefilePointsProcessor(BaseProcessor):
 
         # Get user inputs
         in_shp_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
-        in_dpoints_url = data.get('points', 'https://...data_out_point_att_polygon.csv')
+        in_dpoints_url = data.get('points', 'https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv')
         in_long_col_name = data.get('long_col_name', 'longitude')
         in_lat_col_name = data.get('lat_col_name', 'latitude')
         in_value_name = data.get('value_name', 'transparency_m')
