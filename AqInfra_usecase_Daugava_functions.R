@@ -25,6 +25,7 @@ in_group_to_periods = c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-
 #default season division; # do not put Feb-29th, if needed then choose Mar-01
 in_group_labels = c("winter", "spring", "summer", "autumn")
 in_year_starts_at_Dec1 = TRUE
+date_format = "%Y-%m-%d"
 result_path_peri_conv <- "data_out_peri_conv.csv"
 # 3. mean by group / seasonal means:
 result_path_seasonal_means <- "data_out_seasonal_means.csv"
@@ -188,6 +189,7 @@ out_peri_conv <-
     date_col_name = in_date_col_name,
     group_to_periods = in_group_to_periods,
     group_labels = in_group_labels,
+    date_format = date_format,
     year_starts_at_Dec1 = in_year_starts_at_Dec1
   )
 

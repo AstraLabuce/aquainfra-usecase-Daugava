@@ -14,6 +14,7 @@ peri_conv <- function(data,
              c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30"),
            group_labels = #default = group_to_periods
              group_to_periods, #if defined, should be the same length as group_to_periods
+           date_format = "%Y-%m-%d",
            year_starts_at_Dec1 = TRUE #default
            ) {
     #data - dataset with columns for Year and Month (all the rest variables stays the same)
@@ -32,20 +33,20 @@ peri_conv <- function(data,
     if (missing(data))
       stop("missing data")
     suppressWarnings(if (!unique(!is.na(as.Date(
-      get(date_col_name, data), "%Y-%m-%d"
+      get(date_col_name, data), date_format
     ))))
       stop("Error: Date is not in format YYYY-MM-DD"))
     
     print(paste0('Generating required date format'))
     
     data$Day_generated <-
-      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%d"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = date_format), "%d"))
     data$Month_generated <-
-      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%m"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = date_format), "%m"))
     data$Year_generated <-
-      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%Y"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = date_format), "%Y"))
     data$Year_adj_generated <-
-      as.numeric(format(as.Date(get(date_col_name, data), format = "%Y-%m-%d"), "%Y"))
+      as.numeric(format(as.Date(get(date_col_name, data), format = date_format), "%Y"))
     
     if(year_starts_at_Dec1 == TRUE ){
     data[data$Month_generated == 12,]$Year_adj_generated <-
@@ -55,7 +56,7 @@ peri_conv <- function(data,
     
     data$period_label <- "NA" #making period_label column as 'character'
     data$dayoy <-
-      as.numeric(format(as.Date(data$visit_date, format = "%Y-%m-%d"), "%j"))
+      as.numeric(format(as.Date(data$visit_date, format = date_format), "%j"))
     data$leap_year <- lubridate::leap_year(data$visit_date)
     
     period <-

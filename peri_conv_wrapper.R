@@ -6,7 +6,8 @@
                             # generates chr variable 'season' to allow grouping the data based on season.
 
 #RUN WITH
-#Rscript peri_conv_wrapper.R "data_out_point_att_polygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" TRUE "data_out_peri_conv.csv"
+#Rscript peri_conv_wrapper.R "data_out_point_att_polygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" "%Y-%m-%d" TRUE "data_out_peri_conv.csv"
+#Rscript peri_conv_wrapper.R "data_out_point_att_polygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" "%Y/%m/%d" TRUE "data_out_peri_conv.csv"
 
 library(lubridate)
 library(dplyr)
@@ -22,8 +23,9 @@ in_date_col_name = args[2] # e.g. "visit_date"
 in_group_to_periods = args[3] # e.g. "Dec-01:Mar-01, Mar-02:May-30, Jun-01:Aug-30, Sep-01:Nov-30"
 #in_group_labels = strsplit(args[4], ",")[[1]] # e.g. "winter,spring,summer,autumn"
 in_group_labels = args[4] # e.g. "winter, spring, summer, autumn"
-in_year_starts_at_Dec1 = args[5] # e.g. "True" or "TRUE" or "true", will be parsed to Boolean
-out_result_path = args[6]
+in_date_format = args[5] # e.g. "%Y-%m-%d"
+in_year_starts_at_Dec1 = args[6] # e.g. "True" or "TRUE" or "true", will be parsed to Boolean
+out_result_path = args[7]
 
 # Remove spaces and split:
 in_group_to_periods = gsub(" ", "", in_group_to_periods, fixed = TRUE) # e.g. "Dec-01:Mar-01, Mar-02:May-30, Jun-01:Aug-30, Sep-01:Nov-30"
@@ -65,6 +67,7 @@ out_peri_conv <-
     date_col_name = in_date_col_name,
     group_to_periods = in_group_to_periods,
     group_labels = in_group_labels,
+    date_format = in_date_format,
     year_starts_at_Dec1 = in_year_starts_at_Dec1
   )
 

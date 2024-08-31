@@ -15,7 +15,8 @@ curl --location 'http://localhost:5000/processes/peri-conv/execution' \
         "date_col_name": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
-        "year_starts_at_Dec1": "True"
+        "year_starts_at_Dec1": "True",
+        "date_format": "%Y-%m-%d"
     } 
 }'
 '''
@@ -53,6 +54,7 @@ class PeriConvProcessor(BaseProcessor):
         group_to_periods = data.get('group_to_periods', 'Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30')
         group_labels = data.get('group_labels', 'winter,spring,summer,autumn')
         year_starts_at_Dec1 = data.get('year_starts_at_Dec1', 'True')
+        date_format = data.get('date_format', '%Y-%m-%d')
 
         # Where to store output data
         downloadfilename = 'peri_conv_%s.csv' % self.my_job_id
@@ -68,7 +70,7 @@ class PeriConvProcessor(BaseProcessor):
 
         # Run the R script:
         R_SCRIPT_NAME = 'peri_conv_wrapper.R'
-        r_args = [input_data_in_download_dir, date_col_name, group_to_periods, group_labels, year_starts_at_Dec1, downloadfilepath]
+        r_args = [input_data_in_download_dir, date_col_name, group_to_periods, group_labels, date_format, year_starts_at_Dec1, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)

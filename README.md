@@ -25,7 +25,7 @@ You can also run each function separately from command line, like this:
 Rscript points_att_polygon_wrapper.R "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip" "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx" "longitude" "latitude" "data_out_point_att_polygon.csv"
 
 # 2
-Rscript peri_conv_wrapper.R "data_out_point_att_polygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" TRUE "data_out_peri_conv.csv"
+Rscript peri_conv_wrapper.R "data_out_point_att_polygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" "%Y-%m-%d" TRUE "data_out_peri_conv.csv"
 
 # 3
 Rscript mean_by_group.R "data_out_peri_conv.csv" "data_out_seasonal_means.csv"
