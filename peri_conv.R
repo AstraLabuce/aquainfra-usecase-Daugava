@@ -35,7 +35,7 @@ peri_conv <- function(data,
     suppressWarnings(if (!unique(!is.na(as.Date(
       get(date_col_name, data), date_format
     ))))
-      stop("Error: Date is not in format YYYY-MM-DD"))
+      stop(paste0("Error: Date is not in format ", date_format)))
     
     print(paste0('Generating required date format'))
     
