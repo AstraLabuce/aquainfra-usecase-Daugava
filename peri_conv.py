@@ -62,15 +62,15 @@ class PeriConvProcessor(BaseProcessor):
 
         # Where to look for input data
         # TODO: This ONLY allows for inputs from previously run processes, not for users own data...
-        input_data_in_download_dir = download_dir.rstrip('/')+os.sep+input_data
-        if not os.path.isfile(input_data_in_download_dir):
-            err_msg = 'File %s does not exist.' % input_data_in_download_dir
-            LOGGER.error(err_msg)
-            raise ProcessorExecuteError(user_msg=err_msg)
+        #input_data_in_download_dir = download_dir.rstrip('/')+os.sep+input_data
+        #if not os.path.isfile(input_data_in_download_dir):
+        #    err_msg = 'File %s does not exist.' % input_data_in_download_dir
+        #    LOGGER.error(err_msg)
+        #    raise ProcessorExecuteError(user_msg=err_msg)
 
         # Run the R script:
         R_SCRIPT_NAME = 'peri_conv_wrapper.R'
-        r_args = [input_data_in_download_dir, date_col_name, group_to_periods, group_labels, date_format, year_starts_at_Dec1, downloadfilepath]
+        r_args = [input_data, date_col_name, group_to_periods, group_labels, date_format, year_starts_at_Dec1, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
