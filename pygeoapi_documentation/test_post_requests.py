@@ -1,5 +1,6 @@
 import requests
 import time
+import sys
 
 '''
 This is just a little script to test whether the OGC processing
@@ -25,24 +26,21 @@ headers_async = {'Content-Type': 'application/json', 'Prefer': 'respond-async'}
 session = requests.Session()
 result_points_att_polygon_url = None
 result_peri_conv_url = None
-result_mean_by_group_local = None
 result_mean_by_group_url = None
-result_trend_analysis_local = None
 result_trend_analysis_url = None
-result_ts_selection_interpolation_local = None
 result_ts_selection_interpolation_url = None
-result_map_shapefile_points_local = None
 result_map_shapefile_points_url = None
-result_map_trends_static_local = None
 result_map_trends_static_url = None
-result_barplot_trend_results_local = None
 result_barplot_trend_results_url = None
+
+
+force_async = True
 
 # Define helper for polling for asynchronous results
 def poll_for_json_result(resp201, session, seconds_polling=2, max_seconds=60*60):
     link_to_result = poll_for_links(resp201, session, 'application/json', seconds_polling, max_seconds)
     result_application_json = session.get(link_to_result)
-    print('The result JSON document: %s' % result_application_json.json())
+    #print('The result JSON document: %s' % result_application_json.json())
     return result_application_json.json()
 
 def poll_for_links(resp201, session, required_type='application/json', seconds_polling=2, max_seconds=60*60):
@@ -59,31 +57,39 @@ def poll_for_links(resp201, session, required_type='application/json', seconds_p
         polling_result = session.get(resp.headers['location'])
         print('Job status: %s' % polling_result.json()['status'].lower())
         
-        if not polling_result.json()['status'].lower() == 'successful':
+        if polling_result.json()['status'].lower() == 'accepted':
             if seconds_passed >= max_seconds:
                 print('Polled for %s seconds, giving up...' % max_seconds)
             else:
                 time.sleep(seconds_polling)
                 seconds_passed += seconds_polling
-        
-        else:
+
+        elif polling_result.json()['status'].lower() == 'failed':
+            print('Job failed after %s seconds!' % seconds_passed)
+            print('Stopping.')
+            sys.exit(1)
+
+        elif polling_result.json()['status'].lower() == 'successful':
             print('Job successful after %s seconds!' % seconds_passed)
             links_to_results = polling_result.json()['links']
-            print('Links to results: %s' % links_to_results)
+            #print('Links to results: %s' % links_to_results)
+            print('Picking the "%s"-type link from %s links to results.' % (required_type, len(links_to_results)))
             link_types = []
             for link in links_to_results:
                 link_types.append(link['type'])
                 if link['type'] == required_type:
-                    print('We want this one (type %s): %s' % (required_type, link['href']))
+                    #print('We pick this one (type %s): %s' % (required_type, link['href']))
                     link_to_result = link['href']
                     return link_to_result
-                    #result_application_json = session.get(link_to_result)
-                    #print('The result JSON document: %s' % result_application_json.json())
-                    #return result_application_json.json()
 
             print('Did not find a link of type "%s"! Only: %s' % (required_type, link_types))
-            return None
+            print('Stopping.')
+            sys.exit(1)
 
+        else:
+            print('Could not understand job status: %s' % polling_result.json()['status'].lower())
+            print('Stopping.')
+            sys.exit(1)
 
 ##########################
 ### points_att_polygon ###
@@ -104,36 +110,28 @@ inputs = {
 
 # sync:
 # Often runs into 504 Gateway Error, which is basically a timeout... Try async!
+print('synchronous... (with excel inputs)')
 resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.content)
-print('Result: %s' % resp.json())
+print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 200
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
 
-# Get input for next from output of last
-href = resp.json()['outputs']['points_att_polygon']['href']
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous... (with excel inputs)')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
+
+# Results (sync / async, does not matter):
+href = result_application_json['outputs']['points_att_polygon']['href']
 result_points_att_polygon_url = href
-print('Output: %s' % href)
-print('Next input: %s' % result_points_att_polygon_url)
-
-
-# async:
-resp = session.post(url, headers=headers_async, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-#link_to_result = poll_for_links(resp, 'application/json')
-#result_application_json = session.get(link_to_result)
-#print('The result is a JSON document: %s' % result_application_json.json())
-#link_to_actual_result = result_application_json.json()['outputs']['points_att_polygon']['href']
-#print('It contains a link to our ACTUAL result: %s' % link_to_actual_result)
-
-result_application_json = poll_for_json_result(resp, session)
-print('The result is a JSON document: %s' % result_application_json)
-result_points_att_polygon_url = result_application_json['outputs']['points_att_polygon']['href']
 print('It contains a link to our ACTUAL result: %s' % result_points_att_polygon_url)
 # Check out result itself:
-#final_result = session.get(result_points_att_polygon_url)
-#print('Final result: %s...' % str(final_result.content)[0:200])
-print('Next input: %s' % result_points_att_polygon_url)
-
+final_result = session.get(result_points_att_polygon_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 #################
@@ -153,16 +151,30 @@ inputs = {
         "date_format": "%Y-%m-%d"
     }
 }
+
+# sync:
+print('synchronous... (based on excel inputs)')
 resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.json())
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
 
-# Get input for next from output of last
-href = resp.json()['outputs']['peri_conv']['href']
-result_peri_conv_local = href.split('/')[-1] # TODO: At the moment, mean by group expects data on server, not URL!
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous... (based on excel inputs)')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
+
+# Results (sync / async, does not matter):
+href = result_application_json['outputs']['peri_conv']['href']
 result_peri_conv_url = href
-print('Output: %s' % href)
-print('Next input: %s' % result_peri_conv_url)
+print('It contains a link to our ACTUAL result: %s' % result_peri_conv_url)
+# Check out result itself:
+final_result = session.get(result_peri_conv_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 
@@ -181,16 +193,31 @@ inputs = {
         "points": "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # date format: 1998/02/14 12:30:00.000
     } 
 }
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.content)
-print('Result: %s' % resp.json())
 
-# Get input for next from output of last
-href = resp.json()['outputs']['points_att_polygon']['href']
+# sync:
+# Often runs into 504 Gateway Error, which is basically a timeout... Try async!
+print('synchronous... (with DDAS CSV inputs)')
+resp = session.post(url, headers=headers_sync, json=inputs)
+print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 200
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
+
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous... (with DDAS CSV inputs)')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
+
+# Results (sync / async, does not matter):
+href = result_application_json['outputs']['points_att_polygon']['href']
 result_points_att_polygon_url = href
-print('Output: %s' % href)
-print('Next input: %s' % result_points_att_polygon_url)
+print('It contains a link to our ACTUAL result: %s' % result_points_att_polygon_url)
+# Check out result itself:
+final_result = session.get(result_points_att_polygon_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 #####################
@@ -210,15 +237,30 @@ inputs = {
         "date_format": "%Y/%m/%d"
     }
 }
+
+# sync:
+print('synchronous... (based on DDAS CSV inputs)')
 resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.json())
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
 
-# Get input for next from output of last
-href = resp.json()['outputs']['peri_conv']['href']
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous... (based on DDAS CSV inputs)')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
+
+# Results (sync / async, does not matter):
+href = result_application_json['outputs']['peri_conv']['href']
 result_peri_conv_url = href
-print('Output: %s' % href)
-print('Next input: %s' % result_peri_conv_url)
+print('It contains a link to our ACTUAL result: %s' % result_peri_conv_url)
+# Check out result itself:
+final_result = session.get(result_peri_conv_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 
@@ -234,16 +276,31 @@ inputs = {
 
     }
 }
+
+
+# sync:
+print('synchronous...')
 resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.json())
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
 
-# Get input for next from output of last
-href = resp.json()['outputs']['mean_by_group']['href']
-result_mean_by_group_local = href.split('/')[-1]
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous...')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
+
+# Results (sync / async, does not matter):
+href = result_application_json['outputs']['mean_by_group']['href']
 result_mean_by_group_url = href
-print('Output: %s' % href)
-print('Next input: %s' % result_mean_by_group_url)
+print('It contains a link to our ACTUAL result: %s' % result_mean_by_group_url)
+# Check out result itself:
+final_result = session.get(result_mean_by_group_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 
@@ -255,8 +312,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/ts-selection-interpolation/execution'
 inputs = {
     "inputs": {
-        #"input_data": result_mean_by_group_url or "https://aqua.igb-berlin.de/download/testinputs/mean_by_group.csv",
-        "input_data": result_mean_by_group_local or "testinputs/mean_by_group.csv",
+        "input_data": result_mean_by_group_url or "https://aqua.igb-berlin.de/download/testinputs/mean_by_group.csv",
         "rel_cols": "group_labels,HELCOM_ID",
         "missing_threshold_percentage": "40",
         "year_colname": "Year_adj_generated",
@@ -264,16 +320,31 @@ inputs = {
         "min_data_point": "10"
     }
 }
+
+
+# sync:
+print('synchronous...')
 resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.json())
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
 
-# Get input for next from output of last
-href = resp.json()['outputs']['ts_selection_interpolation']['href']
-result_ts_selection_interpolation_local = href.split('/')[-1]
-result_ts_selection_interpolation_url = href  # TODO: At the moment, ts_selection expects data on server, not URL!
-print('Output: %s' % href)
-print('Next input: %s' % result_ts_selection_interpolation_url)
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous...')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
+
+# Results (sync / async, does not matter):
+href = result_application_json['outputs']['ts_selection_interpolation']['href']
+result_ts_selection_interpolation_url = href
+print('It contains a link to our ACTUAL result: %s' % result_ts_selection_interpolation_url)
+# Check out result itself:
+final_result = session.get(result_ts_selection_interpolation_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 
@@ -285,24 +356,36 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/trend-analysis-mk/execution'
 inputs = {
     "inputs": {
-        #"input_data": result_ts_selection_interpolation_url or "https://aqua.igb-berlin.de/download/testinputs/ts_selection_interpolation.csv",
-        "input_data": result_ts_selection_interpolation_local or "testinputs/ts_selection_interpolation.csv",
+        "input_data": result_ts_selection_interpolation_url or "https://aqua.igb-berlin.de/download/testinputs/ts_selection_interpolation.csv",
         "rel_cols": "season,polygon_id",
         "time_colname": "Year_adj_generated",
         "value_colname": "Secchi_m_mean_annual"
     }
 }
+
+# sync:
+print('synchronous...')
 resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.json())
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
 
-# Get input for next from output of last
-href = resp.json()['outputs']['trend_analysis_mk']['href']
-result_trend_analysis_local = href.split('/')[-1]
-result_trend_analysis_url = href #  # TODO: At the moment, mean by group expects data on server, not URL!
-print('Output: %s' % href)
-print('Next input: %s' % result_trend_analysis_url)
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous...')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
 
+# Results (sync / async, does not matter):
+href = result_application_json['outputs']['trend_analysis_mk']['href']
+result_trend_analysis_url = href
+print('It contains a link to our ACTUAL result: %s' % result_trend_analysis_url)
+# Check out result itself:
+final_result = session.get(result_trend_analysis_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 ############################
@@ -321,16 +404,31 @@ inputs = {
         "region_col_name": "HELCOM_ID"
     }
 }
+
+# sync:
+print('synchronous...')
 resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.json())
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
 
-# Get input for next from output of last
-href = resp.json()['outputs']['map_shapefile_points']['href']
-result_map_shapefile_points_local = href.split('/')[-1]
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous...')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
+
+# Results (sync / async, does not matter):
+print('Result (JSON document): %s' % result_application_json)
+href = result_application_json['outputs']['map_shapefile_points']['href']
 result_map_shapefile_points_url = href
-print('Output: %s' % href)
-print('Next input: %s' % result_map_shapefile_points_url)
+print('It contains a link to our ACTUAL result: %s' % result_map_shapefile_points_url)
+# Check out result itself:
+final_result = session.get(result_map_shapefile_points_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 #############################
@@ -349,16 +447,32 @@ inputs = {
         "group": "season"
     }
 }
+
+# sync:
+print('synchronous...')
 resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.json())
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
 
-# Get input for next from output of last
-href = resp.json()['outputs']['batplot_trend_results']['href']
-result_barplot_trend_results_local = href.split('/')[-1]
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous...')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
+
+# Results (sync / async, does not matter):
+print('Result (JSON document): %s' % result_application_json)
+href = result_application_json['outputs']['batplot_trend_results']['href']
 result_barplot_trend_results_url = href
-print('Output: %s' % href)
-print('Next input: %s' % result_barplot_trend_results_url)
+print('It contains a link to our ACTUAL result: %s' % result_barplot_trend_results_url)
+# Check out result itself:
+final_result = session.get(result_barplot_trend_results_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
+
 
 
 ##############################
@@ -384,16 +498,32 @@ inputs = {
         "p_value": "P_Value"
     }
 }
+
+# sync:
+print('synchronous...')
 resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-print('Result: %s' % resp.json())
+if resp.status_code == 200:
+    result_application_json = resp.json()
+    print('Result (JSON document): %s' % result_application_json)
 
-# Get input for next from output of last
-href = resp.json()['outputs']['map_trends_static']['href']
-result_map_trends_static_local = href.split('/')[-1]
+# or async:
+if not resp.status_code == 200 or force_async:
+    print('asynchronous...')
+    resp = session.post(url, headers=headers_async, json=inputs)
+    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
+    result_application_json = poll_for_json_result(resp, session)
+    print('Result (JSON document): %s' % result_application_json)
+
+# Results (sync / async, does not matter):
+print('Result (JSON document): %s' % result_application_json)
+href = result_application_json['outputs']['map_trends_static']['href']
 result_map_trends_static_url = href
-print('Output: %s' % href)
-print('Next input: %s' % result_map_trends_static_url)
+print('It contains a link to our ACTUAL result: %s' % result_map_trends_static_url)
+# Check out result itself:
+final_result = session.get(result_map_trends_static_url)
+print('Result content: %s...' % str(final_result.content)[0:200])
+
 
 
 ###################
