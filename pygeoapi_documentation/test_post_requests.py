@@ -41,6 +41,7 @@ result_barplot_trend_results_url = None
 
 ##########################
 ### points_att_polygon ###
+### excel              ###
 ##########################
 name = "points_att_polygon"
 print('\nCalling %s...' % name)
@@ -50,11 +51,14 @@ inputs = {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "long_col_name": "longitude",
         "lat_col_name": "latitude",
-        "points": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx"
-        #"points": "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # this has wrong date format!
+        "points": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx" # date format: 1998-02-14T12:30:00
     } 
 }
-resp = session.post(url, headers=headers, json=inputs)
+
+
+# sync:
+# Often runs into 504 Gateway Error, which is basically a timeout... Try async!
+resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.content)
 print('Result: %s' % resp.json())
@@ -69,7 +73,67 @@ print('Next input: %s' % result_points_att_polygon_url)
 
 #################
 ### peri_conv ###
+### excel     ###
 #################
+name = "peri_conv"
+print('\nCalling %s...' % name)
+url = base_url+'/processes/peri-conv/execution'
+inputs = {
+    "inputs": {
+        "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
+        "date_col_name": "visit_date",
+        "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
+        "group_labels": "winter,spring,summer,autumn",
+        "year_starts_at_Dec1": "True",
+        #"date_format": "%Y-%m-%d" # correct
+        "date_format": "%d-%Y-%m-%d" # just to test erro message... TODO: This should not work, why does it?
+    }
+}
+resp = session.post(url, headers=headers_sync, json=inputs)
+print('Calling %s... done. HTTP %s' % (name, resp.status_code))
+print('Result: %s' % resp.json())
+
+# Get input for next from output of last
+href = resp.json()['outputs']['peri_conv']['href']
+result_peri_conv_local = href.split('/')[-1] # TODO: At the moment, mean by group expects data on server, not URL!
+result_peri_conv_url = href
+print('Output: %s' % href)
+print('Next input: %s' % result_peri_conv_url)
+
+
+
+##########################
+### points_att_polygon ###
+### csv from ddas      ###
+##########################
+name = "points_att_polygon"
+print('\nCalling %s...' % name)
+url = base_url+'/processes/points-att-polygon/execution'
+inputs = { 
+    "inputs": {
+        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "long_col_name": "longitude",
+        "lat_col_name": "latitude",
+        "points": "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # date format: 1998/02/14 12:30:00.000
+    } 
+}
+resp = session.post(url, headers=headers_sync, json=inputs)
+print('Calling %s... done. HTTP %s' % (name, resp.status_code))
+print('Result: %s' % resp.content)
+print('Result: %s' % resp.json())
+
+# Get input for next from output of last
+href = resp.json()['outputs']['points_att_polygon']['href']
+result_points_att_polygon_local = href.split('/')[-1] # TODO: At the moment, peri conv expects data on server, not URL!
+result_points_att_polygon_url = href
+print('Output: %s' % href)
+print('Next input: %s' % result_points_att_polygon_url)
+
+
+#####################
+### peri_conv     ###
+### csv from ddas ###
+#####################
 name = "peri_conv"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/peri-conv/execution'
