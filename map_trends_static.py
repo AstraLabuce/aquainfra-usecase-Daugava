@@ -50,7 +50,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
 
         # Get user inputs
         in_shp_url = data.get('shp_url', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
-        in_trend_results_path = data.get('trend_results_path', 'https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv')
+        in_trend_results_url = data.get('trend_results_path', 'https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv')
         in_id_trend_col = data.get('id_trend_col', 'polygon_id')
         in_id_shp_col = data.get('id_shp_col', 'HELCOM_ID')
         in_group = data.get('group', 'season')
@@ -63,7 +63,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
 
         # Run the R script:
         R_SCRIPT_NAME = 'map_trends_static_wrapper.R'
-        r_args = [in_shp_url, in_trend_results_path, in_id_trend_col, in_id_shp_col, in_group, in_p_value_col, in_p_value_threshold, downloadfilepath]
+        r_args = [in_shp_url, in_trend_results_url, in_id_trend_col, in_id_shp_col, in_group, in_p_value_col, in_p_value_threshold, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script('1', LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)

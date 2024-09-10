@@ -13,7 +13,7 @@ library(sf)
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
 in_shp_url <- args[1] # e.g. "shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp"
-in_trend_results_path <- args[2] # e.g. "mk_trend_analysis_results.csv"
+in_trend_results_path_or_url <- args[2] # e.g. "mk_trend_analysis_results.csv"
 in_id_trend_col <- args[3] # e.g. "polygon_id"
 in_id_shp_col <- args[4] # e.g. "HELCOM_ID"
 in_group <- args[5] # e.g. "season"
@@ -39,7 +39,10 @@ if (file.exists(config_file_path)) {
 }
 
 # Read input data
-data <- data.table::fread(in_trend_results_path)
+
+# Read the input data from file - this can take a URL!
+data <- data.table::fread(in_trend_results_path_or_url)
+
 # Define the directory and local file path for the shape file
 url_parts_shp <- strsplit(in_shp_url, "/")[[1]]
 shp_file_name <- url_parts_shp[length(url_parts_shp)]

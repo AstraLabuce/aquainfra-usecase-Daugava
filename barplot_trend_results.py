@@ -11,7 +11,7 @@ curl --location 'http://localhost:5000/processes/barplot-trend-results/execution
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "data": "url to mk_trend_analysis_results.csv",
+        "data": "https://testserver.de/download/mk_trend_analysis_results.csv",
         "id_col": "polygon_id",
         "test_value": "Tau_Value",
         "p_value": "P_Value",
@@ -48,7 +48,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_data = data.get('data', 'https://.../mk_trend_analysis_results.csv')
+        input_data_url = data.get('data', 'https://.../mk_trend_analysis_results.csv')
         in_id_col = data.get('id_col', 'polygon_id')
         in_test_value = data.get('test_value', 'Tau_Value')
         p_value = data.get('p_value', 'P_Value')
@@ -61,7 +61,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
 
         # Run the R script:
         R_SCRIPT_NAME = 'barplot_trend_results_wrapper.R'
-        r_args = [in_data, in_id_col, in_test_value, p_value, in_p_value_threshold, in_group, downloadfilepath]
+        r_args = [input_data_url, in_id_col, in_test_value, p_value, in_p_value_threshold, in_group, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script('1', LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)

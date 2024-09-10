@@ -49,7 +49,7 @@ class PeriConvProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        input_data = data.get('input_data', 'point_att_polygon.csv')
+        input_data_url = data.get('input_data', 'http://.../point_att_polygon.csv')
         date_col_name = data.get('date_col_name', 'visit_date')
         group_to_periods = data.get('group_to_periods', 'Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30')
         group_labels = data.get('group_labels', 'winter,spring,summer,autumn')
@@ -62,7 +62,7 @@ class PeriConvProcessor(BaseProcessor):
 
         # Run the R script:
         R_SCRIPT_NAME = 'peri_conv_wrapper.R'
-        r_args = [input_data, date_col_name, group_to_periods, group_labels, date_format, year_starts_at_Dec1, downloadfilepath]
+        r_args = [input_data_url, date_col_name, group_to_periods, group_labels, date_format, year_starts_at_Dec1, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)

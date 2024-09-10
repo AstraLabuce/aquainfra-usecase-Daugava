@@ -9,7 +9,7 @@ library(jsonlite)
 
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
-in_data_path = args[1]
+input_data_path_or_url = args[1]
 in_rel_cols = args[2] # e.g. "season, polygon_id"
 in_time_colname = args[3]  # e.g. "Year_adj_generated"
 in_value_colname = args[4] # e.g. "Secchi_m_mean_annual"
@@ -19,8 +19,8 @@ out_result_path = args[5]  # e.g. "mk_trend_analysis_results.csv"
 in_rel_cols = gsub(" ", "", in_rel_cols, fixed = TRUE)
 in_rel_cols = strsplit(in_rel_cols, ",")[[1]] # e.g. "season, polygon_id"
 
-# Read the input data from file:
-data_list_subgroups <- data.table::fread(in_data_path)
+# Read the input data from file - this can take a URL!
+data_list_subgroups <- data.table::fread(input_data_path_or_url)
 
 # Read the function "trend_analysis_mk" either from current working directory,
 # or read the directory from config!

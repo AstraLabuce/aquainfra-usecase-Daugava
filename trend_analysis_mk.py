@@ -11,7 +11,7 @@ curl --location 'http://localhost:5000/processes/trend-analysis-mk/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "ts_selection_interpolation.csv",
+        "input_data": "https://testserver.de/download/ts_selection_interpolation.csv",
         "rel_cols": "season,polygon_id",
         "time_colname": "Year_adj_generated",
         "value_colname": "Secchi_m_mean_annual"
@@ -47,7 +47,7 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_data_path = data.get('input_data', 'ts_selection_interpolation.csv') # or selected_interpolated.csv ?
+        in_data_url = data.get('input_data', 'https://.../ts_selection_interpolation.csv') # or selected_interpolated.csv ?
         in_rel_cols = data.get('rel_cols', '') # TODO empty or error? min occurs 0 or 1?
         in_time_colname = data.get('time_colname', '')
         in_value_colname = data.get('value_colname', '')
@@ -56,17 +56,9 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         downloadfilename = 'trend_analysis_mk-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
-        # Where to look for input data
-        # TODO: This ONLY allows for inputs from previously run processes, not for users own data...
-        input_data_in_download_dir = download_dir.rstrip('/')+os.sep+in_data_path
-        if not os.path.isfile(input_data_in_download_dir):
-            err_msg = 'File %s does not exist.' % input_data_in_download_dir
-            LOGGER.error(err_msg)
-            raise ProcessorExecuteError(user_msg=err_msg)
-
         # Run the R script:
         R_SCRIPT_NAME = 'trend_analysis_mk_wrapper.R'
-        r_args = [input_data_in_download_dir, in_rel_cols, in_time_colname, in_value_colname, downloadfilepath]
+        r_args = [in_data_url, in_rel_cols, in_time_colname, in_value_colname, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)

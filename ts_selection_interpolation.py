@@ -11,7 +11,7 @@ curl --location 'http://localhost:5000/processes/ts-selection-interpolation/exec
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "mean_by_group.csv",
+        "input_data": "https://testserver.de/mean_by_group.csv",
         "rel_cols": "group_labels,HELCOM_ID",
         "missing_threshold_percentage": "40",
         "year_colname": "Year_adj_generated",
@@ -49,7 +49,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_data_path = data.get('input_data', 'mean_by_group.csv')
+        in_data_url = data.get('input_data', 'https://.../mean_by_group.csv')
         in_rel_cols = data.get('rel_cols', '')
         in_missing_threshold_percentage = data.get('missing_threshold_percentage', '')
         in_year_colname = data.get('year_colname', '')
@@ -60,17 +60,9 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         downloadfilename = 'ts_selection_interpolation-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
-        # Where to look for input data
-        # TODO: This ONLY allows for inputs from previously run processes, not for users own data...
-        input_data_in_download_dir = download_dir.rstrip('/')+os.sep+in_data_path
-        if not os.path.isfile(input_data_in_download_dir):
-            err_msg = 'File %s does not exist.' % input_data_in_download_dir
-            LOGGER.error(err_msg)
-            raise ProcessorExecuteError(user_msg=err_msg)
-
         # Run the R script:
         R_SCRIPT_NAME = 'ts_selection_interpolation_wrapper.R'
-        r_args = [input_data_in_download_dir, in_rel_cols, in_missing_threshold_percentage, in_year_colname, in_value_colname, in_min_data_point, downloadfilepath]
+        r_args = [in_data_url, in_rel_cols, in_missing_threshold_percentage, in_year_colname, in_value_colname, in_min_data_point, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)

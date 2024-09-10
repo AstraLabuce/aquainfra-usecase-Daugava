@@ -18,7 +18,7 @@ library(jsonlite)
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
 in_shp_url <- args[1]      # e.g. "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip"
-in_dpoints_path <- args[2]  # e.g. "https://..../data_out_point_att_polygon.csv"
+in_dpoints_path_or_url <- args[2]  # e.g. "https://..../data_out_point_att_polygon.csv"
 in_long_col_name <- args[3] # e.g. "longitude"
 in_lat_col_name <- args[4]  # e.g. "latitude"
 in_value_name <- args[5]    # e.g. "transparency_m"
@@ -44,8 +44,9 @@ if (file.exists(config_file_path)) {
   input_data_dir <- "./"
 }
 
-# Read input data
-dpoints <- data.table::fread(in_dpoints_path)
+# Read the input data from file - this can take a URL!
+dpoints <- data.table::fread(in_dpoints_path_or_url)
+
 # Define the directory and local file path for the shape file
 url_parts_shp <- strsplit(in_shp_url, "/")[[1]]
 shp_file_name <- url_parts_shp[length(url_parts_shp)]

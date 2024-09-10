@@ -9,7 +9,7 @@ library(jsonlite)
 # Retrieve command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 print(paste0('R Command line args: ', args))
-in_data_path <- args[1] # e.g. "mk_trend_analysis_results.csv"
+in_data_path_or_url <- args[1] # e.g. "mk_trend_analysis_results.csv"
 in_id_col <- args[2] # e.g. "polygon_id"
 in_test_value <- args[3] # e.g. "Tau_Value"
 in_p_value <- args[4] # e.g. "P_Value"
@@ -17,7 +17,10 @@ in_p_value_threshold <- args[5] # e.g. "0.05"
 in_group <- args[6] # e.g. "season"
 out_result_path <- args[7] # e.g. "barplot_trend_results.png"
 
-data_list_subgroups <- data.table::fread(in_data_path)
+# Read input data
+
+# Read the input data from file - this can take a URL!
+data_list_subgroups <- data.table::fread(in_data_path_or_url)
 
 # Read the function "barplot_trend_results" either from current working directory,
 # or read the directory from config!
