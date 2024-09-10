@@ -59,6 +59,7 @@ if (!dir.exists(shp_dir_zipped)) {
 
 # Download shapefile if it doesn't exist:
 # TODO: Problem: If someone wants to use a shapefile that happens to have the same name! Should use PIDs.
+# Idea for quickfix: LUT that has url and localpath stored. Filename could be hash over url? Store md5 too.
 if (file.exists(shp_file_path)) {
   print(paste0("File ", shp_file_path, " already exists. Skipping download."))
 } else {
@@ -103,6 +104,7 @@ shapefile <- st_read(shp_dir_unzipped)
 ## input 2/2: Table
 
 # Define the directory and local file path for the Excel file
+# TODO: If we get a URL to a CSV, we can just data.table::fread it!
 in_situ_directory <- paste0(input_data_dir, "in_situ_data/")
 url_parts_table <- strsplit(in_dpoints_url, "/")[[1]]
 table_file_name <- url_parts_table[length(url_parts_table)]

@@ -144,7 +144,8 @@ peri_conv <- function(data,
         }
       }
     }
-    
+
+
     print(paste0('Finalizing results'))
     
     period_regular <- subset(period_fin, leap_year == FALSE)
@@ -164,6 +165,7 @@ peri_conv <- function(data,
         }
       }
     }
+
     res <- rbind(data_leap, data_regular)
     labels <-
       data.frame(period_label = group_to_periods, group_labels)

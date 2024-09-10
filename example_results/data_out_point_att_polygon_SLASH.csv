@@ -1,0 +1,11 @@
+longitude,latitude,visit_date,transparency_m,color_id,HELCOM_ID,country,level_2,Name,Open_sea,F2_Name,new_area_k,Shape_Leng,Shape_Area
+23.9833,57.1,1998/02/14 12:30:00.000,1.6,19,LAT-005,Latvia,Gulf of Riga,Gulf of Riga transitional waters,,Gulf of Riga transitional waters,855.811191767,243360.758113,2896144600.07
+23.85,57.3,1998/02/14 15:35:00.000,4,9,SEA-011,Opensea,Gulf of Riga,Opensea Gulf of Riga,Gulf of Riga,Opensea Gulf of Riga,8674.48923994,954770.496399,30193177349.7
+23.85,57.3,1998/03/11 12:20:00.000,2.5,16,SEA-011,Opensea,Gulf of Riga,Opensea Gulf of Riga,Gulf of Riga,Opensea Gulf of Riga,8674.48923994,954770.496399,30193177349.7
+23.9333,57.1667,1998/03/11 15:22:00.000,1.6,19,LAT-005,Latvia,Gulf of Riga,Gulf of Riga transitional waters,,Gulf of Riga transitional waters,855.811191767,243360.758113,2896144600.07
+23.9833,57.1,1998/03/11 16:15:00.000,1.2,19,LAT-005,Latvia,Gulf of Riga,Gulf of Riga transitional waters,,Gulf of Riga transitional waters,855.811191767,243360.758113,2896144600.07
+24.0017,57.0833,1998/03/11 17:15:00.000,1.1,21,LAT-005,Latvia,Gulf of Riga,Gulf of Riga transitional waters,,Gulf of Riga transitional waters,855.811191767,243360.758113,2896144600.07
+23.6167,57.6167,1998/03/25 06:30:00.000,3.9,9,SEA-011,Opensea,Gulf of Riga,Opensea Gulf of Riga,Gulf of Riga,Opensea Gulf of Riga,8674.48923994,954770.496399,30193177349.7
+23.7667,57.4167,1998/03/25 08:30:00.000,3.6,9,SEA-011,Opensea,Gulf of Riga,Opensea Gulf of Riga,Gulf of Riga,Opensea Gulf of Riga,8674.48923994,954770.496399,30193177349.7
+23.85,57.3,1998/03/25 09:20:00.000,2.1,15,SEA-011,Opensea,Gulf of Riga,Opensea Gulf of Riga,Gulf of Riga,Opensea Gulf of Riga,8674.48923994,954770.496399,30193177349.7
+23.9333,57.1667,1998/03/25 12:15:00.000,2.1,19,LAT-005,Latvia,Gulf of Riga,Gulf of Riga transitional waters,,Gulf of Riga transitional waters,855.811191767,243360.758113,2896144600.07
