@@ -34,7 +34,7 @@ result_map_trends_static_url = None
 result_barplot_trend_results_url = None
 
 
-force_async = True
+force_async = False
 
 # Define helper for polling for asynchronous results
 def poll_for_json_result(resp201, session, seconds_polling=2, max_seconds=60*60):
@@ -148,7 +148,7 @@ inputs = {
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
         "year_starts_at_Dec1": "True",
-        "date_format": "%Y-%m-%d"
+        "date_format": "%Y-%m-%d" # correct for excel inputs!
     }
 }
 
@@ -182,6 +182,9 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 ### points_att_polygon ###
 ### csv from ddas      ###
 ##########################
+# TODO: Can we use CSV data from https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv ?
+# For points_att_polygon, it is no problem, but later ts_selection_interpolation will fail!
+'''
 name = "points_att_polygon"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/points-att-polygon/execution'
@@ -218,12 +221,15 @@ print('It contains a link to our ACTUAL result: %s' % result_points_att_polygon_
 # Check out result itself:
 final_result = session.get(result_points_att_polygon_url)
 print('Result content: %s...' % str(final_result.content)[0:200])
-
+'''
 
 #####################
 ### peri_conv     ###
 ### csv from ddas ###
 #####################
+# TODO: Can we use CSV data from https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv ?
+# For peri_conv, it is no problem, if we specify the date format, but later ts_selection_interpolation will fail!
+'''
 name = "peri_conv"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/peri-conv/execution'
@@ -234,7 +240,7 @@ inputs = {
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
         "year_starts_at_Dec1": "True",
-        "date_format": "%Y/%m/%d"
+        "date_format": "%Y/%m/%d" # correct for DDAS csv inputs
     }
 }
 
@@ -261,7 +267,7 @@ print('It contains a link to our ACTUAL result: %s' % result_peri_conv_url)
 # Check out result itself:
 final_result = session.get(result_peri_conv_url)
 print('Result content: %s...' % str(final_result.content)[0:200])
-
+'''
 
 
 #####################
