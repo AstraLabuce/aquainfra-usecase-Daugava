@@ -85,8 +85,7 @@ inputs = {
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
         "year_starts_at_Dec1": "True",
-        #"date_format": "%Y-%m-%d" # correct
-        "date_format": "%d-%Y-%m-%d" # just to test erro message... TODO: This should not work, why does it?
+        "date_format": "%Y-%m-%d"
     }
 }
 resp = session.post(url, headers=headers_sync, json=inputs)
@@ -144,7 +143,8 @@ inputs = {
         "date_col_name": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
-        "year_starts_at_Dec1": "True"
+        "year_starts_at_Dec1": "True",
+        "date_format": "%Y/%m/%d"
     }
 }
 resp = session.post(url, headers=headers, json=inputs)
