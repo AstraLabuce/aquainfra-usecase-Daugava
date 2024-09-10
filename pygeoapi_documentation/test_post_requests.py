@@ -23,7 +23,6 @@ headers_async = {'Content-Type': 'application/json', 'Prefer': 'respond-async'}
 
 # Get started...
 session = requests.Session()
-result_points_att_polygon_local = None
 result_points_att_polygon_url = None
 result_peri_conv_local = None
 result_peri_conv_url = None
@@ -113,7 +112,6 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['points_att_polygon']['href']
-result_points_att_polygon_local = href.split('/')[-1] # TODO: At the moment, peri conv expects data on server, not URL!
 result_points_att_polygon_url = href
 print('Output: %s' % href)
 print('Next input: %s' % result_points_att_polygon_url)
@@ -191,7 +189,6 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['points_att_polygon']['href']
-result_points_att_polygon_local = href.split('/')[-1] # TODO: At the moment, peri conv expects data on server, not URL!
 result_points_att_polygon_url = href
 print('Output: %s' % href)
 print('Next input: %s' % result_points_att_polygon_url)
@@ -206,8 +203,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/peri-conv/execution'
 inputs = {
     "inputs": {
-        #"input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
-        "input_data": result_points_att_polygon_local or "testinputs/points_att_polygon.csv",
+        "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
         "date_col_name": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
