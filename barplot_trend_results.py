@@ -64,7 +64,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         r_args = [input_data_url, in_id_col, in_test_value, p_value, in_p_value_threshold, in_group, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
-        exit_code, err_msg = call_r_script('1', LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
+        exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
         LOGGER.info('Running R script done: Exit code %s, msg %s' % (exit_code, err_msg))
 
         if not exit_code == 0:
@@ -92,7 +92,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         return f'<BarplotTrendResultsProcessor> {self.name}'
 
 
-def call_r_script(num, LOGGER, r_file_name, path_rscripts, r_args):
+def call_r_script(LOGGER, r_file_name, path_rscripts, r_args):
     # TODO: Move function to some module, same in all processes
 
     LOGGER.debug('Now calling bash which calls R: %s' % r_file_name)
@@ -108,11 +108,11 @@ def call_r_script(num, LOGGER, r_file_name, path_rscripts, r_args):
     stdouttext = stdoutdata.decode()
     stderrtext = stderrdata.decode()
     if len(stderrdata) > 0:
-        err_and_out = 'R stdout and stderr:\n___PROCESS OUTPUT {n}___\n___stdout___\n{stdout}\n___stderr___\n{stderr}   (END PROCESS OUTPUT {n})\n___________'.format(
-            stdout= stdouttext, stderr=stderrtext, n=num)
+        err_and_out = 'R stdout and stderr:\n___PROCESS OUTPUT {name}___\n___stdout___\n{stdout}\n___stderr___\n{stderr}   (END PROCESS OUTPUT {name})\n___________'.format(
+            name=r_file_name, stdout=stdouttext, stderr=stderrtext)
         LOGGER.error(err_and_out)
     else:
-        err_and_out = 'R stdout:\n___PROCESS OUTPUT {n}___\n___stdout___\n{stdout}\n___stderr___\n___(Nothing written to stderr)___\n   (END PROCESS OUTPUT {n})\n___________'.format(
-            stdout = stdouttext, n = num)
+        err_and_out = 'R stdour:\n___PROCESS OUTPUT {name}___\n___stdout___\n{stdout}\n___stderr___\n___(Nothing written to stderr)___\n   (END PROCESS OUTPUT {name})\n___________'.format(
+            name=r_file_name, stdout=stdouttext)
         LOGGER.info(err_and_out)
     return p.returncode, err_and_out
