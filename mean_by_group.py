@@ -11,7 +11,7 @@ curl --location 'http://localhost:5000/processes/mean-by-group/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "peri_conv.csv"
+        "input_data": "https://testserver.de/download/peri_conv.csv"
     } 
 }'
 '''
@@ -50,17 +50,9 @@ class MeanByGroupProcessor(BaseProcessor):
         downloadfilename = 'mean_by_group_%s.csv' % self.my_job_id # or seasonal_means.csv?
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
-        # Where to look for input data
-        # TODO: This ONLY allows for inputs from previously run processes, not for users own data...
-        input_data_in_download_dir = download_dir.rstrip('/')+os.sep+input_data
-        if not os.path.isfile(input_data_in_download_dir):
-            err_msg = 'File %s does not exist.' % input_data_in_download_dir
-            LOGGER.error(err_msg)
-            raise ProcessorExecuteError(user_msg=err_msg)
-
         # Run the R script:
         R_SCRIPT_NAME = 'mean_by_group.R'
-        r_args = [input_data_in_download_dir, downloadfilepath]
+        r_args = [input_data, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)

@@ -24,7 +24,6 @@ headers_async = {'Content-Type': 'application/json', 'Prefer': 'respond-async'}
 # Get started...
 session = requests.Session()
 result_points_att_polygon_url = None
-result_peri_conv_local = None
 result_peri_conv_url = None
 result_mean_by_group_local = None
 result_mean_by_group_url = None
@@ -217,7 +216,6 @@ print('Result: %s' % resp.json())
 
 # Get input for next from output of last
 href = resp.json()['outputs']['peri_conv']['href']
-result_peri_conv_local = href.split('/')[-1] # TODO: At the moment, mean by group expects data on server, not URL!
 result_peri_conv_url = href
 print('Output: %s' % href)
 print('Next input: %s' % result_peri_conv_url)
@@ -232,8 +230,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/mean-by-group/execution'
 inputs = {
     "inputs": {
-        #"input_data": result_peri_conv_url or "https://aqua.igb-berlin.de/download/testinputs/peri_conv.csv"
-        "input_data": result_peri_conv_local or "testinputs/peri_conv.csv"
+        "input_data": result_peri_conv_url or "https://aqua.igb-berlin.de/download/testinputs/peri_conv.csv"
 
     }
 }

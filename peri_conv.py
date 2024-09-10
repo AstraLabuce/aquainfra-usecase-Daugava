@@ -11,7 +11,7 @@ curl --location 'http://localhost:5000/processes/peri-conv/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "point_att_polygon.csv",
+        "input_data": "https://testserver.de/download/points_att_polygon.csv",
         "date_col_name": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
@@ -59,14 +59,6 @@ class PeriConvProcessor(BaseProcessor):
         # Where to store output data
         downloadfilename = 'peri_conv_%s.csv' % self.my_job_id
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
-
-        # Where to look for input data
-        # TODO: This ONLY allows for inputs from previously run processes, not for users own data...
-        #input_data_in_download_dir = download_dir.rstrip('/')+os.sep+input_data
-        #if not os.path.isfile(input_data_in_download_dir):
-        #    err_msg = 'File %s does not exist.' % input_data_in_download_dir
-        #    LOGGER.error(err_msg)
-        #    raise ProcessorExecuteError(user_msg=err_msg)
 
         # Run the R script:
         R_SCRIPT_NAME = 'peri_conv_wrapper.R'
