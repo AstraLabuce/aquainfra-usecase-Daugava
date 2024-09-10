@@ -1,4 +1,5 @@
 import requests
+import time
 
 '''
 This is just a little script to test whether the OGC processing
@@ -16,7 +17,8 @@ Merret Buurman (IGB Berlin), 2024-08-15
 
 
 base_url = 'https://xxx.xxx/pygeoapi'
-headers = {'Content-Type': 'application/json'}
+headers_sync = {'Content-Type': 'application/json'}
+headers_async = {'Content-Type': 'application/json', 'Prefer': 'respond-async'}
 
 
 # Get started...
@@ -37,6 +39,52 @@ result_map_trends_static_local = None
 result_map_trends_static_url = None
 result_barplot_trend_results_local = None
 result_barplot_trend_results_url = None
+
+# Define helper for polling for asynchronous results
+def poll_for_json_result(resp201, session, seconds_polling=2, max_seconds=60*60):
+    link_to_result = poll_for_links(resp201, session, 'application/json', seconds_polling, max_seconds)
+    result_application_json = session.get(link_to_result)
+    print('The result JSON document: %s' % result_application_json.json())
+    return result_application_json.json()
+
+def poll_for_links(resp201, session, required_type='application/json', seconds_polling=2, max_seconds=60*60):
+    # Returns link to result in required_type
+    
+    if not resp201.status_code == 201:
+        print('This should return HTTP status 201, but we got: %s' % resp201.status_code)
+    
+    print('Where to poll for status: %s' % resp201.headers['location'])
+    print('Polling every %s seconds...' % seconds_polling)
+    seconds_passed = 0
+    polling_url = resp201.headers['location']
+    while True:
+        polling_result = session.get(resp.headers['location'])
+        print('Job status: %s' % polling_result.json()['status'].lower())
+        
+        if not polling_result.json()['status'].lower() == 'successful':
+            if seconds_passed >= max_seconds:
+                print('Polled for %s seconds, giving up...' % max_seconds)
+            else:
+                time.sleep(seconds_polling)
+                seconds_passed += seconds_polling
+        
+        else:
+            print('Job successful after %s seconds!' % seconds_passed)
+            links_to_results = polling_result.json()['links']
+            print('Links to results: %s' % links_to_results)
+            link_types = []
+            for link in links_to_results:
+                link_types.append(link['type'])
+                if link['type'] == required_type:
+                    print('We want this one (type %s): %s' % (required_type, link['href']))
+                    link_to_result = link['href']
+                    return link_to_result
+                    #result_application_json = session.get(link_to_result)
+                    #print('The result JSON document: %s' % result_application_json.json())
+                    #return result_application_json.json()
+
+            print('Did not find a link of type "%s"! Only: %s' % (required_type, link_types))
+            return None
 
 
 ##########################
@@ -69,6 +117,26 @@ result_points_att_polygon_local = href.split('/')[-1] # TODO: At the moment, per
 result_points_att_polygon_url = href
 print('Output: %s' % href)
 print('Next input: %s' % result_points_att_polygon_url)
+
+
+# async:
+resp = session.post(url, headers=headers_async, json=inputs)
+print('Calling %s... done. HTTP %s' % (name, resp.status_code))
+#link_to_result = poll_for_links(resp, 'application/json')
+#result_application_json = session.get(link_to_result)
+#print('The result is a JSON document: %s' % result_application_json.json())
+#link_to_actual_result = result_application_json.json()['outputs']['points_att_polygon']['href']
+#print('It contains a link to our ACTUAL result: %s' % link_to_actual_result)
+
+result_application_json = poll_for_json_result(resp, session)
+print('The result is a JSON document: %s' % result_application_json)
+result_points_att_polygon_url = result_application_json['outputs']['points_att_polygon']['href']
+print('It contains a link to our ACTUAL result: %s' % result_points_att_polygon_url)
+# Check out result itself:
+#final_result = session.get(result_points_att_polygon_url)
+#print('Final result: %s...' % str(final_result.content)[0:200])
+print('Next input: %s' % result_points_att_polygon_url)
+
 
 
 #################
@@ -147,7 +215,7 @@ inputs = {
         "date_format": "%Y/%m/%d"
     }
 }
-resp = session.post(url, headers=headers, json=inputs)
+resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
@@ -173,7 +241,7 @@ inputs = {
 
     }
 }
-resp = session.post(url, headers=headers, json=inputs)
+resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
@@ -203,7 +271,7 @@ inputs = {
         "min_data_point": "10"
     }
 }
-resp = session.post(url, headers=headers, json=inputs)
+resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
@@ -231,7 +299,7 @@ inputs = {
         "value_colname": "Secchi_m_mean_annual"
     }
 }
-resp = session.post(url, headers=headers, json=inputs)
+resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
@@ -260,7 +328,7 @@ inputs = {
         "region_col_name": "HELCOM_ID"
     }
 }
-resp = session.post(url, headers=headers, json=inputs)
+resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
@@ -288,7 +356,7 @@ inputs = {
         "group": "season"
     }
 }
-resp = session.post(url, headers=headers, json=inputs)
+resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
@@ -323,7 +391,7 @@ inputs = {
         "p_value": "P_Value"
     }
 }
-resp = session.post(url, headers=headers, json=inputs)
+resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 print('Result: %s' % resp.json())
 
