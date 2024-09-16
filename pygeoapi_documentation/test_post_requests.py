@@ -55,21 +55,22 @@ def poll_for_links(resp201, session, required_type='application/json', seconds_p
     polling_url = resp201.headers['location']
     while True:
         polling_result = session.get(resp.headers['location'])
-        print('Job status: %s' % polling_result.json()['status'].lower())
+        job_status = polling_result.json()['status'].lower()
+        print('Job status: %s' % job_status)
         
-        if polling_result.json()['status'].lower() == 'accepted':
+        if job_status == 'accepted' or job_status == 'running':
             if seconds_passed >= max_seconds:
                 print('Polled for %s seconds, giving up...' % max_seconds)
             else:
                 time.sleep(seconds_polling)
                 seconds_passed += seconds_polling
 
-        elif polling_result.json()['status'].lower() == 'failed':
+        elif job_status == 'failed':
             print('Job failed after %s seconds!' % seconds_passed)
             print('Stopping.')
             sys.exit(1)
 
-        elif polling_result.json()['status'].lower() == 'successful':
+        elif job_status == 'successful':
             print('Job successful after %s seconds!' % seconds_passed)
             links_to_results = polling_result.json()['links']
             #print('Links to results: %s' % links_to_results)
