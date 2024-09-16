@@ -78,7 +78,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "batplot_trend_results": {
+                    "barplot_trend_results": {
                         "title": "barplot trend results",
                         "description": "TODO must ask astra what this is",
                         "href": downloadlink

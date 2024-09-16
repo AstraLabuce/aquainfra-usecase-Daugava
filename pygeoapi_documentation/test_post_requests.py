@@ -473,7 +473,7 @@ if not resp.status_code == 200 or force_async:
 
 # Results (sync / async, does not matter):
 print('Result (JSON document): %s' % result_application_json)
-href = result_application_json['outputs']['batplot_trend_results']['href']
+href = result_application_json['outputs']['barplot_trend_results']['href']
 result_barplot_trend_results_url = href
 print('It contains a link to our ACTUAL result: %s' % result_barplot_trend_results_url)
 # Check out result itself:
