@@ -15,26 +15,35 @@
 ##print(paste0('R Command line args: ', args))
 # 1. point att polygon:
 in_shp_path = "shp/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.shp"
+in_dpoints_url = "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # added this url for downloading csv data from DDAS!
 in_dpoints_path = "in_situ_data/in_situ_example.xlsx"
+in_dpoints_path =  "in_situ_data/in_situ_example.csv"
 in_long_col_name = "longitude"
 in_lat_col_name = "latitude"
+in_value_name = "transparency_m"
 result_path_point_att_polygon <- "data_out_point_att_polygon.csv"
 # 2. peri_conv
 in_date_col_name = "visit_date"
-in_group_to_periods = c("Dec-01:Mar-01", "Mar-02:May-30", "Jun-01:Aug-30", "Sep-01:Nov-30")
+in_group_to_periods = c("Dec-01:Mar-01", "Mar-02:May-31", "Jun-01:Aug-31", "Sep-01:Nov-30")
 #default season division; # do not put Feb-29th, if needed then choose Mar-01
 in_group_labels = c("winter", "spring", "summer", "autumn")
 in_year_starts_at_Dec1 = TRUE
-date_format = "%Y-%m-%d"
+date_format = "%Y/%m/%d"  # This date format is correct for DDAS CSV!
 result_path_peri_conv <- "data_out_peri_conv.csv"
-# 3. mean by group / seasonal means:
+# 3.1 mean by group / by location, season, year, polygon means:
+result_path_means <- "data_out_means.csv"
+cols_to_group_by <- c("longitude", "latitude", "Year_adj_generated", "group_labels", "HELCOM_ID")
+value = "transparency_m"
+# 3.2 mean by group / by season, year, polygon means:
 result_path_seasonal_means <- "data_out_seasonal_means.csv"
+cols_to_group_by <- c("Year_adj_generated", "group_labels", "HELCOM_ID")
+value = "mean"
 # 4. ts_selection_interpolation
 in_rel_cols_ts = c("group_labels", "HELCOM_ID")
-in_missing_threshold_percentage = 40
+in_missing_threshold_percentage = 80
 in_year_colname = "Year_adj_generated"
-in_value_colname = "Secchi_m_mean_annual"
-in_min_data_point = 10
+in_value_colname = "mean"
+in_min_data_point = 2
 result_path_selected_interpolated = "data_out_selected_interpolated.csv"
 # 5. mk_trend_analysis
 in_rel_cols_mk = c("season", "polygon_id")
@@ -62,22 +71,14 @@ result_path_map_trends_interactive = "map_trend_results.html"
 #result_path_static_map_html = "map_trend_results.html" # not used
 result_path_static_map_png = "map_trend_results.png"
 
-## Imports
-#library(rgdal) # Outdated! See: https://cloud.r-project.org/web/packages/rgdal/index.html
-library(sf)
-library(janitor)
-library(dplyr)
-
 ## Read input files
 ## TODO: Make more format agnostic??
-#shapefile <- rgdal::readOGR(in_shp_path) #"SpatialPolygonsDataFrame"
 shapefile <- sf::st_read(in_shp_path)
 
-# locate in situ data set manually
-# load in situ data and respective metadata (geolocation and date are mandatory metadata)
-# example data
-#data_raw <- readxl::read_excel(in_dpoints_path) %>% #example data from https://latmare.lhei.lv/
-#  janitor::clean_names() # makes column names clean for R
+# Merret: I added this download from DDAS here:
+download.file(in_dpoints_url, in_dpoints_path, mode = "wb")
+print(paste0("File ", in_dpoints_path, " downloaded."))
+
 data_raw <- tryCatch(
   {
     data_raw <- readxl::read_excel(in_dpoints_path) %>%
@@ -95,48 +96,6 @@ data_raw <- tryCatch(
     return(data_raw) # to return it and store in variable data_raw
   }
 )
-
-
-#############.
-# this is for our local full data set
-#data_raw <-
- # readxl::read_excel("in_situ_data/Latmare_20240111_secchi_color.xlsx") %>% #datafvrom LIAE data base from https://latmare.lhei.lv/
-  #janitor::clean_names() # makes column names clean for R
-#############.
-
-#list relevant columns: geolocation (lat and lon), date and values for data points are mandatory
-rel_columns <- c(
-  "longitude",
-  "latitude",
-  "visit_date",
-  "transparency_m",
-  "color_id" #water color hue in Furel-Ule (categories)
-)
-
-# relevant data
-data_rel <- data_raw %>%
-  #select only relevant columns
-  dplyr::select(all_of(rel_columns)) %>%
-  # remove cases when Secchi depth, water colour were not measured
-  filter(
-    !is.na(`transparency_m`) &
-      !is.na(`color_id`) &
-      !is.na(`longitude`) &
-      !is.na(`latitude`)
-  ) # make sure to use correct column names
-
-# set coordinates ad numeric (in case they are read as chr variables)
-data_rel <- data_rel %>%
-  mutate(
-    longitude  = as.numeric(longitude),
-    latitude   = as.numeric(latitude),
-    transparency_m = as.numeric(transparency_m)
-  )
-#write.csv(data_rel, file = "data_WP5_DaugavaUseCase_input.csv", row.names = FALSE) # this should be made available to DDAS
-
-# Data shouold be available at least in the test DDAS environment!
-# !! In AquaInfra DDAS data is available in geojson format. 
-## Need a function to transform geojson to tabular!! Or maybe there is something availabe in Galaxy already?
 
 ############################################################################################.
 
@@ -158,7 +117,7 @@ if ("points_att_polygon.R" %in% list.files()){
 print('Running points_att_polygon')
 out_points_att_polygon <- points_att_polygon(
   shp = shapefile, 
-  dpoints = data_rel, 
+  dpoints = data_raw, #Astra: should we define this in args?
   long_col_name = in_long_col_name, 
   lat_col_name = in_lat_col_name)
 
@@ -207,27 +166,40 @@ data.table::fwrite(out_peri_conv , file = result_path_peri_conv)
 ## At the moment, quick and easy version, just to continue the data analysis##################.
 ##############################################################################################.
 
-library(magrittr)
-library(dplyr)
-
+## 3.1. first mean by location, season, year, polygon
 data_mean_by_group <- data.table::fread(result_path_peri_conv)
 
-data_mean_by_group$transparency_m <- as.numeric(data_mean_by_group$transparency_m)
 
-# Call the function:
-print('Running mean by group...')
-out_seasonal_means <- data_mean_by_group %>%
-  group_by(longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID) %>%
-  summarise(Secchi_m_mean = mean(transparency_m)) %>%
-  ungroup() %>% 
-  group_by(Year_adj_generated, group_labels, HELCOM_ID) %>%
-  summarise(Secchi_m_mean_annual = mean(Secchi_m_mean)) %>%
-  ungroup()
+# Read the function "mean_by_group" from current working directory:
+if ("mean_by_group.R" %in% list.files()){
+  source("mean_by_group.R")
+} else {
+  warning('Could not find file "mean_by_group" in current working dir!')
+}
+
+
+out_means <- mean_by_group(data = data_mean_by_group,
+                           cols_to_group_by = c("longitude", "latitude", 
+                                                "Year_adj_generated", "group_labels", "HELCOM_ID"),
+                           value = "transparency_m")
+
+# Write the result to csv file:
+print(paste0('Write result to csv file: ', result_path_means))
+data.table::fwrite(out_means , file = result_path_means) 
+
+## 3.2. second mean by season, year, polygon
+
+data_mean_by_group <- data.table::fread(result_path_means)
+
+out_means <- mean_by_group(data = data_mean_by_group,
+                           cols_to_group_by = c("Year_adj_generated", "group_labels", "HELCOM_ID"),
+                           value = "mean")
 
 
 # Write the result to csv file:
 print(paste0('Write result to csv file: ', result_path_seasonal_means))
-data.table::fwrite(out_seasonal_means , file = result_path_seasonal_means) 
+data.table::fwrite(out_means , file = result_path_seasonal_means) 
+
 
 
 ##############################################################################################.

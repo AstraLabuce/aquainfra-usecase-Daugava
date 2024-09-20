@@ -8,26 +8,19 @@
 ## RUN WITH
 ## Rscript mean_by_group.R "data_out_peri_conv.csv" "data_out_seasonal_means.csv"
 
-library(magrittr)
-library(dplyr)
+library(data.table)
 
-args <- commandArgs(trailingOnly = TRUE)
-print(paste0('R Command line args: ', args))
-input_data_path_or_url = args[1]
-output_data_path = args[2]
-
-# Read the input data from file - this can take a URL!
-data_mean_by_group <- data.table::fread(input_data_path_or_url)
-# TODO Astra: The column names "transparency_m", "Seechi_m_mean", "Secchi_m_mean_annual" are hard-coded here --> Make "arg" (1 or several?) and let user pass it!
-data_mean_by_group$transparency_m <- as.numeric(data_mean_by_group$transparency_m)
-
-out_seasonal_means <- data_mean_by_group %>%
-  group_by(longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID) %>%
-  summarise(Secchi_m_mean = mean(transparency_m)) %>%
-  ungroup() %>% 
-  group_by(Year_adj_generated, group_labels, HELCOM_ID) %>%
-  summarise(Secchi_m_mean_annual = mean(Secchi_m_mean)) %>%
-  ungroup()
-
-print(paste0('Write result to csv file: ', output_data_path))
-data.table::fwrite(out_seasonal_means , file = output_data_path)
+mean_by_group <- function(data, cols_to_group_by = "group", value = value) {
+  if (missing(data))
+    stop("missing data")
+  if (missing(cols_to_group_by))
+    stop("missing cols_to_group_by")
+  
+  err = paste0("Error: `", value, "` is not numeric.")
+  stopifnot(err =
+              is.numeric(as.data.frame(data)[, names(data) == value]))
+  
+  print('caluclating mean_by_group')
+  out_means <- data[ ,list(mean=mean(as.data.frame(data)[, names(data) == value])), by=cols_to_group_by]
+  out_means
+}

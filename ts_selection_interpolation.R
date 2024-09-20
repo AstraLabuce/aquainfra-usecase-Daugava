@@ -75,6 +75,9 @@ ts_selection_interpolation <- function(
   # Remove NULL elements from the list
   sub_tables_subset <- Filter(Negate(is.null), sub_tables_subset)
   
+  if (! length(sub_tables_subset) > 0)
+    stop(paste0("Error: no data to analyse. Add more data points or increase missing_threshold"))
+  
   # Loop through each table in sub_tables_subset a function for extending 
   # the dataframes by missing years
   # object for results
@@ -117,9 +120,14 @@ ts_selection_interpolation <- function(
   short_datasets <- lapply(sub_tables_subset_out, dim)
   sub_tables_subset_out <- 
     sub_tables_subset_out[unname(unlist(sapply(short_datasets, function(i) lapply(i, "[[", 1))[1,]) > min_data_point)]
+  
+  if (! length(sub_tables_subset_out) > 0)
+    stop(paste0("Error: no data to analyse. Add more data points or decrease min_data_point"))
+  
   # transform list to data.frame
   res <- data.frame(Reduce(rbind, sub_tables_subset_out))
-  # TODO Check (Astra?): Are we sure season and polygon_id are here?
+  # TODO Check (Astra?): Are we sure season and polygon_id are here? 
+  ## yes!! 
   res <- tidyr::separate(res, ID, c("season", "polygon_id"), sep = ";")
   
   return(res)
