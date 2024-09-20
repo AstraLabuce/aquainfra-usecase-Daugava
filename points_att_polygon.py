@@ -50,7 +50,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
         in_long_col_name = data.get('long_col_name', 'longitude')
         in_lat_col_name = data.get('lat_col_name', 'latitude')
         in_regions_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
-        in_dpoints_url = data.get('points', 'https://raw.githubusercontent.com/AstraLabuce/aquainfra-usecase-Daugava/main/in_situ_data/in_situ_example.xlsx')
+        in_dpoints_url = data.get('input_table', 'https://raw.githubusercontent.com/AstraLabuce/aquainfra-usecase-Daugava/main/in_situ_data/in_situ_example.xlsx')
 
         # Where to store output data
         downloadfilename = 'points_att_polygon-%s.csv' % self.my_job_id
@@ -75,9 +75,9 @@ class PointsAttPolygonProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "points_att_polygon": {
-                        "title": "point_att_polygon result table",
-                        "description": "TODO must ask astra what this is",
+                    "data_merged_with_regions": {
+                        "title": PROCESS_METADATA["outputs"]["data_merged_with_regions"]["title"],
+                        "description": PROCESS_METADATA["outputs"]["data_merged_with_regions"]["description"],
                         "href": downloadlink
                     }
                 }

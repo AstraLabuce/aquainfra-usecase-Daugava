@@ -49,7 +49,7 @@ class PeriConvProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        input_data_url = data.get('input_data', 'http://.../point_att_polygon.csv')
+        input_data_url = data.get('input_table', 'http://.../point_att_polygon.csv')
         date_col_name = data.get('date_col_name', 'visit_date')
         group_to_periods = data.get('group_to_periods', 'Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30')
         group_labels = data.get('group_labels', 'winter,spring,summer,autumn')
@@ -79,9 +79,9 @@ class PeriConvProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "peri_conv": {
-                        "title": "peri_conv result table",
-                        "description": "TODO must ask astra what this is",
+                    "data_grouped_by_date": {
+                        "title": PROCESS_METADATA["outputs"]["data_grouped_by_date"]["title"],
+                        "description": PROCESS_METADATA["outputs"]["data_grouped_by_date"]["description"],
                         "href": downloadlink
                     }
                 }

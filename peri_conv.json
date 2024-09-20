@@ -2,10 +2,10 @@
     "version": "0.1.0",
     "id": "peri-conv",
     "title": {
-        "en": "peri-conv"
+        "en": "Group data to groups based on date"
     },
     "description": {
-        "en": "adds December to the next year (all winter months together). in the result every year starts at Dec-01. and ends Nov-30; generates num variable 'Year_adjusted' to show change; generates chr variable 'season' to allow grouping the data based on season."
+        "en": "This process groups the data into groups based on the date. If requested (by setting \"year_starts_at_Dec1\"), it adds December to the next year (i.e. all winter months together). In that case, in the result, every year starts at Dec-01 and ends on Nov-30. The process generates the numeric variable \"Year_adj_generated\" to show this change. It generates the character variable \"group_labels\" to allow grouping the data based on the provided periods, and the column \"period_label\" which contains the period definition, e.g. \"Jun-01:Aug-30\"."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["astra"],
@@ -17,9 +17,9 @@
         "hreflang": "en-US"
     }],
     "inputs": {
-        "input_data": {
-            "title": "Input table (result from point_att_polygon)",
-            "description": "dataset with columns for Year and Month (all the rest variables stays the same)",
+        "input_table": {
+            "title": "Table to be grouped by date, with date colum",
+            "description": "A table with a column containing a date. It can have other columns which will not be changed during this process.",
             "schema": {
                 "type": "string"
             },
@@ -28,8 +28,18 @@
             "keywords": ["table", "csv"]
         },
         "date_col_name": {
+            "title": "Date column names",
+            "description": "The date format used to parse the date, i.e. to extract day, month and year from the date column, e.g.  or \"%Y-%m-%d\" for dates like \"1998-08-22\" (this is the default) or \"%Y/%m/%d\" for dates like \"1998/08/22\".",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["date format"]
+        },
+        "date_format": {
             "title": "date_col_name",
-            "description": "Column name to Date in format YYYY-MM-DD; Year, Month, Day, Year_adj - will be generated. Example: visit date.",
+            "description": "Column name of the date column in the format defined above. Example: \"visit date\".",
             "schema": {
                 "type": "string"
             },
@@ -38,8 +48,8 @@
             "keywords": ["column"]
         },
         "group_to_periods": {
-            "title": "group_to_periods",
-            "description": "Example: Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30. TODO must ask astra what this is",
+            "title": "Periods to group the data into",
+            "description": "Define the periods that you want the data to be grouped into. Please follow the example: \"Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30\" (first three letters of each month, then a minus/hyphen, then the day (two digits), then comma, then the next period).",
             "schema": {
                 "type": "string"
             },
@@ -48,8 +58,8 @@
             "keywords": ["date"]
         },
         "group_labels": {
-            "title": "group_labels",
-            "description": "Example: winter,spring,summer,autumn. TODO must ask astra what this is",
+            "title": "Period labels",
+            "description": "Define names for the periods defined above, separated by a comma. Example: \"winter,spring,summer,autumn\".",
             "schema": {
                 "type": "string"
             },
@@ -58,8 +68,8 @@
             "keywords": ["period"]
         },
         "year_starts_at_Dec1": {
-            "title": "year_starts_at_Dec1",
-            "description": "year_starts_at_Dec1. TODO must ask astra what this is",
+            "title": "Include December into next year",
+            "description": "Tell whether the years in your grouping starts at first of December (\"true\") or not (\"false\"). This has to be reflected in the period definitions, these should not contradict each other.",
             "schema": {
                 "type": "string"
             },
@@ -69,9 +79,9 @@
         }
     },
     "outputs": {
-        "peri_conv": {
-            "title": "peri_conv result table",
-            "description": "TODO must ask astra what this is",
+        "data_grouped_by_date": {
+            "title": "The input table grouped by date",
+            "description": "The input table grouped by period, i.e. with added columns \"group_labels\" (e.g. \"winter\", allows to group the data in later analyses), \"period_label\" (the period definition, e.g. \"Jun-01:Aug-30\"), \"Year_adj_generated\" (in case the year is set to start on December first, December gets assigned the adjacent year), ,  \"leap_year\" (boolean to indicate leap year), and \"Day_generated\", \"Month_generated\", \"Year_generated\" (simply generated from the date column).",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/json"
@@ -80,11 +90,12 @@
     },
     "example": {
         "inputs": {
-            "input_data": "points_att_polygon.csv",
+            "input_table": "points_att_polygon.csv",
             "date_col_name": "visit date",
             "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
             "group_labels": "winter,spring,summer,autumn",
-            "year_starts_at_Dec1": "True"
+            "date_format": "%Y-%m-%d",
+            "year_starts_at_Dec1": "true"
         }
     }
 }

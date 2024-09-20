@@ -2,10 +2,10 @@
     "version": "0.1.0",
     "id": "points-att-polygon",
     "title": {
-        "en": "points-att-polygon"
+        "en": "Group points by region"
     },
     "description": {
-        "en": "data points merged with polygon attributes based on data point location"
+        "en": "Merge data points with the attributes of the study region the points fall into."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["astra"],
@@ -17,9 +17,19 @@
         "hreflang": "en-US"
     }],
     "inputs": {
+        "input_table": {
+            "title": "Table to be merged with study region",
+            "description": "Input table containing the in-situ data points with coordinates. Can be provided as Excel file or CSV file (comma-separated text file). The coordinates have to be in WGS84 coordinate system.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": ["table", "excel", "csv"]
+        },
         "regions": {
-            "title": "regions",
-            "description": "Shapefile. TODO must ask astra what this is",
+            "title": "Study region or study subregions",
+            "description": "Study region, or several regions, to classify your input data into groups of interest. Currently it has to be provided as a shapefile. It can be in any coordinate system and will be transformed to WGS84 during this process.",
             "schema": {
                 "type": "string"
             },
@@ -27,19 +37,9 @@
             "maxOccurs": 1,
             "keywords": ["shapefile"]
         },
-        "points": {
-            "title": "points",
-            "description": "Excel file. TODO must ask astra what this is",
-            "schema": {
-                "type": "string"
-            },
-            "minOccurs": 1,
-            "maxOccurs": 1,
-            "keywords": ["table", "excel file"]
-        },
         "long_col_name": {
             "title": "Column name for longitude",
-            "description": "Name of the column that contains longitude values.",
+            "description": "Name of the column that contains longitude values (in WGS84).",
             "schema": {
                 "type": "string"
             },
@@ -49,7 +49,7 @@
         },
         "lat_col_name": {
             "title": "Column name for latiitude",
-            "description": "Name of the column that contains latitude values.",
+            "description": "Name of the column that contains latitude values (in WGS84).",
             "schema": {
                 "type": "string"
             },
@@ -59,9 +59,9 @@
         }
     },
     "outputs": {
-        "points_att_polygon": {
-            "title": "point_att_polygon result table",
-            "description": "TODO must ask astra what this is",
+        "data_merged_with_regions": {
+            "title": "The input table grouped and enhanced by study region",
+            "description": "The input data table, with added study region name and study region attributes.",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/csv"
@@ -70,7 +70,7 @@
     },
     "example": {
         "inputs": {
-            "regions": "https://www.example.xyz",
+            "input_table": "https://www.example.xyz",
             "points": "https://www.example.xyz",
             "long_col_name": "long",
             "lat_col_name": "lat"
