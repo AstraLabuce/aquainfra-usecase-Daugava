@@ -45,6 +45,8 @@ class MeanByGroupProcessor(BaseProcessor):
 
         # Get user inputs
         input_data_url = data.get('input_data', 'http://...peri_conv.csv')
+        in_cols_to_group_by = data.get('cols_to_group_by', "longitude,latitude, Year_adj_generated, group_labels, HELCOM_ID")
+        in_value = data.get('value', 'transparency_m')
 
         # Where to store output data
         downloadfilename = 'mean_by_group_%s.csv' % self.my_job_id # or seasonal_means.csv?
@@ -52,7 +54,7 @@ class MeanByGroupProcessor(BaseProcessor):
 
         # Run the R script:
         R_SCRIPT_NAME = 'mean_by_group.R'
-        r_args = [input_data_url, downloadfilepath]
+        r_args = [input_data_url, in_cols_to_group_by, in_value, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)

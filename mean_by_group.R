@@ -20,7 +20,7 @@ mean_by_group <- function(data, cols_to_group_by = "group", value = value) {
   stopifnot(err =
               is.numeric(as.data.frame(data)[, names(data) == value]))
   
-  print('caluclating mean_by_group')
+  print('calculating mean_by_group')
   out_means <- data[ ,list(mean=mean(as.data.frame(data)[, names(data) == value])), by=cols_to_group_by]
   out_means
 }

@@ -26,6 +26,26 @@
             "minOccurs": 0,
             "maxOccurs": 1,
             "keywords": ["csv"]
+        },
+        "cols_to_group_by": {
+            "title": "Column names to group by",
+            "description": "TODO must ask astra what this is. Example: \"longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID\". Second example: \"Year_adj_generated, group_labels, HELCOM_ID\".",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["csv"]
+        },
+        "value": {
+            "title": "Value",
+            "description": "TODO must ask astra what this is. Example: \"transparency_m\". Second example: \"mean\"",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 0,
+            "maxOccurs": 1,
+            "keywords": ["csv"]
         }
     },
     "outputs": {
@@ -40,7 +60,9 @@
     },
     "example": {
         "inputs": {
-            "input_data": "peri_conv.csv"
+            "input_data": "peri_conv.csv",
+            "cols_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
+            "value": "transparency_m"
         }
     }
 }

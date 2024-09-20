@@ -279,8 +279,9 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/mean-by-group/execution'
 inputs = {
     "inputs": {
-        "input_data": result_peri_conv_url or "https://aqua.igb-berlin.de/download/testinputs/peri_conv.csv"
-
+        "input_data": result_peri_conv_url or "https://aqua.igb-berlin.de/download/testinputs/peri_conv.csv",
+        "cols_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
+        "value": "transparency_m"
     }
 }
 
