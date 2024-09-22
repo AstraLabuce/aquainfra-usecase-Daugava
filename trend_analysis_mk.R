@@ -42,6 +42,44 @@ trend_analysis_mk <- function(
   # Remove elements with 0 rows from the list
   data <- data[sapply(data, function(x) dim(x)[1]) > 0]
   
+  gap_check <- lapply(data, function(table) {
+    calculate_missing_percentage <- function(table) {
+      # Extract the years from the table
+      years <- suppressWarnings(sort(as.numeric(as.character(
+        get(time_colname, table)
+      ))))
+      # Remove missing values
+      years <- years[!is.na(years)]
+      # Calculate the total number of years
+      total_years <- length(years)
+      # Check if there are enough years for calculation
+      if (total_years < 2) {
+        return(100)  # Return 100% missing if there are not enough years
+      }
+      
+      # Calculate the difference between consecutive years
+      year_diff <- diff(years)
+      # Calculate the number of consecutive years
+      consecutive_years <- sum(year_diff == 1) + 1
+      # Calculate the expected number of rows
+      expected_rows <- max(years, na.rm = TRUE) - min(years, na.rm = TRUE) + 1
+      # Calculate the percentage of missing rows
+      missing_percentage <- ((expected_rows - consecutive_years) / expected_rows) * 100
+      
+      return(missing_percentage)
+    }
+    missing_percentage <- calculate_missing_percentage(table)
+    
+    if (missing_percentage == 0) {
+      return(table)
+    } else {
+      return(NULL)
+    }
+  })
+  
+  if (length(names(gap_check[sapply(gap_check, is.null)])) > 0)
+    stop(paste0("Error: gaps in time_colname period identified. Remove data group describing ", names(gap_check[sapply(gap_check, is.null)])," or add missing data"))
+  
     # Loop through each table in sub_tables_subset
     for (table_name in names(data)) {
       # Extract the current table
@@ -67,8 +105,10 @@ trend_analysis_mk <- function(
     
     # Combine data into a data frame
     results_table <- data.frame(ID = table_names, period = period, Tau_Value = tau_values, P_Value = p_values)
-    # TODO Check (Astra?): Are we sure season and polygon_id are here?
-    results_table <- tidyr::separate(results_table, ID, c("season", "polygon_id"), sep = ";")
+    # REPLY: you are correct noting this! It could be anything defined in rel_cols variable,
+    # it could be one and it could be e.g. four parameters. Here is more generic approach:
+    # ID is generated in the script hence it should always be there before this line.
+    results_table <- tidyr::separate(results_table, ID,  rel_cols, sep = ";")
     
     # Return the results table
     return(results_table)

@@ -57,7 +57,7 @@ map_shapefile_points <- function(shp, dpoints,
 
   mapview::mapview(shp_wgs84, 
                    alpha.region = 0.3, 
-                   legend = FALSE, 
+                   legend = FALSE,
                    zcol = region_col_name) + 
     mapview::mapview(data_spatial, 
                      zcol = value_name,

@@ -26,7 +26,18 @@ ts_selection_interpolation <- function(
          call. = FALSE)
   }
 
-  list_groups <-  vector("list", length(rel_cols))
+  list_groups <- suppressWarnings( vector("list", length(rel_cols)))
+  
+  data <- as.data.frame(data)[, names(data) %in% rel_cols | names(data) == value_col | names(data) == year_col]
+  groups <- as.data.frame(unique(as.data.frame(data)[, ! names(data) == value_col]))
+
+  
+  groups$group_id <- seq(from = 1, to = dim(groups)[1], by = 1)
+  data <- left_join(data, groups, by = c(rel_cols, year_col))
+  groups_mean <- aggregate(subset(data, select = names(data) == value_col), list(data$group_id), FUN=mean)
+  colnames(groups_mean)[1] <- "group_id"
+  out_means <- suppressWarnings(left_join(groups, groups_mean, by = "group_id"))
+  data <- select(out_means, -group_id)
   
   for (each in seq(rel_cols)){
     list_groups[[each]] <- as.factor(subset(data, select = names(data) == rel_cols[each])[[1]])
@@ -34,14 +45,13 @@ ts_selection_interpolation <- function(
   sub_tables <- split(data, list_groups, sep = ";")
   
   # Some tables have too many missing years, therefore it is necessary to remove them from the analysis. 
-  # In the example, the treshold for the removal is 40% of timeseries years missing.
-  
+
   sub_tables_subset <- lapply(sub_tables, function(table) {
     
     #create a function for which will calculate a percentage of missing years
     calculate_missing_percentage <- function(table) {
       # Extract the years from the table
-      years <- as.numeric(as.character(table$Year_adj_generated))
+      years <- suppressWarnings(sort(as.numeric(as.character(get(year_col, table)))))
       # Remove missing values
       years <- years[!is.na(years)]
       # Calculate the total number of years
@@ -104,7 +114,10 @@ ts_selection_interpolation <- function(
     #processed_table <- sub_tables_subset_out[[table_name]]
     processed_table <- 
       subset(processed_table, select = names(processed_table) %in% c(year_col, value_col), drop = FALSE)
-
+    
+    if (! length(processed_table) == 2)
+      stop(paste0("Error: check if column identified in value_col is available in dataset"))
+    
     # Apply zoo::na.approx() to fill gaps if there are at least two non-NA values
     if (sum(!is.na(subset(processed_table, select = names(processed_table) == value_col)[[1]])) >= 2) {
       filled_table <- as.data.frame(zoo::na.approx(processed_table))
@@ -127,8 +140,10 @@ ts_selection_interpolation <- function(
   # transform list to data.frame
   res <- data.frame(Reduce(rbind, sub_tables_subset_out))
   # TODO Check (Astra?): Are we sure season and polygon_id are here? 
-  ## yes!! 
-  res <- tidyr::separate(res, ID, c("season", "polygon_id"), sep = ";")
-  
+  # REPLY: you are correct noting this! It could be anything defined in rel_cols variable,
+  # it could be one and it could be e.g. four parameters. Here is more generic approach:
+  # ID is generated in the script hence it should always be there before this line.
+  res <- tidyr::separate(res, ID, rel_cols, sep = ";")
+  print("Done!")
   return(res)
 }

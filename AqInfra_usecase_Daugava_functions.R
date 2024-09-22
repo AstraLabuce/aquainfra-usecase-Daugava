@@ -32,23 +32,23 @@ date_format = "%Y/%m/%d"  # This date format is correct for DDAS CSV!
 result_path_peri_conv <- "data_out_peri_conv.csv"
 # 3.1 mean by group / by location, season, year, polygon means:
 result_path_means <- "data_out_means.csv"
-cols_to_group_by <- c("longitude", "latitude", "Year_adj_generated", "group_labels", "HELCOM_ID")
-value = "transparency_m"
+cols_to_group_by_first <- c("longitude", "latitude", "Year_adj_generated", "group_labels", "HELCOM_ID")
+value_col_first = "transparency_m"
 # 3.2 mean by group / by season, year, polygon means:
 result_path_seasonal_means <- "data_out_seasonal_means.csv"
-cols_to_group_by <- c("Year_adj_generated", "group_labels", "HELCOM_ID")
-value = "mean"
+cols_to_group_by_second <- c("Year_adj_generated", "group_labels", "HELCOM_ID")
+value_col_second = "transparency_m"
 # 4. ts_selection_interpolation
 in_rel_cols_ts = c("group_labels", "HELCOM_ID")
-in_missing_threshold_percentage = 80
-in_year_colname = "Year_adj_generated"
-in_value_colname = "mean"
-in_min_data_point = 2
+in_missing_threshold_percentage = 50
+in_year_colname_ts = "Year_adj_generated"
+in_value_colname_ts = "transparency_m"
+in_min_data_point_ts = 5
 result_path_selected_interpolated = "data_out_selected_interpolated.csv"
 # 5. mk_trend_analysis
-in_rel_cols_mk = c("season", "polygon_id")
-in_time_colname = "Year_adj_generated"
-in_value_colname = "Secchi_m_mean_annual"
+in_rel_cols_mk = c("group_labels", "HELCOM_ID")
+in_time_colname_mk = "Year_adj_generated"
+in_value_colname_mk = "transparency_m"
 result_path_trend_analysis_mk = "mk_trend_analysis_results.csv"
 # 6.1 vis: map_shapefile_points
 in_long_col_name_vis = "longitude"
@@ -57,14 +57,14 @@ in_value_name_vis = "transparency_m"
 in_region_col_name = "HELCOM_ID"
 result_url_map_shapefile_points = "map_shapefile_insitu.html"
 # 6.2 vis: barplot_trend_results
-in_id_col = "polygon_id"
+in_id_col = "HELCOM_ID"
 in_test_value = "Tau_Value"
 in_p_value_col = "P_Value"
 in_p_value_threshold = "0.05"
-in_group = "season"
+in_group = "group_labels"
 result_path_barplot_trend_results = "barplot_trend_results.png"
 # 6.3 vis: map_trends_interactive
-in_id_trend_col = "polygon_id"
+in_id_trend_col = "HELCOM_ID"
 in_id_shp_col = "HELCOM_ID"
 result_path_map_trends_interactive = "map_trend_results.html"
 # 6.4: static map
@@ -78,6 +78,8 @@ shapefile <- sf::st_read(in_shp_path)
 # Merret: I added this download from DDAS here:
 download.file(in_dpoints_url, in_dpoints_path, mode = "wb")
 print(paste0("File ", in_dpoints_path, " downloaded."))
+
+library(magrittr)
 
 data_raw <- tryCatch(
   {
@@ -179,9 +181,8 @@ if ("mean_by_group.R" %in% list.files()){
 
 
 out_means <- mean_by_group(data = data_mean_by_group,
-                           cols_to_group_by = c("longitude", "latitude", 
-                                                "Year_adj_generated", "group_labels", "HELCOM_ID"),
-                           value = "transparency_m")
+                           cols_to_group_by = cols_to_group_by_first,
+                           value_col = value_col_first)
 
 # Write the result to csv file:
 print(paste0('Write result to csv file: ', result_path_means))
@@ -191,9 +192,16 @@ data.table::fwrite(out_means , file = result_path_means)
 
 data_mean_by_group <- data.table::fread(result_path_means)
 
+# Read the function "mean_by_group" from current working directory:
+if ("mean_by_group.R" %in% list.files()){
+  source("mean_by_group.R")
+} else {
+  warning('Could not find file "mean_by_group" in current working dir!')
+}
+
 out_means <- mean_by_group(data = data_mean_by_group,
-                           cols_to_group_by = c("Year_adj_generated", "group_labels", "HELCOM_ID"),
-                           value = "mean")
+                           cols_to_group_by = cols_to_group_by_second,
+                           value_col = value_col_second)
 
 
 # Write the result to csv file:
@@ -206,7 +214,7 @@ data.table::fwrite(out_means , file = result_path_seasonal_means)
 ## 4. TimeSeries selection and interpolation of NAs ####
 ##############################################################################################.
 
-data_list_subgroups <- data.table::fread(result_path_seasonal_means)
+data_list_subgroups_ts <- data.table::fread(result_path_seasonal_means)
 
 # split data into sub-tables for each season and HELCOM_ID separately
 # Create a list to store sub-tables of transparency
@@ -221,12 +229,12 @@ if ("ts_selection_interpolation.R" %in% list.files()){
 # Call the function:
 print('Running ts_selection_interpolation...')
 out_ts <- ts_selection_interpolation(
-  data = data_list_subgroups, 
+  data = data_list_subgroups_ts, 
   rel_cols = in_rel_cols_ts, 
   missing_threshold = in_missing_threshold_percentage, 
-  year_col = in_year_colname,
-  value_col = in_value_colname,
-  min_data_point = in_min_data_point)
+  year_col = in_year_colname_ts,
+  value_col = in_value_colname_ts,
+  min_data_point = in_min_data_point_ts)
 
 # Write the result to csv file:
 print(paste0('Write result to csv file: ', result_path_selected_interpolated))
@@ -237,7 +245,7 @@ data.table::fwrite(out_ts , file = result_path_selected_interpolated)
 ## 5. trend_analysis Mann Kendall ####
 ##############################################################################################.
 
-data_list_subgroups <- data.table::fread(result_path_selected_interpolated)
+data_list_subgroups_mk <- data.table::fread(result_path_selected_interpolated)
 
 
 # Read the function "trend_analysis_mk" from current working directory:
@@ -249,10 +257,10 @@ if ("trend_analysis_mk.R" %in% list.files()){
 
 # Call the function:
 print('Running trend_analysis_mk...')
-out_mk <- trend_analysis_mk(data = data_list_subgroups,
+out_mk <- trend_analysis_mk(data = data_list_subgroups_mk,
                   rel_cols = in_rel_cols_mk,
-                  value_col = in_value_colname,
-                  time_colname = in_time_colname)
+                  value_colname = in_value_colname_mk,
+                  time_colname = in_time_colname_mk)
 
 # Write the result to csv file:
 print(paste0('Write result to csv file: ', result_path_trend_analysis_mk))

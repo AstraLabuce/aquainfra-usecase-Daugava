@@ -47,7 +47,8 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
   # set to WGS84 projection
   print('Setting to WGS84 CRS...')
   sf::st_crs(data_spatial) <- 4326
-
+  print('It may take a while...')
+  
   shp_wgs84 <- st_transform(shp, st_crs(data_spatial))
   if (!all(st_is_valid(shp_wgs84))) {
     shp_wgs84 <- st_make_valid(shp_wgs84)
@@ -58,5 +59,6 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
   data_shp <- sf::st_drop_geometry(data_shp)
   res <- full_join(dpoints, data_shp)
   rm(data_spatial)
+  print('Done!')
   res
 }
