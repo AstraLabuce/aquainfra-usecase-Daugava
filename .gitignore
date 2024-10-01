@@ -8,11 +8,18 @@ shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shp
 shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2018.shx
 .Rhistory
 .Rproj.user
+shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2022.CPG
+shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2022.dbf
+shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2022.prj
+shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2022.sbn
+shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2022.sbx
+shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2022.shp
+shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2022.shx
+
 
 __pycache__
 OLD
 config.json
-*.csv
 *.png
 *.html
 rosm.cache
