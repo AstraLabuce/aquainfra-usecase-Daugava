@@ -6,6 +6,7 @@
 
 library(zoo)
 library(tidyr)
+library(dplyr)
 
 # split data into sub-tables for each season and HELCOM_ID separately
 # Create a list to store sub-tables of transparency
@@ -33,10 +34,10 @@ ts_selection_interpolation <- function(
 
   
   groups$group_id <- seq(from = 1, to = dim(groups)[1], by = 1)
-  data <- left_join(data, groups, by = c(rel_cols, year_col))
+  data <- dplyr::left_join(data, groups, by = c(rel_cols, year_col))
   groups_mean <- aggregate(subset(data, select = names(data) == value_col), list(data$group_id), FUN=mean)
   colnames(groups_mean)[1] <- "group_id"
-  out_means <- suppressWarnings(left_join(groups, groups_mean, by = "group_id"))
+  out_means <- suppressWarnings(dplyr::left_join(groups, groups_mean, by = "group_id"))
   data <- select(out_means, -group_id)
   
   for (each in seq(rel_cols)){
