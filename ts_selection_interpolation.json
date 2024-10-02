@@ -19,7 +19,7 @@
     "inputs": {
         "input_data": {
             "title": "Input table",
-            "description": "The input table containing data for selection and interpolation. This table includes grouping variables (if applicable), the year (or other time identifier) and the value columns to be interpolated. For example, use the result from mean_by_group.",
+            "description": "URL to the input table containing data for selection and interpolation. This table includes grouping variables (if applicable), the year (or other time identifier) and the value columns to be interpolated. For example, use the result from mean_by_group.",
             "schema": {
                 "type": "string"
             },

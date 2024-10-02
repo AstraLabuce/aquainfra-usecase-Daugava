@@ -19,7 +19,7 @@
     "inputs": {
         "input_data": {
             "title": "Table to be grouped by date, with date colum",
-            "description": "A table with a column containing a date. It can have other columns which will not be changed during this process.",
+            "description": "URL to the table with a column containing a date. It can have other columns which will not be changed during this process.",
             "schema": {
                 "type": "string"
             },

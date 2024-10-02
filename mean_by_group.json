@@ -19,7 +19,7 @@
     "inputs": {
         "input_data": {
             "title": "Input table",
-            "description": "URL pointing to an input table containing group identifier(s) and a value column. Groups are defined by one or more columns. Other columns present in the table will be removed in the process, retaining only those specified in cols_to_group_by and value_col. For example, use the result table from peri_conv.",
+            "description": "URL to the input table containing group identifier(s) and a value column. Groups are defined by one or more columns. Other columns present in the table will be removed in the process, retaining only those specified in cols_to_group_by and value_col. For example, use the result table from peri_conv.",
             "schema": {
                 "type": "string"
             },

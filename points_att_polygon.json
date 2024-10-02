@@ -19,7 +19,7 @@
     "inputs": {
         "input_data": {
             "title": "Table to be merged with study region",
-            "description": "Input table containing the in-situ data points with coordinates. Can be provided as Excel file or CSV file (comma-separated text file). The coordinates have to be in WGS84 coordinate system.",
+            "description": "URL to the input table containing the in-situ data points with coordinates. Can be provided as Excel file or CSV file (comma-separated text file). The coordinates have to be in WGS84 coordinate system.",
             "schema": {
                 "type": "string"
             },
@@ -29,7 +29,7 @@
         },
         "regions": {
             "title": "Study region or study subregions",
-            "description": "Study region, or several regions, to classify your input data into groups of interest. Currently it has to be provided as a shapefile. It can be in any coordinate system and will be transformed to WGS84 during this process.",
+            "description": "URL to the study region, or several regions, to classify your input data into groups of interest. Currently it has to be provided as a shapefile. It can be in any coordinate system and will be transformed to WGS84 during this process.",
             "schema": {
                 "type": "string"
             },

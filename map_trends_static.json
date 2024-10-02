@@ -29,7 +29,7 @@
         },
         "input_data": {
             "title": "Input table",
-            "description": "The input table containing statistical analysis results. The table must include columns for test values, p-values, and identifiers linking to study region.",
+            "description": "URL to the input table containing statistical analysis results. The table must include columns for test values, p-values, and identifiers linking to study region.",
             "schema": {
                 "type": "string"
             },
