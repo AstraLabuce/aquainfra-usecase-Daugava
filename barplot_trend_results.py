@@ -68,7 +68,6 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         LOGGER.info('Running R script done: Exit code %s, msg %s' % (exit_code, err_msg))
 
         if not exit_code == 0:
-            LOGGER.error(err_msg)
             raise ProcessorExecuteError(user_msg="R script failed with exit code %s" % exit_code)
 
         else:

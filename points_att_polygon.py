@@ -53,7 +53,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
         in_dpoints_url = data.get('input_data', 'https://raw.githubusercontent.com/AstraLabuce/aquainfra-usecase-Daugava/main/in_situ_data/in_situ_example.xlsx')
 
         # Where to store output data
-        downloadfilename = 'points_att_polygon-%s.csv' % self.my_job_id
+        downloadfilename = 'data_merged_with_regions-%s.csv' % self.my_job_id
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
@@ -65,7 +65,6 @@ class PointsAttPolygonProcessor(BaseProcessor):
         LOGGER.info('Running R script done: Exit code %s' % exit_code)
 
         if not exit_code == 0:
-            LOGGER.error(err_msg)
             raise ProcessorExecuteError(user_msg="R script failed with exit code %s" % exit_code)
 
         else:

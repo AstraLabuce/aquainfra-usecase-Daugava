@@ -63,7 +63,6 @@ class MeanByGroupProcessor(BaseProcessor):
         LOGGER.info('Running R script done: Exit code %s' % exit_code)
 
         if not exit_code == 0:
-            LOGGER.error(err_msg)
             raise ProcessorExecuteError(user_msg="R script failed with exit code %s" % exit_code)
 
         else:

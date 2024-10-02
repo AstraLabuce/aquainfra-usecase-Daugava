@@ -5,7 +5,7 @@
         "en": "Man-Kendall Trend Analysis on Time Series"
     },
     "description": {
-        "en": "trend-analysis-mk"
+        "en": "This process performs a Man-Kendall trend analysis to identify the presence or absence of significant trends in time series data. It returns statistical analysis coefficients (e.g., p-values, tau, and slope) for each defined group, allowing for group-wise trend identification."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],
