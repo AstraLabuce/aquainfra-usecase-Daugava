@@ -37,9 +37,9 @@
             "maxOccurs": 1,
             "keywords": ["csv"]
         },
-        "value": {
-            "title": "Value",
-            "description": "TODO must ask astra what this is. Example: \"transparency_m\". Second example: \"mean\"",
+        "value_col": {
+            "title": "Column name for column containing values",
+            "description": "The name of the column that contains the values for which the average will be calculated. Only one column name can be included. Default = \"value\". Examples: \"transparency_m\", \"mean\"",
             "schema": {
                 "type": "string"
             },
@@ -62,7 +62,7 @@
         "inputs": {
             "input_data": "peri_conv.csv",
             "cols_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
-            "value": "transparency_m"
+            "value_col": "transparency_m"
         }
     }
 }

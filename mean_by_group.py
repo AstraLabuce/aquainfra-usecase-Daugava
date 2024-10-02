@@ -13,7 +13,7 @@ curl --location 'http://localhost:5000/processes/mean-by-group/execution' \
     "inputs": {
         "input_table": "https://testserver.de/download/peri_conv.csv",
         "cols_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
-        "value": "transparency_m"
+        "value_col": "transparency_m"
     } 
 }'
 '''
@@ -48,7 +48,7 @@ class MeanByGroupProcessor(BaseProcessor):
         # Get user inputs
         input_data_url = data.get('input_data', 'http://...peri_conv.csv')
         in_cols_to_group_by = data.get('cols_to_group_by', "longitude,latitude, Year_adj_generated, group_labels, HELCOM_ID")
-        in_value = data.get('value', 'transparency_m')
+        in_value_col = data.get('value_col', 'transparency_m')
 
         # Where to store output data
         downloadfilename = 'mean_by_group_%s.csv' % self.my_job_id # or seasonal_means.csv?
@@ -56,7 +56,7 @@ class MeanByGroupProcessor(BaseProcessor):
 
         # Run the R script:
         R_SCRIPT_NAME = 'mean_by_group_wrapper.R'
-        r_args = [input_data_url, in_cols_to_group_by, in_value, downloadfilepath]
+        r_args = [input_data_url, in_cols_to_group_by, in_value_col, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
