@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "id": "trend-analysis-mk",
     "title": {
-        "en": "trend-analysis-mk"
+        "en": "Man-Kendall Trend Analysis on Time Series"
     },
     "description": {
         "en": "trend-analysis-mk"
@@ -19,7 +19,7 @@
     "inputs": {
         "input_data": {
             "title": "Input table (result from ts_selection_interpolation)",
-            "description": "TODO must ask astra what this is",
+            "description": "description: This process performs a Man-Kendall trend analysis to identify the presence or absence of significant trends in time series data. It returns statistical analysis coefficients (e.g., p-values, tau, and slope) for each defined group, allowing for group-wise trend identification.",
             "schema": {
                 "type": "string"
             },
@@ -28,8 +28,8 @@
             "keywords": ["table", "csv"]
         },
         "rel_cols": {
-            "title": "Column names I guess",
-            "description": "TODO must ask astra what this is",
+            "title": "Column names identifying group(s)",
+            "description": "Column name(s) identifying relevant groups in the dataset. These columns will be used to define unique groups for which separate trend analyses are performed.",
             "schema": {
                 "type": "string"
             },
@@ -39,7 +39,7 @@
         },
         "time_colname": {
             "title": "Column name for time",
-            "description": "TODO must ask astra what this is",
+            "description": "The name of the column containing the time variable (e.g., year, month) to be used in the trend analysis. Default = \"year\".",
             "schema": {
                 "type": "string"
             },
@@ -48,8 +48,8 @@
             "keywords": ["TODO"]
         },
         "value_colname": {
-            "title": "Column name for some value",
-            "description": "TODO must ask astra what this is",
+            "title": "Column name for values",
+            "description": "The name of the column containing the values to be analyzed in the Man-Kendall trend test. Default = \"value\"",
             "schema": {
                 "type": "string"
             },

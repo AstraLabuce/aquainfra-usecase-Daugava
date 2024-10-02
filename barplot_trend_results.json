@@ -2,10 +2,10 @@
     "version": "0.1.0",
     "id": "barplot-trend-results",
     "title": {
-        "en": "barplot-trend-results"
+        "en": "Visualisation of statistical analysis results"
     },
     "description": {
-        "en": "barplot-trend-results"
+        "en": "This process visualizes statistical analysis results, where the test value (stat.value) is plotted on the Y-axis and id are plotted on the X-axis. Bar color is determined by groups and is displayed in the legend. Bar opacity is controlled by the p-value threshold, with translucent bars representing insignificant results based on the provided p_value_threshold."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],
@@ -18,8 +18,8 @@
     }],
     "inputs": {
         "data": {
-            "title": "data",
-            "description": "astra",
+            "title": "Input table",
+            "description": "The input table containing statistical analysis results. The table must include columns for test values, p-values, and group identifiers.",
             "schema": {
                 "type": "string"
             },
@@ -28,8 +28,8 @@
             "keywords": ["full name", "personal"]
         },
         "id_col": {
-            "title": "id_col",
-            "description": "astra",
+            "title": "Column name for identifier",
+            "description": "The name of the column containing group or sample identifiers, e.g., polygon id. Default = \"polygon_id\"",
             "schema": {
                 "type": "string"
             },
@@ -38,8 +38,8 @@
             "keywords": ["full name", "personal"]
         },
         "test_value": {
-            "title": "test_value",
-            "description": "astra",
+            "title": "Column name for test value",
+            "description": "The name of the column containing the test values (e.g., statistical coefficients) to be plotted on the Y-axis, e.g., Tau for Mann-Kendall test. Default = \"value\".",
             "schema": {
                 "type": "string"
             },
@@ -48,8 +48,8 @@
             "keywords": ["full name", "personal"]
         },
         "p_value": {
-            "title": "p_value",
-            "description": "astra",
+            "title": "Column name for p value",
+            "description": "The name of the column containing p values, used to determine bar transparency. Default = \"p_value\"",
             "schema": {
                 "type": "string"
             },
@@ -58,8 +58,8 @@
             "keywords": ["full name", "personal"]
         },
         "p_value_threshold": {
-            "title": "p_value_threshold",
-            "description": "astra",
+            "title": "p value threshold for significance",
+            "description": "The threshold for distinguishing significant from insignificant values. It adjusts the transparency of bars in the plot. Default = 0.05",
             "schema": {
                 "type": "string"
             },
@@ -68,8 +68,8 @@
             "keywords": ["full name", "personal"]
         },
         "group": {
-            "title": "group",
-            "description": "astra",
+            "title": "Column name for subgroups",
+            "description": "The name of the column that defines the subgroups or categories to be displayed on the X-axis, e.g., seasons for every polygon_id. Default = \"group\"",
             "schema": {
                 "type": "string"
             },
@@ -90,8 +90,12 @@
     },
     "example": {
         "inputs": {
-            "name": "World",
-            "message": "An optional message."
+            "data": "https://testserver.de/download/mk_trend_analysis_results.csv",
+            "id_col": "polygon_id",
+            "test_value": "Tau_Value",
+            "p_value": "P_Value",
+            "p_value_threshold": "0.05",
+            "group": "season"
         }
     }
 }

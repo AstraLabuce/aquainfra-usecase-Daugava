@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "id": "ts-selection-interpolation",
     "title": {
-        "en": "ts-selection-interpolation"
+        "en": "Select and Interpolate Time Series"
     },
     "description": {
-        "en": "Split data into sub-tables for each season and HELCOM_ID separately. Create a list to store sub-tables of transparency."
+        "en": "This process selects time series with sufficient data for interpolation and returns continuous time series where missing values (NAs) are replaced using linear interpolation (R function zoo::na.approx). The result is a complete time series without gaps. Timeseries with insufficient data are removed. / Split data into sub-tables for each season and HELCOM_ID separately. Create a list to store sub-tables of transparency."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],
@@ -18,8 +18,8 @@
     }],
     "inputs": {
         "input_data": {
-            "title": "Input table (result from mean_by_group)",
-            "description": "TODO must ask astra what this is",
+            "title": "Input table",
+            "description": "The input table containing data for selection and interpolation. This table includes grouping variables (if applicable), the year (or other time identifier) and the value columns to be interpolated. For example, use the result from mean_by_group.",
             "schema": {
                 "type": "string"
             },
@@ -28,8 +28,8 @@
             "keywords": ["table", "csv"]
         },
         "rel_cols": {
-            "title": "Points excel",
-            "description": "TODO must ask astra what this is",
+            "title": "Column names identifying group(s)",
+            "description": "Column name(s) describing relevant values in the dataset. These columns are treated as grouping identifiers, and a combination of all specified columns will be used to define unique groups. For each group, a separate time series is analyzed and interpolated individually.",
             "schema": {
                 "type": "string"
             },
@@ -38,8 +38,8 @@
             "keywords": ["points"]
         },
         "missing_threshold_percentage": {
-            "title": "Column name for longitude",
-            "description": "TODO must ask astra what this is",
+            "title": "Threshold for missing values",
+            "description": "Threshold for the allowed percentage of missing data points (NAs). For example, a value of 40 means series with more than 40% missing data will be removed. Default = 30",
             "schema": {
                 "type": "string"
             },
@@ -48,8 +48,8 @@
             "keywords": ["percent"]
         },
         "year_colname": {
-            "title": "Column name for latiitude",
-            "description": "TODO must ask astra what this is",
+            "title": "Column name for time",
+            "description": "The name of the column containing the year (or other time identifier, such as quarter, month, or day). Default = \"Year\"",
             "schema": {
                 "type": "string"
             },
@@ -58,8 +58,8 @@
             "keywords": ["year", "column"]
         },
         "value_colname": {
-            "title": "Column name for some value",
-            "description": "TODO must ask astra what this is",
+            "title": "Column name for values",
+            "description": "The name of the column containing the values to be considered for interpolation. Default = \"value\".",
             "schema": {
                 "type": "string"
             },
@@ -68,8 +68,8 @@
             "keywords": ["column"]
         },
         "min_data_point": {
-            "title": "Some min data point",
-            "description": "TODO must ask astra what this is",
+            "title": "Minimum number of data points required",
+            "description": "The minimum number of data points required in a time series for it to be included in the interpolation process. Default = 10.",
             "schema": {
                 "type": "string"
             },
@@ -80,8 +80,8 @@
     },
     "outputs": {
         "ts_selection_interpolation": {
-            "title": "ts_selection_interpolation result table",
-            "description": "TODO must ask astra what this is",
+            "title": "Interpolated time series",
+            "description": "A table containing continuous time series for each unique group defined by rel_cols, with missing values replaced by linear interpolation. Time series with insufficient data based on the missing_threshold_percentage or min_data_point are excluded.",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/json"

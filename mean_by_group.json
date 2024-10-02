@@ -2,10 +2,10 @@
     "version": "0.1.0",
     "id": "mean-by-group",
     "title": {
-        "en": "mean-by-group"
+        "en": "Return group average"
     },
     "description": {
-        "en": "Calculate data average per site, per year, per season and per HELCOM_ID."
+        "en": "description: This function calculates and returns the average value for each defined group (for example per site, per year, per season and per HELCOM_ID)."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],
@@ -18,8 +18,8 @@
     }],
     "inputs": {
         "input_data": {
-            "title": "Input table (result from peri_conv)",
-            "description": "TODO must ask astra what this is",
+            "title": "Input table",
+            "description": "Input table containing group identifier(s) and a value column. Groups are defined by one or more columns. Other columns present in the table will be removed in the process, retaining only those specified in cols_to_group_by and value_col. For example, use the result table from peri_conv.",
             "schema": {
                 "type": "string"
             },
@@ -28,8 +28,8 @@
             "keywords": ["csv"]
         },
         "cols_to_group_by": {
-            "title": "Column names to group by",
-            "description": "TODO must ask astra what this is. Example: \"longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID\". Second example: \"Year_adj_generated, group_labels, HELCOM_ID\".",
+            "title": "Column names identifying group",
+            "description": "One or more column names identifying the group. A combination of all specified columns will be used to define unique groups for calculating the average value. Default = \"group\". Example: \"longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID\". Another example: \"Year_adj_generated, group_labels, HELCOM_ID\".",
             "schema": {
                 "type": "string"
             },
@@ -50,8 +50,8 @@
     },
     "outputs": {
         "mean_by_group": {
-            "title": "mean_by_group result table",
-            "description": "TODO must ask astra what this is",
+            "title": "Group average values (result table)",
+            "description": "A table containing the unique groups defined by cols_to_group_by and the corresponding average values for each group, based on the column specified in value_col.",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/json"

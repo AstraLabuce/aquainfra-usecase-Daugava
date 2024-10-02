@@ -2,10 +2,10 @@
     "version": "0.1.0",
     "id": "map-shapefile-points",
     "title": {
-        "en": "map-shapefile-points"
+        "en": "Spatial visualisation of regions and data points "
     },
     "description": {
-        "en": "map-shapefile-points"
+        "en": "This process maps the study region and data point locations on OpenStreetMap, providing a visual representation of the geographic distribution of in-situ data points within the defined study area."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],
@@ -18,8 +18,8 @@
     }],
     "inputs": {
         "regions": {
-            "title": "regions",
-            "description": "astra",
+            "title": "Study region or study subregions",
+            "description": "Study region, or several regions, to classify the input data into groups of interest. Currently it has to be provided as a shapefile. It can be in any coordinate system and will be transformed to WGS84 during this process.",
             "schema": {
                 "type": "string"
             },
@@ -28,8 +28,8 @@
             "keywords": ["full name", "personal"]
         },
         "points": {
-            "title": "points",
-            "description": "astra",
+            "title": "Data table to be plotted on top of study regions",
+            "description": "Input table containing the in-situ data points with coordinates.",
             "schema": {
                 "type": "string"
             },
@@ -39,7 +39,7 @@
         },
         "long_col_name": {
             "title": "Column name for longitude",
-            "description": "astra",
+            "description": "The name of the column containing longitude values for the data points.",
             "schema": {
                 "type": "string"
             },
@@ -48,8 +48,8 @@
             "keywords": ["full name", "personal"]
         },
         "lat_col_name": {
-            "title": "Column name for latiitude",
-            "description": "astra",
+            "title": "Column name for latitude",
+            "description": "The name of the column containing latitude values for the data points.",
             "schema": {
                 "type": "string"
             },
@@ -58,8 +58,8 @@
             "keywords": ["full name", "personal"]
         },
         "value_name": {
-            "title": "Value name",
-            "description": "astra",
+            "title": "Column name of data point identifier",
+            "description": "The name of the column containing identifier (e.g., site name) or values (e.g., depth) to color the points according to their corresponding values.",
             "schema": {
                 "type": "string"
             },
@@ -68,8 +68,8 @@
             "keywords": ["full name", "personal"]
         },
         "region_col_name": {
-            "title": "region name",
-            "description": "astra",
+            "title": "Column name of region identifier",
+            "description": "The name of the column containing identifiers (e.g., basin name) to distinguish the polygons on the map if multiple regions are present.",
             "schema": {
                 "type": "string"
             },
@@ -90,8 +90,12 @@
     },
     "example": {
         "inputs": {
-            "name": "World",
-            "message": "An optional message."
+            "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+            "points": "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
+            "long_col_name": "longitude",
+            "lat_col_name": "latitude",
+            "value_name": "transparency_m",
+            "region_col_name": "HELCOM_ID"
         }
     }
 }
