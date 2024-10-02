@@ -79,9 +79,9 @@
         }
     },
     "outputs": {
-        "echo": {
-            "title": "Hello, world",
-            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+        "interactive_map": {
+            "title": "Interactive map",
+            "description": "A visual representation of the study region overlaid with in-situ data points, plotted on OpenStreetMap. The image will include color-coded points and option to pop-up information about regions.",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/html"

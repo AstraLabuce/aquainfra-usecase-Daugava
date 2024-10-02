@@ -53,7 +53,7 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         in_value_colname = data.get('value_colname', '')
 
         # Where to store output data
-        downloadfilename = 'trend_analysis_mk-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
+        downloadfilename = 'trend_analysis_results-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
@@ -75,9 +75,9 @@ class TrendAnalysisMkProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "trend_analysis_mk": {
-                        "title": "trend_analysis_mk result table",
-                        "description": "TODO must ask astra what this is",
+                    "trend_analysis_results": {
+                        "title": self.metadata['outputs']['trend_analysis_results']['title'],
+                        "description": self.metadata['outputs']['trend_analysis_results']['description'],
                         "href": downloadlink
                     }
                 }

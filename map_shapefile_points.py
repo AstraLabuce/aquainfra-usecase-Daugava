@@ -56,7 +56,7 @@ class MapShapefilePointsProcessor(BaseProcessor):
         in_region_col_name = data.get('region_col_name', 'HELCOM_ID')
 
         # Where to store output data
-        downloadfilename = 'map_shapefile_insitu-%s.html' % self.my_job_id
+        downloadfilename = 'interactive_map-%s.html' % self.my_job_id
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
@@ -78,9 +78,9 @@ class MapShapefilePointsProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "map_shapefile_points": {
-                        "title": "map_shapefile_points result table",
-                        "description": "TODO must ask astra what this is",
+                    "interactive_map": {
+                        "title": self.metadata['outputs']['interactive_map']['title'],
+                        "description": self.metadata['outputs']['interactive_map']['description'],
                         "href": downloadlink
                     }
                 }

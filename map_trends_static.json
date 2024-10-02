@@ -89,9 +89,9 @@
         }
     },
     "outputs": {
-        "echo": {
-            "title": "Hello, world",
-            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+        "map_trends_static": {
+            "title": "TODO ask",
+            "description": "TODO ask",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/html"

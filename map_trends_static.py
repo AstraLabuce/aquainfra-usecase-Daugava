@@ -81,8 +81,8 @@ class MapTrendsStaticProcessor(BaseProcessor):
             response_object = {
                 "outputs": {
                     "map_trends_static": {
-                        "title": "map_trends_static",
-                        "description": "TODO must ask astra what this is",
+                        "title": self.metadata['outputs']['map_trends_static']['title'],
+                        "description": self.metadata['outputs']['map_trends_static']['description'],
                         "href": downloadlink
                     }
                 }

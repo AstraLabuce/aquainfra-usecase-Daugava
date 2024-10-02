@@ -79,9 +79,9 @@
         }
     },
     "outputs": {
-        "echo": {
-            "title": "Hello, world",
-            "description": "A \"hello world\" echo with the name and (optional) message submitted for processing",
+        "barplot_image": {
+            "title": "Barplot image (DPI 300)",
+            "description": "A high-resolution bar plot image (DPI = 300) where the Y-axis shows the test value and the X-axis shows the id and its groups. Opacity of bars is determined by the significance of the p-values based on the p_value_threshold.",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/html"

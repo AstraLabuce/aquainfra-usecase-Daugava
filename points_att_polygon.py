@@ -76,8 +76,8 @@ class PointsAttPolygonProcessor(BaseProcessor):
             response_object = {
                 "outputs": {
                     "data_merged_with_regions": {
-                        "title": PROCESS_METADATA["outputs"]["data_merged_with_regions"]["title"],
-                        "description": PROCESS_METADATA["outputs"]["data_merged_with_regions"]["description"],
+                        "title": self.metadata['outputs']['data_merged_with_regions']['title'],
+                        "description": self.metadata['outputs']['data_merged_with_regions']['description'],
                         "href": downloadlink
                     }
                 }

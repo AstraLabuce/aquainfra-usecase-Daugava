@@ -59,9 +59,9 @@
         }
     },
     "outputs": {
-        "trend_analysis_mk": {
-            "title": "trend_analysis_mk result table",
-            "description": "TODO must ask astra what this is",
+        "trend_analysis_results": {
+            "title": "Man-Kendall trend analysis",
+            "description": "A table containing the statistical results of the Man-Kendall trend analysis for each unique group defined by rel_cols. The table includes coefficients such as tau, p-values, and slope for each group's time series.",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/json"

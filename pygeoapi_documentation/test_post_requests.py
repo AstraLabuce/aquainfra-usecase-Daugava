@@ -216,7 +216,7 @@ if not resp.status_code == 200 or force_async:
     print('Result (JSON document): %s' % result_application_json)
 
 # Results (sync / async, does not matter):
-href = result_application_json['outputs']['points_att_polygon']['href']
+href = result_application_json['outputs']['data_merged_with_regions']['href']
 result_points_att_polygon_url = href
 print('It contains a link to our ACTUAL result: %s' % result_points_att_polygon_url)
 # Check out result itself:
@@ -262,7 +262,7 @@ if not resp.status_code == 200 or force_async:
     print('Result (JSON document): %s' % result_application_json)
 
 # Results (sync / async, does not matter):
-href = result_application_json['outputs']['peri_conv']['href']
+href = result_application_json['outputs']['data_grouped_by_date']['href']
 result_peri_conv_url = href
 print('It contains a link to our ACTUAL result: %s' % result_peri_conv_url)
 # Check out result itself:
@@ -347,7 +347,7 @@ if not resp.status_code == 200 or force_async:
     print('Result (JSON document): %s' % result_application_json)
 
 # Results (sync / async, does not matter):
-href = result_application_json['outputs']['ts_selection_interpolation']['href']
+href = result_application_json['outputs']['interpolated_time_series']['href']
 result_ts_selection_interpolation_url = href
 print('It contains a link to our ACTUAL result: %s' % result_ts_selection_interpolation_url)
 # Check out result itself:
@@ -364,7 +364,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/trend-analysis-mk/execution'
 inputs = {
     "inputs": {
-        "input_data": result_ts_selection_interpolation_url or "https://aqua.igb-berlin.de/download/testinputs/ts_selection_interpolation.csv",
+        "input_data": result_ts_selection_interpolation_url or "https://aqua.igb-berlin.de/download/testinputs/interpolated_time_series.csv",
         "rel_cols": "season,polygon_id",
         "time_colname": "Year_adj_generated",
         "value_colname": "Secchi_m_mean_annual"
@@ -388,7 +388,7 @@ if not resp.status_code == 200 or force_async:
     print('Result (JSON document): %s' % result_application_json)
 
 # Results (sync / async, does not matter):
-href = result_application_json['outputs']['trend_analysis_mk']['href']
+href = result_application_json['outputs']['trend_analysis_results']['href']
 result_trend_analysis_url = href
 print('It contains a link to our ACTUAL result: %s' % result_trend_analysis_url)
 # Check out result itself:
@@ -431,7 +431,7 @@ if not resp.status_code == 200 or force_async:
 
 # Results (sync / async, does not matter):
 print('Result (JSON document): %s' % result_application_json)
-href = result_application_json['outputs']['map_shapefile_points']['href']
+href = result_application_json['outputs']['interactive_map']['href']
 result_map_shapefile_points_url = href
 print('It contains a link to our ACTUAL result: %s' % result_map_shapefile_points_url)
 # Check out result itself:
@@ -447,7 +447,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/barplot-trend-results/execution'
 inputs = {
     "inputs": {
-        "data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
+        "data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
         "id_col": "polygon_id",
         "test_value": "Tau_Value",
         "p_value": "P_Value",
@@ -474,7 +474,7 @@ if not resp.status_code == 200 or force_async:
 
 # Results (sync / async, does not matter):
 print('Result (JSON document): %s' % result_application_json)
-href = result_application_json['outputs']['barplot_trend_results']['href']
+href = result_application_json['outputs']['barplot_image']['href']
 result_barplot_trend_results_url = href
 print('It contains a link to our ACTUAL result: %s' % result_barplot_trend_results_url)
 # Check out result itself:

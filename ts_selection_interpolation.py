@@ -57,7 +57,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         in_min_data_point = data.get('min_data_point', '')
 
         # Where to store output data
-        downloadfilename = 'ts_selection_interpolation-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
+        downloadfilename = 'interpolated_time_series-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
@@ -79,9 +79,9 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "ts_selection_interpolation": {
-                        "title": "ts_selection_interpolation result table",
-                        "description": "TODO must ask astra what this is",
+                    "interpolated_time_series": {
+                        "title": self.metadata['outputs']['interpolated_time_series']['title'],
+                        "description": self.metadata['outputs']['interpolated_time_series']['description'],
                         "href": downloadlink
                     }
                 }

@@ -79,7 +79,7 @@
         }
     },
     "outputs": {
-        "ts_selection_interpolation": {
+        "interpolated_time_series": {
             "title": "Interpolated time series",
             "description": "A table containing continuous time series for each unique group defined by rel_cols, with missing values replaced by linear interpolation. Time series with insufficient data based on the missing_threshold_percentage or min_data_point are excluded.",
             "schema": {

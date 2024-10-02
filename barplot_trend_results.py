@@ -56,7 +56,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         in_group = data.get('group', 'season')
         
         # Where to store output data
-        downloadfilename = 'barplot_trend_results-%s.png' % self.my_job_id
+        downloadfilename = 'barplot_image-%s.png' % self.my_job_id
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
@@ -78,9 +78,9 @@ class BarplotTrendResultsProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "barplot_trend_results": {
-                        "title": "barplot trend results",
-                        "description": "TODO must ask astra what this is",
+                    "barplot_image": {
+                        "title": self.metadata['outputs']['barplot_image']['title'],
+                        "description": self.metadata['outputs']['barplot_image']['description'],
                         "href": downloadlink
                     }
                 }

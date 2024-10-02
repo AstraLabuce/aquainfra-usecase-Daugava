@@ -80,8 +80,8 @@ class PeriConvProcessor(BaseProcessor):
             response_object = {
                 "outputs": {
                     "data_grouped_by_date": {
-                        "title": PROCESS_METADATA["outputs"]["data_grouped_by_date"]["title"],
-                        "description": PROCESS_METADATA["outputs"]["data_grouped_by_date"]["description"],
+                        "title": self.metadata['outputs']['data_grouped_by_date']['title'],
+                        "description": self.metadata['outputs']['data_grouped_by_date']['description'],
                         "href": downloadlink
                     }
                 }

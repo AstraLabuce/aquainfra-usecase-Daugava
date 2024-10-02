@@ -74,8 +74,8 @@ class MeanByGroupProcessor(BaseProcessor):
             response_object = {
                 "outputs": {
                     "mean_by_group": {
-                        "title": "mean_by_group result table",
-                        "description": "TODO must ask astra what this is",
+                        "title": self.metadata['outputs']['mean_by_group']['title'],
+                        "description": self.metadata['outputs']['mean_by_group']['description'],
                         "href": downloadlink
                     }
                 }
