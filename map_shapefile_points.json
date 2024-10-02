@@ -27,7 +27,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "points": {
+        "input_data": {
             "title": "Data table to be plotted on top of study regions",
             "description": "Input table containing the in-situ data points with coordinates.",
             "schema": {
@@ -91,7 +91,7 @@
     "example": {
         "inputs": {
             "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-            "points": "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
+            "input_data": "https://aqua.igb-berlin.de/download/testinputs/data_merged_with_regions.csv",
             "long_col_name": "longitude",
             "lat_col_name": "latitude",
             "value_name": "transparency_m",

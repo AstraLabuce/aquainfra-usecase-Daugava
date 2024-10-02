@@ -17,7 +17,7 @@
         "hreflang": "en-US"
     }],
     "inputs": {
-        "input_table": {
+        "input_data": {
             "title": "Table to be grouped by date, with date colum",
             "description": "A table with a column containing a date. It can have other columns which will not be changed during this process.",
             "schema": {
@@ -90,7 +90,7 @@
     },
     "example": {
         "inputs": {
-            "input_table": "points_att_polygon.csv",
+            "input_data": "https://testserver.de/download/data_merged_with_regions.csv",
             "date_col_name": "visit date",
             "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
             "group_labels": "winter,spring,summer,autumn",

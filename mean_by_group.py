@@ -11,7 +11,7 @@ curl --location 'http://localhost:5000/processes/mean-by-group/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_table": "https://testserver.de/download/peri_conv.csv",
+        "input_data": "https://testserver.de/download/peri_conv.csv",
         "cols_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
         "value_col": "transparency_m"
     } 

@@ -17,7 +17,7 @@
         "hreflang": "en-US"
     }],
     "inputs": {
-        "input_table": {
+        "input_data": {
             "title": "Table to be merged with study region",
             "description": "Input table containing the in-situ data points with coordinates. Can be provided as Excel file or CSV file (comma-separated text file). The coordinates have to be in WGS84 coordinate system.",
             "schema": {
@@ -70,7 +70,7 @@
     },
     "example": {
         "inputs": {
-            "input_table": "https://www.example.xyz",
+            "input_data": "https://www.example.xyz",
             "points": "https://www.example.xyz",
             "long_col_name": "long",
             "lat_col_name": "lat"
