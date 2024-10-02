@@ -5,10 +5,10 @@
         "en": "Group points by region"
     },
     "description": {
-        "en": "Merge data points with the attributes of the study region the points fall into."
+        "en": "Merge data points with the attributes of the study region the points fall into (R function 'points_att_polygon')."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
-    "keywords": ["astra"],
+    "keywords": ["daugava use case", "AquaINFRA", "points_att_polygon", "R"],
     "links": [{
         "type": "text/html",
         "rel": "about",
@@ -45,7 +45,7 @@
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["longitude", "column"]
+            "keywords": ["longitude", "column", "wgs84"]
         },
         "colname_lat": {
             "title": "Column name for latiitude",
@@ -55,7 +55,7 @@
             },
             "minOccurs": 0,
             "maxOccurs": 1,
-            "keywords": ["latitude", "column"]
+            "keywords": ["latitude", "column", "wgs84"]
         }
     },
     "outputs": {

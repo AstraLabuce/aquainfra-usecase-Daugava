@@ -5,10 +5,10 @@
         "en": "Spatial visualisation of regions and data points "
     },
     "description": {
-        "en": "This process maps the study region and data point locations on OpenStreetMap, providing a visual representation of the geographic distribution of in-situ data points within the defined study area."
+        "en": "This process maps the study region and data point locations on OpenStreetMap, providing a visual representation of the geographic distribution of in-situ data points within the defined study area (R function 'map_shapefile_points')."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
-    "keywords": ["hello world", "example", "echo"],
+    "keywords": ["daugava use case", "AquaINFRA", "map_shapefile_points", "R"],
     "links": [{
         "type": "text/html",
         "rel": "about",

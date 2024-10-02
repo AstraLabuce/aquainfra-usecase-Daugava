@@ -5,10 +5,10 @@
         "en": "Visualisation of statistical analysis results"
     },
     "description": {
-        "en": "This process visualizes statistical analysis results, where the test value (stat.value) is plotted on the Y-axis and id are plotted on the X-axis. Bar color is determined by groups and is displayed in the legend. Bar opacity is controlled by the p-value threshold, with translucent bars representing insignificant results based on the provided p_value_threshold."
+        "en": "This process visualizes statistical analysis results, where the test value (stat.value) is plotted on the Y-axis and id are plotted on the X-axis. Bar color is determined by groups and is displayed in the legend. Bar opacity is controlled by the p-value threshold, with translucent bars representing insignificant results based on the provided p_value_threshold (R function 'barplot_trend_results')."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
-    "keywords": ["hello world", "example", "echo"],
+    "keywords": ["daugava use case", "AquaINFRA", "barplot_trend_results", "R"],
     "links": [{
         "type": "text/html",
         "rel": "about",

@@ -5,10 +5,10 @@
         "en": "Spatial visualisation of regions and data points "
     },
     "description": {
-        "en": "This process maps the trend analysis results onto a study region map, visually representing each region according to the statistical results (significant increase vs. significant decrease vs. insignificant trend). The map helps in understanding the spatial distribution of trends across different areas."
+        "en": "This process maps the trend analysis results onto a study region map, visually representing each region according to the statistical results (significant increase vs. significant decrease vs. insignificant trend). The map helps in understanding the spatial distribution of trends across different areas (R function 'map_trends_static')."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
-    "keywords": ["hello world", "example", "echo"],
+    "keywords": ["daugava use case", "AquaINFRA", "map_trends_static", "R"],
     "links": [{
         "type": "text/html",
         "rel": "about",

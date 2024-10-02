@@ -5,10 +5,10 @@
         "en": "Select and Interpolate Time Series"
     },
     "description": {
-        "en": "This process selects time series with sufficient data for interpolation and returns continuous time series where missing values (NAs) are replaced using linear interpolation (R function zoo::na.approx). The result is a complete time series without gaps. Timeseries with insufficient data are removed. / Split data into sub-tables for each season and HELCOM_ID separately. Create a list to store sub-tables of transparency."
+        "en": "This process selects time series with sufficient data for interpolation and returns continuous time series where missing values (NAs) are replaced using linear interpolation (R function zoo::na.approx). The result is a complete time series without gaps. Timeseries with insufficient data are removed. / Split data into sub-tables for each season and HELCOM_ID separately. Create a list to store sub-tables of transparency (R function 'ts_selection_interpolation')."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
-    "keywords": ["hello world", "example", "echo"],
+    "keywords": ["daugava use case", "AquaINFRA", "ts_selection_interpolation", "R"],
     "links": [{
         "type": "text/html",
         "rel": "about",

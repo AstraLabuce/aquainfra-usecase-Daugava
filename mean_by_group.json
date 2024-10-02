@@ -5,10 +5,10 @@
         "en": "Return group average"
     },
     "description": {
-        "en": "description: This function calculates and returns the average value for each defined group (for example per site, per year, per season and per HELCOM_ID)."
+        "en": "description: This function calculates and returns the average value for each defined group (for example per site, per year, per season and per HELCOM_ID) (R function 'mean_by_group')."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
-    "keywords": ["hello world", "example", "echo"],
+    "keywords": ["daugava use case", "AquaINFRA", "mean_by_group", "R"],
     "links": [{
         "type": "text/html",
         "rel": "about",
