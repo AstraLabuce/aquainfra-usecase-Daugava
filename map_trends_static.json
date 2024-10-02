@@ -18,8 +18,8 @@
     }],
     "inputs": {
         "shp_url": {
-            "title": "shp_url",
-            "description": "astra",
+            "title": "Study region or study subregions",
+            "description": "URL to the study region, or several regions, used to classify the input data into groups of interest. Currently it has to be provided as a shapefile. It can be in any coordinate system and will be transformed to WGS84 during this process.",
             "schema": {
                 "type": "string"
             },
@@ -38,8 +38,8 @@
             "keywords": ["full name", "personal"]
         },
         "id_trend_col": {
-            "title": "id_trend_col",
-            "description": "astra",
+            "title": "Column name of study region identifier",
+            "description": "The name of the column containing identifiers for study regions, which must correspond to the identifiers in the shapefile (shp). Default = \"id\"",
             "schema": {
                 "type": "string"
             },
@@ -48,8 +48,8 @@
             "keywords": ["full name", "personal"]
         },
         "id_shp_col": {
-            "title": "id_shp_col",
-            "description": "astra",
+            "title": "Column name of study region identifier",
+            "description": "    The name of the column in the input data that contains identifiers for study regions, corresponding to the identifiers in the shapefile. Default = \"id\"",
             "schema": {
                 "type": "string"
             },
@@ -58,8 +58,8 @@
             "keywords": ["full name", "personal"]
         },
         "group": {
-            "title": "group",
-            "description": "astra",
+            "title": "Column name for subgroups",
+            "description": "The name of the column that defines the subgroups or categories to be displayed on the X-axis, e.g., seasons for every polygon_id. Default = \"group\"",
             "schema": {
                 "type": "string"
             },
@@ -68,8 +68,8 @@
             "keywords": ["full name", "personal"]
         },
         "p_value_threshold": {
-            "title": "p_value_threshold",
-            "description": "astra",
+            "title": "p value threshold for significance",
+            "description": "The threshold for distinguishing significant from insignificant values. It adjusts the transparency of bars in the plot. Default = 0.05",
             "schema": {
                 "type": "string"
             },
@@ -78,8 +78,8 @@
             "keywords": ["full name", "personal"]
         },
         "p_value": {
-            "title": "p_value",
-            "description": "astra",
+            "title": "Column name for p value",
+            "description": "The name of the column containing p values, used to determine bar transparency. Default = \"p_value\"",
             "schema": {
                 "type": "string"
             },
@@ -89,9 +89,9 @@
         }
     },
     "outputs": {
-        "map_trends_static": {
-            "title": "TODO ask",
-            "description": "TODO ask",
+        "trend_map": {
+            "title": "Trend map",
+            "description": "A visual representation of the study region, with areas colored based on the statistical results (significant increase vs. significant decrease vs. insignificant trend). The map will provide an intuitive understanding of trend distributions across regions.",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/html"
@@ -100,8 +100,13 @@
     },
     "example": {
         "inputs": {
-            "name": "World",
-            "message": "An optional message."
+            "shp_url": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+            "trend_results_path": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
+            "id_trend_col": "polygon_id",
+            "id_shp_col": "HELCOM_ID",
+            "group": "season",
+            "p_value_col": "P_Value",
+            "p_value_threshold": "0.05"
         }
     }
 }

@@ -525,7 +525,7 @@ if not resp.status_code == 200 or force_async:
 
 # Results (sync / async, does not matter):
 print('Result (JSON document): %s' % result_application_json)
-href = result_application_json['outputs']['map_trends_static']['href']
+href = result_application_json['outputs']['trend_map']['href']
 result_map_trends_static_url = href
 print('It contains a link to our ACTUAL result: %s' % result_map_trends_static_url)
 # Check out result itself:

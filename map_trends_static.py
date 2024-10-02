@@ -16,7 +16,7 @@ curl --location 'http://localhost:5000/processes/map-trends-static/execution' \
         "id_trend_col": "polygon_id",
         "id_shp_col": "HELCOM_ID",
         "group": "season",
-        "p_value_col": "P_Value"
+        "p_value_col": "P_Value",
         "p_value_threshold": "0.05"
     } 
 }'
@@ -80,9 +80,9 @@ class MapTrendsStaticProcessor(BaseProcessor):
             # Return link to file:
             response_object = {
                 "outputs": {
-                    "map_trends_static": {
-                        "title": self.metadata['outputs']['map_trends_static']['title'],
-                        "description": self.metadata['outputs']['map_trends_static']['description'],
+                    "trend_map": {
+                        "title": self.metadata['outputs']['trend_map']['title'],
+                        "description": self.metadata['outputs']['trend_map']['description'],
                         "href": downloadlink
                     }
                 }
