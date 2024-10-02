@@ -127,7 +127,7 @@ if not resp.status_code == 200 or force_async:
     print('Result (JSON document): %s' % result_application_json)
 
 # Results (sync / async, does not matter):
-href = result_application_json['outputs']['points_att_polygon']['href']
+href = result_application_json['outputs']['data_merged_with_regions']['href']
 result_points_att_polygon_url = href
 print('It contains a link to our ACTUAL result: %s' % result_points_att_polygon_url)
 # Check out result itself:
@@ -170,7 +170,7 @@ if not resp.status_code == 200 or force_async:
     print('Result (JSON document): %s' % result_application_json)
 
 # Results (sync / async, does not matter):
-href = result_application_json['outputs']['peri_conv']['href']
+href = result_application_json['outputs']['data_grouped_by_date']['href']
 result_peri_conv_url = href
 print('It contains a link to our ACTUAL result: %s' % result_peri_conv_url)
 # Check out result itself:
