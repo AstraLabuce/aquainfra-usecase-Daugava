@@ -13,10 +13,10 @@ curl --location 'http://localhost:5000/processes/map-trends-static/execution' \
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "input_data": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
-        "id_trend_col": "polygon_id",
-        "id_shp_col": "HELCOM_ID",
-        "group": "season",
-        "p_value_col": "P_Value",
+        "colname_id_trend": "polygon_id",
+        "colname_region_id": "HELCOM_ID",
+        "colname_group": "season",
+        "colname_p_value": "P_Value",
         "p_value_threshold": "0.05"
     } 
 }'
@@ -51,11 +51,11 @@ class MapTrendsStaticProcessor(BaseProcessor):
         # Get user inputs
         in_shp_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
         in_trend_results_url = data.get('input_data', 'https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv')
-        in_id_trend_col = data.get('id_trend_col', 'id') # default was: polygon_id
-        in_id_shp_col = data.get('id_shp_col', 'id') # default was: HELCOM_ID
-        in_group = data.get('group', 'group') # default was: season
+        in_id_trend_col = data.get('colname_id_trend', 'id') # default was: polygon_id
+        in_id_shp_col = data.get('colname_region_id', 'id') # default was: HELCOM_ID
+        in_group = data.get('colname_group', 'group') # default was: season
         in_p_value_threshold = data.get('p_value_threshold', '0.05')
-        in_p_value_col = data.get('p_value_col', 'p_Value')
+        in_p_value_col = data.get('colname_p_value', 'p_Value')
         
         # Where to store output data
         downloadfilename = 'map_trends_static-%s.png' % self.my_job_id

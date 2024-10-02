@@ -12,9 +12,9 @@ curl --location 'http://localhost:5000/processes/trend-analysis-mk/execution' \
 --data '{ 
     "inputs": {
         "input_data": "https://testserver.de/download/ts_selection_interpolation.csv",
-        "rel_cols": "season,polygon_id",
-        "time_colname": "Year_adj_generated",
-        "value_colname": "Secchi_m_mean_annual"
+        "colnames_relevant": "season,polygon_id",
+        "colname_time": "Year_adj_generated",
+        "colname_value": "Secchi_m_mean_annual"
     } 
 }'
 '''
@@ -48,9 +48,9 @@ class TrendAnalysisMkProcessor(BaseProcessor):
 
         # Get user inputs
         in_data_url = data.get('input_data', 'https://.../ts_selection_interpolation.csv') # or selected_interpolated.csv ?
-        in_rel_cols = data.get('rel_cols', '(no-default)') # TODO empty or error? min occurs 0 or 1?
-        in_time_colname = data.get('time_colname', 'year')
-        in_value_colname = data.get('value_colname', 'value')
+        in_rel_cols = data.get('colnames_relevant', '(no-default)') # TODO empty or error? min occurs 0 or 1?
+        in_time_colname = data.get('colname_time', 'year')
+        in_value_colname = data.get('colname_value', 'value')
 
         # Where to store output data
         downloadfilename = 'trend_analysis_results-%s.csv' % self.my_job_id # or selected_interpolated.csv ?

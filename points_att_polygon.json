@@ -37,7 +37,7 @@
             "maxOccurs": 1,
             "keywords": ["shapefile"]
         },
-        "long_col_name": {
+        "colname_long": {
             "title": "Column name for longitude",
             "description": "Name of the column that contains longitude values (in WGS84).",
             "schema": {
@@ -47,7 +47,7 @@
             "maxOccurs": 1,
             "keywords": ["longitude", "column"]
         },
-        "lat_col_name": {
+        "colname_lat": {
             "title": "Column name for latiitude",
             "description": "Name of the column that contains latitude values (in WGS84).",
             "schema": {
@@ -72,8 +72,8 @@
         "inputs": {
             "input_data": "https://www.example.xyz",
             "points": "https://www.example.xyz",
-            "long_col_name": "long",
-            "lat_col_name": "lat"
+            "colname_long": "long",
+            "colname_lat": "lat"
         }
     }
 }

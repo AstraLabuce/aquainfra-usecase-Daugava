@@ -19,7 +19,7 @@
     "inputs": {
         "input_data": {
             "title": "Input table",
-            "description": "Input table containing group identifier(s) and a value column. Groups are defined by one or more columns. Other columns present in the table will be removed in the process, retaining only those specified in cols_to_group_by and value_col. For example, use the result table from peri_conv.",
+            "description": "URL pointing to an input table containing group identifier(s) and a value column. Groups are defined by one or more columns. Other columns present in the table will be removed in the process, retaining only those specified in cols_to_group_by and value_col. For example, use the result table from peri_conv.",
             "schema": {
                 "type": "string"
             },
@@ -27,7 +27,7 @@
             "maxOccurs": 1,
             "keywords": ["csv"]
         },
-        "cols_to_group_by": {
+        "colnames_to_group_by": {
             "title": "Column names identifying group",
             "description": "One or more column names identifying the group. A combination of all specified columns will be used to define unique groups for calculating the average value. Default = \"group\". Example: \"longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID\". Another example: \"Year_adj_generated, group_labels, HELCOM_ID\".",
             "schema": {
@@ -37,7 +37,7 @@
             "maxOccurs": 1,
             "keywords": ["csv"]
         },
-        "value_col": {
+        "colname_value": {
             "title": "Column name for column containing values",
             "description": "The name of the column that contains the values for which the average will be calculated. Only one column name can be included. Default = \"value\". Examples: \"transparency_m\", \"mean\"",
             "schema": {
@@ -61,8 +61,8 @@
     "example": {
         "inputs": {
             "input_data": "https://testserver.de/download/peri_conv.csv",
-            "cols_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
-            "value_col": "transparency_m"
+            "colnames_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
+            "colname_value": "transparency_m"
         }
     }
 }

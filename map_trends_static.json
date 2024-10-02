@@ -37,7 +37,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "id_trend_col": {
+        "colname_id_trend": {
             "title": "Column name of study region identifier",
             "description": "The name of the column containing identifiers for study regions, which must correspond to the identifiers in the shapefile (shp). Default = \"id\"",
             "schema": {
@@ -47,7 +47,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "id_shp_col": {
+        "colname_region_id": {
             "title": "Column name of study region identifier",
             "description": "    The name of the column in the input data that contains identifiers for study regions, corresponding to the identifiers in the shapefile. Default = \"id\"",
             "schema": {
@@ -57,7 +57,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "group": {
+        "colname_group": {
             "title": "Column name for subgroups",
             "description": "The name of the column that defines the subgroups or categories to be displayed on the X-axis, e.g., seasons for every polygon_id. Default = \"group\"",
             "schema": {
@@ -77,7 +77,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "p_value_col": {
+        "colname_p_value": {
             "title": "Column name for p value",
             "description": "The name of the column containing p values, used to determine bar transparency. Default = \"p_value\"",
             "schema": {
@@ -102,10 +102,10 @@
         "inputs": {
             "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
             "input_data": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
-            "id_trend_col": "polygon_id",
-            "id_shp_col": "HELCOM_ID",
-            "group": "season",
-            "p_value_col": "P_Value",
+            "colname_id_trend": "polygon_id",
+            "colname_region_id": "HELCOM_ID",
+            "colname_group": "season",
+            "colname_p_value": "P_Value",
             "p_value_threshold": "0.05"
         }
     }

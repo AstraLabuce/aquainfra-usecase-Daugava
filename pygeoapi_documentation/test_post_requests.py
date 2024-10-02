@@ -102,8 +102,8 @@ url = base_url+'/processes/points-att-polygon/execution'
 inputs = { 
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "long_col_name": "longitude",
-        "lat_col_name": "latitude",
+        "colname_lon": "longitude",
+        "colname_lat": "latitude",
         "input_data": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx" # date format: 1998-02-14T12:30:00
     } 
 }
@@ -145,7 +145,7 @@ url = base_url+'/processes/peri-conv/execution'
 inputs = {
     "inputs": {
         "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
-        "date_col_name": "visit_date",
+        "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
         "year_starts_at_Dec1": "True",
@@ -192,9 +192,9 @@ url = base_url+'/processes/points-att-polygon/execution'
 inputs = { 
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "long_col_name": "longitude",
-        "lat_col_name": "latitude",
-        "points": "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # date format: 1998/02/14 12:30:00.000
+        "colname_lon": "longitude",
+        "colname_lat": "latitude",
+        "input_data": "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # date format: 1998/02/14 12:30:00.000
     } 
 }
 
@@ -237,7 +237,7 @@ url = base_url+'/processes/peri-conv/execution'
 inputs = {
     "inputs": {
         "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
-        "date_col_name": "visit_date",
+        "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
         "year_starts_at_Dec1": "True",
@@ -280,8 +280,8 @@ url = base_url+'/processes/mean-by-group/execution'
 inputs = {
     "inputs": {
         "input_data": result_peri_conv_url or "https://aqua.igb-berlin.de/download/testinputs/peri_conv.csv",
-        "cols_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
-        "value_col": "transparency_m"
+        "colnamess_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
+        "colname_value": "transparency_m"
     }
 }
 
@@ -321,10 +321,10 @@ url = base_url+'/processes/ts-selection-interpolation/execution'
 inputs = {
     "inputs": {
         "input_data": result_mean_by_group_url or "https://aqua.igb-berlin.de/download/testinputs/mean_by_group.csv",
-        "rel_cols": "group_labels,HELCOM_ID",
+        "colnames_relevant": "group_labels,HELCOM_ID",
         "missing_threshold_percentage": "40",
-        "year_colname": "Year_adj_generated",
-        "value_colname": "Secchi_m_mean_annual",
+        "colname_year": "Year_adj_generated",
+        "colname_value": "Secchi_m_mean_annual",
         "min_data_point": "10"
     }
 }
@@ -365,9 +365,9 @@ url = base_url+'/processes/trend-analysis-mk/execution'
 inputs = {
     "inputs": {
         "input_data": result_ts_selection_interpolation_url or "https://aqua.igb-berlin.de/download/testinputs/interpolated_time_series.csv",
-        "rel_cols": "season,polygon_id",
-        "time_colname": "Year_adj_generated",
-        "value_colname": "Secchi_m_mean_annual"
+        "colnames_relevant": "season,polygon_id",
+        "colname_time": "Year_adj_generated",
+        "colname_value": "Secchi_m_mean_annual"
     }
 }
 
@@ -405,11 +405,11 @@ url = base_url+'/processes/map-shapefile-points/execution'
 inputs = {
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "long_col_name": "longitude",
-        "lat_col_name": "latitude",
+        "colname_long": "longitude",
+        "colname_lat": "latitude",
         "points": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
-        "value_name": "transparency_m",
-        "region_col_name": "HELCOM_ID"
+        "colname_value_name": "transparency_m",
+        "colname_region_id": "HELCOM_ID"
     }
 }
 
@@ -447,12 +447,12 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/barplot-trend-results/execution'
 inputs = {
     "inputs": {
-        "data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
-        "id_col": "polygon_id",
-        "test_value": "Tau_Value",
-        "p_value": "P_Value",
+        "input_data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
+        "colname_id": "polygon_id",
+        "colname_test_value": "Tau_Value",
+        "colname_p_value": "P_Value",
         "p_value_threshold": "0.05",
-        "group": "season"
+        "colname_group": "season"
     }
 }
 
@@ -498,12 +498,12 @@ url = base_url+'/processes/map-trends-static/execution'
 inputs = {
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "trend_results_path": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
-        "id_trend_col": "polygon_id",
-        "id_shp_col": "HELCOM_ID",
-        "group": "season",
+        "input_data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
+        "colname_id_trend": "polygon_id",
+        "colname_region_id": "HELCOM_ID",
+        "colname_group": "season",
         "p_value_threshold": "0.05",
-        "p_value_col": "P_Value"
+        "colname_p_value": "P_Value"
     }
 }
 

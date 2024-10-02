@@ -11,12 +11,12 @@ curl --location 'http://localhost:5000/processes/barplot-trend-results/execution
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "data": "https://testserver.de/download/mk_trend_analysis_results.csv",
-        "id_col": "polygon_id",
-        "test_value": "Tau_Value",
-        "p_value": "P_Value",
+        "input_data": "https://testserver.de/download/trend_analysis_results.csv",
+        "colname_id": "polygon_id",
+        "colname_test_value": "Tau_Value",
+        "colname_p_value": "P_Value",
         "p_value_threshold": "0.05",
-        "group": "season"
+        "colname_group": "season"
     } 
 }'
 '''
@@ -48,12 +48,12 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        input_data_url = data.get('data', 'https://.../mk_trend_analysis_results.csv')
-        in_id_col = data.get('id_col', 'polygon_id')
-        in_test_value = data.get('test_value', 'value') # default was: Tau_Value
-        p_value = data.get('p_value', 'p_value')
+        input_data_url = data.get('input_data', 'https://.../trend_analysis_results.csv')
+        in_id_col = data.get('colname_id', 'polygon_id')
+        in_test_value = data.get('colname_test_value', 'value') # default was: Tau_Value
+        p_value = data.get('colname_p_value', 'p_value')
         in_p_value_threshold = data.get('p_value_threshold', '0.05')
-        in_group = data.get('group', 'group') # default was: season
+        in_group = data.get('colname_group', 'group') # default was: season
         
         # Where to store output data
         downloadfilename = 'barplot_image-%s.png' % self.my_job_id

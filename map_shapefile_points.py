@@ -12,11 +12,11 @@ curl --location 'http://localhost:5000/processes/map-shapefile-points/execution'
 --data '{ 
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "long_col_name": "longitude",
-        "lat_col_name": "latitude",
+        "colname_long": "longitude",
+        "colname_lat": "latitude",
         "input_data": "https://aqua.igb-berlin.de/download/testinputs/data_merged_with_regions.csv",
-        "value_name": "transparency_m",
-        "region_col_name": "HELCOM_ID"
+        "colname_value_name": "transparency_m",
+        "colname_region_id": "HELCOM_ID"
     } 
 }'
 '''
@@ -49,11 +49,11 @@ class MapShapefilePointsProcessor(BaseProcessor):
 
         # Get user inputs
         in_shp_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
-        in_dpoints_url = data.get('input_data', 'https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv')
-        in_long_col_name = data.get('long_col_name', 'longitude')
-        in_lat_col_name = data.get('lat_col_name', 'latitude')
-        in_value_name = data.get('value_name', 'transparency_m')
-        in_region_col_name = data.get('region_col_name', 'HELCOM_ID')
+        in_dpoints_url = data.get('input_data', 'https://aqua.igb-berlin.de/download/testinputs/data_merged_with_regions.csv')
+        in_long_col_name = data.get('colname_long', 'longitude')
+        in_lat_col_name = data.get('colname_lat', 'latitude')
+        in_value_name = data.get('colname_value_name', 'transparency_m')
+        in_region_col_name = data.get('colname_region_id', 'HELCOM_ID')
 
         # Where to store output data
         downloadfilename = 'interactive_map-%s.html' % self.my_job_id

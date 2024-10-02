@@ -17,7 +17,7 @@
         "hreflang": "en-US"
     }],
     "inputs": {
-        "data": {
+        "input_data": {
             "title": "Input table",
             "description": "The input table containing statistical analysis results. The table must include columns for test values, p-values, and group identifiers.",
             "schema": {
@@ -27,7 +27,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "id_col": {
+        "colname_id": {
             "title": "Column name for identifier",
             "description": "The name of the column containing group or sample identifiers, e.g., polygon id. Default = \"polygon_id\"",
             "schema": {
@@ -37,7 +37,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "test_value": {
+        "colname_test_value": {
             "title": "Column name for test value",
             "description": "The name of the column containing the test values (e.g., statistical coefficients) to be plotted on the Y-axis, e.g., Tau for Mann-Kendall test. Default = \"value\".",
             "schema": {
@@ -47,7 +47,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "p_value": {
+        "colname_p_value": {
             "title": "Column name for p value",
             "description": "The name of the column containing p values, used to determine bar transparency. Default = \"p_value\"",
             "schema": {
@@ -67,7 +67,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "group": {
+        "colname_group": {
             "title": "Column name for subgroups",
             "description": "The name of the column that defines the subgroups or categories to be displayed on the X-axis, e.g., seasons for every polygon_id. Default = \"group\"",
             "schema": {
@@ -90,12 +90,12 @@
     },
     "example": {
         "inputs": {
-            "data": "https://testserver.de/download/mk_trend_analysis_results.csv",
-            "id_col": "polygon_id",
-            "test_value": "Tau_Value",
-            "p_value": "P_Value",
+            "input_data": "https://testserver.de/download/trend_analysis_results.csv",
+            "colname_id": "polygon_id",
+            "colname_test_value": "Tau_Value",
+            "colname_p_value": "P_Value",
             "p_value_threshold": "0.05",
-            "group": "season"
+            "colname_group": "season"
         }
     }
 }

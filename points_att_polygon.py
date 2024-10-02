@@ -12,8 +12,8 @@ curl --location 'http://localhost:5000/processes/points-att-polygon/execution' \
 --data '{ 
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "long_col_name": "longitude",
-        "lat_col_name": "latitude",
+        "colname_long": "longitude",
+        "colname_lat": "latitude",
         "input_data": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx"
     } 
 }'
@@ -47,8 +47,8 @@ class PointsAttPolygonProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_long_col_name = data.get('long_col_name', 'longitude')
-        in_lat_col_name = data.get('lat_col_name', 'latitude')
+        in_long_col_name = data.get('colname_long', 'longitude')
+        in_lat_col_name = data.get('colname_lat', 'latitude')
         in_regions_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
         in_dpoints_url = data.get('input_data', 'https://raw.githubusercontent.com/AstraLabuce/aquainfra-usecase-Daugava/main/in_situ_data/in_situ_example.xlsx')
 

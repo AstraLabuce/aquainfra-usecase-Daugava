@@ -18,8 +18,8 @@
     }],
     "inputs": {
         "input_data": {
-            "title": "Input table (result from ts_selection_interpolation)",
-            "description": "description: This process performs a Man-Kendall trend analysis to identify the presence or absence of significant trends in time series data. It returns statistical analysis coefficients (e.g., p-values, tau, and slope) for each defined group, allowing for group-wise trend identification.",
+            "title": "Input table",
+            "description": "URL to the input table containing the time series data. This table includes grouping identifiers (if applicable), columns for time (e.g., year, month) and values to be analyzed for trends. For example, use the result from ts_selection_interpolation.",
             "schema": {
                 "type": "string"
             },
@@ -27,7 +27,7 @@
             "maxOccurs": 1,
             "keywords": ["table", "csv"]
         },
-        "rel_cols": {
+        "colnames_relevant": {
             "title": "Column names identifying group(s)",
             "description": "Column name(s) identifying relevant groups in the dataset. These columns will be used to define unique groups for which separate trend analyses are performed.",
             "schema": {
@@ -37,7 +37,7 @@
             "maxOccurs": 1,
             "keywords": ["TODO"]
         },
-        "time_colname": {
+        "colname_time": {
             "title": "Column name for time",
             "description": "The name of the column containing the time variable (e.g., year, month) to be used in the trend analysis. Default = \"year\".",
             "schema": {
@@ -47,7 +47,7 @@
             "maxOccurs": 1,
             "keywords": ["TODO"]
         },
-        "value_colname": {
+        "colname_value": {
             "title": "Column name for values",
             "description": "The name of the column containing the values to be analyzed in the Man-Kendall trend test. Default = \"value\"",
             "schema": {
@@ -61,7 +61,7 @@
     "outputs": {
         "trend_analysis_results": {
             "title": "Man-Kendall trend analysis",
-            "description": "A table containing the statistical results of the Man-Kendall trend analysis for each unique group defined by rel_cols. The table includes coefficients such as tau, p-values, and slope for each group's time series.",
+            "description": "A table containing the statistical results of the Man-Kendall trend analysis for each unique group defined by colnames_relevant. The table includes coefficients such as tau, p-values, and slope for each group's time series.",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/json"
@@ -71,9 +71,9 @@
     "example": {
         "inputs": {
             "input_data": "ts_selection_interpolation.csv",
-            "rel_cols": "season,polygon_id",
-            "time_colname": "Year_adj_generated",
-            "value_colname": "Secchi_m_mean_annual"
+            "colnames_relevant": "season,polygon_id",
+            "colname_time": "Year_adj_generated",
+            "colname_value": "Secchi_m_mean_annual"
         }
     }
 }

@@ -12,7 +12,7 @@ curl --location 'http://localhost:5000/processes/peri-conv/execution' \
 --data '{ 
     "inputs": {
         "input_data": "https://testserver.de/download/data_merged_with_regions.csv",
-        "date_col_name": "visit_date",
+        "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
         "year_starts_at_Dec1": "True",
@@ -50,7 +50,7 @@ class PeriConvProcessor(BaseProcessor):
 
         # Get user inputs
         input_data_url = data.get('input_data', 'http://.../point_att_polygon.csv')
-        date_col_name = data.get('date_col_name', 'visit_date')
+        date_col_name = data.get('colname_date', 'visit_date')
         group_to_periods = data.get('group_to_periods', 'Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30')
         group_labels = data.get('group_labels', 'winter,spring,summer,autumn')
         year_starts_at_Dec1 = data.get('year_starts_at_Dec1', 'True')

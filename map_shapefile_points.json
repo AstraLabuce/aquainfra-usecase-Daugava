@@ -37,7 +37,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "long_col_name": {
+        "colname_long": {
             "title": "Column name for longitude",
             "description": "The name of the column containing longitude values for the data points.",
             "schema": {
@@ -47,7 +47,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "lat_col_name": {
+        "colname_lat": {
             "title": "Column name for latitude",
             "description": "The name of the column containing latitude values for the data points.",
             "schema": {
@@ -57,7 +57,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "value_name": {
+        "colname_value_name": {
             "title": "Column name of data point identifier",
             "description": "The name of the column containing identifier (e.g., site name) or values (e.g., depth) to color the points according to their corresponding values.",
             "schema": {
@@ -67,7 +67,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "region_col_name": {
+        "colname_region_id": {
             "title": "Column name of region identifier",
             "description": "The name of the column containing identifiers (e.g., basin name) to distinguish the polygons on the map if multiple regions are present.",
             "schema": {
@@ -92,10 +92,10 @@
         "inputs": {
             "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
             "input_data": "https://aqua.igb-berlin.de/download/testinputs/data_merged_with_regions.csv",
-            "long_col_name": "longitude",
-            "lat_col_name": "latitude",
-            "value_name": "transparency_m",
-            "region_col_name": "HELCOM_ID"
+            "colname_long": "longitude",
+            "colname_lat": "latitude",
+            "colname_value_name": "transparency_m",
+            "colname_region_id": "HELCOM_ID"
         }
     }
 }

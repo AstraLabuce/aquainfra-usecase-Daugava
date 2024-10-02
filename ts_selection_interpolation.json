@@ -27,7 +27,7 @@
             "maxOccurs": 1,
             "keywords": ["table", "csv"]
         },
-        "rel_cols": {
+        "colnames_relevant": {
             "title": "Column names identifying group(s)",
             "description": "Column name(s) describing relevant values in the dataset. These columns are treated as grouping identifiers, and a combination of all specified columns will be used to define unique groups. For each group, a separate time series is analyzed and interpolated individually.",
             "schema": {
@@ -47,7 +47,7 @@
             "maxOccurs": 1,
             "keywords": ["percent"]
         },
-        "year_colname": {
+        "colname_year": {
             "title": "Column name for time",
             "description": "The name of the column containing the year (or other time identifier, such as quarter, month, or day). Default = \"Year\"",
             "schema": {
@@ -57,7 +57,7 @@
             "maxOccurs": 1,
             "keywords": ["year", "column"]
         },
-        "value_colname": {
+        "colname_value": {
             "title": "Column name for values",
             "description": "The name of the column containing the values to be considered for interpolation. Default = \"value\".",
             "schema": {
@@ -91,10 +91,10 @@
     "example": {
         "inputs": {
             "input_data": "mean_by_group.csv",
-            "rel_cols": "group_labels,HELCOM_ID",
+            "colnames_relevant": "group_labels,HELCOM_ID",
             "missing_threshold_percentage": "40",
-            "year_colname": "Year_adj_generated",
-            "value_colname": "Secchi_m_mean_annual",
+            "colname_year": "Year_adj_generated",
+            "colname_value": "Secchi_m_mean_annual",
             "min_data_point": "10"
         }
     }

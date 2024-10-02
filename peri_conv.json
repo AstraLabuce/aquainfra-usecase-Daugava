@@ -27,9 +27,10 @@
             "maxOccurs": 1,
             "keywords": ["table", "csv"]
         },
-        "date_col_name": {
+        "colname_date": {
             "title": "Date column names",
-            "description": "The date format used to parse the date, i.e. to extract day, month and year from the date column, e.g.  or \"%Y-%m-%d\" for dates like \"1998-08-22\" (this is the default) or \"%Y/%m/%d\" for dates like \"1998/08/22\".",
+            "description": "Column name of the date column in the format defined above. Example: \"visit date\".",
+
             "schema": {
                 "type": "string"
             },
@@ -38,8 +39,8 @@
             "keywords": ["date format"]
         },
         "date_format": {
-            "title": "date_col_name",
-            "description": "Column name of the date column in the format defined above. Example: \"visit date\".",
+            "title": "Date format",
+            "description": "The date format used to parse the date, i.e. to extract day, month and year from the date column, e.g.  or \"%Y-%m-%d\" for dates like \"1998-08-22\" (this is the default) or \"%Y/%m/%d\" for dates like \"1998/08/22\".",
             "schema": {
                 "type": "string"
             },
@@ -91,7 +92,7 @@
     "example": {
         "inputs": {
             "input_data": "https://testserver.de/download/data_merged_with_regions.csv",
-            "date_col_name": "visit date",
+            "colname_date": "visit date",
             "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
             "group_labels": "winter,spring,summer,autumn",
             "date_format": "%Y-%m-%d",
