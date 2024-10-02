@@ -67,6 +67,7 @@ def poll_for_links(resp201, session, required_type='application/json', seconds_p
 
         elif job_status == 'failed':
             print('Job failed after %s seconds!' % seconds_passed)
+            print('Debug info: %s' % polling_result.json())
             print('Stopping.')
             sys.exit(1)
 
@@ -280,7 +281,7 @@ url = base_url+'/processes/mean-by-group/execution'
 inputs = {
     "inputs": {
         "input_data": result_peri_conv_url or "https://aqua.igb-berlin.de/download/testinputs/peri_conv.csv",
-        "colnamess_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
+        "colnames_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
         "colname_value": "transparency_m"
     }
 }
