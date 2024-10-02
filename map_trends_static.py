@@ -51,11 +51,11 @@ class MapTrendsStaticProcessor(BaseProcessor):
         # Get user inputs
         in_shp_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
         in_trend_results_url = data.get('input_data', 'https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv')
-        in_id_trend_col = data.get('id_trend_col', 'polygon_id')
-        in_id_shp_col = data.get('id_shp_col', 'HELCOM_ID')
-        in_group = data.get('group', 'season')
+        in_id_trend_col = data.get('id_trend_col', 'id') # default was: polygon_id
+        in_id_shp_col = data.get('id_shp_col', 'id') # default was: HELCOM_ID
+        in_group = data.get('group', 'group') # default was: season
         in_p_value_threshold = data.get('p_value_threshold', '0.05')
-        in_p_value_col = data.get('p_value_col', 'P_Value')
+        in_p_value_col = data.get('p_value_col', 'p_Value')
         
         # Where to store output data
         downloadfilename = 'map_trends_static-%s.png' % self.my_job_id

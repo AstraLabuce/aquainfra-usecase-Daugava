@@ -50,10 +50,10 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         # Get user inputs
         input_data_url = data.get('data', 'https://.../mk_trend_analysis_results.csv')
         in_id_col = data.get('id_col', 'polygon_id')
-        in_test_value = data.get('test_value', 'Tau_Value')
-        p_value = data.get('p_value', 'P_Value')
+        in_test_value = data.get('test_value', 'value') # default was: Tau_Value
+        p_value = data.get('p_value', 'p_value')
         in_p_value_threshold = data.get('p_value_threshold', '0.05')
-        in_group = data.get('group', 'season')
+        in_group = data.get('group', 'group') # default was: season
         
         # Where to store output data
         downloadfilename = 'barplot_image-%s.png' % self.my_job_id

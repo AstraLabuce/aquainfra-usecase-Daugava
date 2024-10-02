@@ -47,8 +47,8 @@ class MeanByGroupProcessor(BaseProcessor):
 
         # Get user inputs
         input_data_url = data.get('input_data', 'http://...peri_conv.csv')
-        in_cols_to_group_by = data.get('cols_to_group_by', "longitude,latitude, Year_adj_generated, group_labels, HELCOM_ID")
-        in_value_col = data.get('value_col', 'transparency_m')
+        in_cols_to_group_by = data.get('cols_to_group_by', 'group') # default was: "longitude,latitude, Year_adj_generated, group_labels, HELCOM_ID"
+        in_value_col = data.get('value_col', 'value') # default was: "transparency_m"
 
         # Where to store output data
         downloadfilename = 'mean_by_group_%s.csv' % self.my_job_id # or seasonal_means.csv?

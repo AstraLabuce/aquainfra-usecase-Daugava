@@ -50,11 +50,11 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
 
         # Get user inputs
         in_data_url = data.get('input_data', 'https://.../mean_by_group.csv')
-        in_rel_cols = data.get('rel_cols', '')
-        in_missing_threshold_percentage = data.get('missing_threshold_percentage', '')
-        in_year_colname = data.get('year_colname', '')
-        in_value_colname = data.get('value_colname', '')
-        in_min_data_point = data.get('min_data_point', '')
+        in_rel_cols = data.get('rel_cols', '(no-default)')
+        in_missing_threshold_percentage = data.get('missing_threshold_percentage', '30')
+        in_year_colname = data.get('year_colname', 'Year')
+        in_value_colname = data.get('value_colname', 'value')
+        in_min_data_point = data.get('min_data_point', '10')
 
         # Where to store output data
         downloadfilename = 'interpolated_time_series-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
