@@ -325,7 +325,7 @@ inputs = {
         "colnames_relevant": "group_labels,HELCOM_ID",
         "missing_threshold_percentage": "40",
         "colname_year": "Year_adj_generated",
-        "colname_value": "Secchi_m_mean_annual",
+        "colname_value": "transparency_m", # not in the result: "Secchi_m_mean_annual",
         "min_data_point": "10"
     }
 }
@@ -366,9 +366,10 @@ url = base_url+'/processes/trend-analysis-mk/execution'
 inputs = {
     "inputs": {
         "input_data": result_ts_selection_interpolation_url or "https://aqua.igb-berlin.de/download/testinputs/interpolated_time_series.csv",
-        "colnames_relevant": "season,polygon_id",
+        #"colnames_relevant": "season,polygon_id",
+        "colnames_relevant": "group_labels,HELCOM_ID",
         "colname_time": "Year_adj_generated",
-        "colname_value": "Secchi_m_mean_annual"
+        "colname_value": "transparency_m", # "Secchi_m_mean_annual"
     }
 }
 
@@ -449,11 +450,11 @@ url = base_url+'/processes/barplot-trend-results/execution'
 inputs = {
     "inputs": {
         "input_data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
-        "colname_id": "polygon_id",
+        "colname_id": "HELCOM_ID", # "polygon_id",
         "colname_test_value": "Tau_Value",
         "colname_p_value": "P_Value",
         "p_value_threshold": "0.05",
-        "colname_group": "season"
+        "colname_group": "period", # "season"
     }
 }
 
@@ -500,9 +501,9 @@ inputs = {
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "input_data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
-        "colname_id_trend": "polygon_id",
+        "colname_id_trend": "HELCOM_ID", # "polygon_id",
         "colname_region_id": "HELCOM_ID",
-        "colname_group": "season",
+        "colname_group": "period", # "season"
         "p_value_threshold": "0.05",
         "colname_p_value": "P_Value"
     }
