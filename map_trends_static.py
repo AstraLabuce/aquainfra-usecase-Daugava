@@ -11,8 +11,8 @@ curl --location 'http://localhost:5000/processes/map-trends-static/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "shp_url": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "trend_results_path": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
+        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "input_data": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
         "id_trend_col": "polygon_id",
         "id_shp_col": "HELCOM_ID",
         "group": "season",
@@ -49,8 +49,8 @@ class MapTrendsStaticProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_shp_url = data.get('shp_url', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
-        in_trend_results_url = data.get('trend_results_path', 'https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv')
+        in_shp_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
+        in_trend_results_url = data.get('input_data', 'https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv')
         in_id_trend_col = data.get('id_trend_col', 'polygon_id')
         in_id_shp_col = data.get('id_shp_col', 'HELCOM_ID')
         in_group = data.get('group', 'season')

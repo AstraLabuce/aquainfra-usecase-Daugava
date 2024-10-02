@@ -2,10 +2,10 @@
     "version": "0.1.0",
     "id": "map-trends-static",
     "title": {
-        "en": "map-trends-static"
+        "en": "Spatial visualisation of regions and data points "
     },
     "description": {
-        "en": "map-trends-static"
+        "en": "This process maps the trend analysis results onto a study region map, visually representing each region according to the statistical results (significant increase vs. significant decrease vs. insignificant trend). The map helps in understanding the spatial distribution of trends across different areas."
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["hello world", "example", "echo"],
@@ -17,7 +17,7 @@
         "hreflang": "en-US"
     }],
     "inputs": {
-        "shp_url": {
+        "regions": {
             "title": "Study region or study subregions",
             "description": "URL to the study region, or several regions, used to classify the input data into groups of interest. Currently it has to be provided as a shapefile. It can be in any coordinate system and will be transformed to WGS84 during this process.",
             "schema": {
@@ -27,9 +27,9 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "trend_results_path": {
-            "title": "trend_results_path",
-            "description": "astra",
+        "input_data": {
+            "title": "Input table",
+            "description": "The input table containing statistical analysis results. The table must include columns for test values, p-values, and identifiers linking to study region.",
             "schema": {
                 "type": "string"
             },
@@ -77,7 +77,7 @@
             "maxOccurs": 1,
             "keywords": ["full name", "personal"]
         },
-        "p_value": {
+        "p_value_col": {
             "title": "Column name for p value",
             "description": "The name of the column containing p values, used to determine bar transparency. Default = \"p_value\"",
             "schema": {
@@ -100,8 +100,8 @@
     },
     "example": {
         "inputs": {
-            "shp_url": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-            "trend_results_path": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
+            "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+            "input_data": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
             "id_trend_col": "polygon_id",
             "id_shp_col": "HELCOM_ID",
             "group": "season",

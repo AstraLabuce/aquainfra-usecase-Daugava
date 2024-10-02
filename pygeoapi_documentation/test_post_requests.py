@@ -497,13 +497,13 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/map-trends-static/execution'
 inputs = {
     "inputs": {
-        "shp_url": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "trend_results_path": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
         "id_trend_col": "polygon_id",
         "id_shp_col": "HELCOM_ID",
         "group": "season",
         "p_value_threshold": "0.05",
-        "p_value": "P_Value"
+        "p_value_col": "P_Value"
     }
 }
 
