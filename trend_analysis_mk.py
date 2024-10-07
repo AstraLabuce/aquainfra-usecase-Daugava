@@ -60,11 +60,11 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
-        R_SCRIPT_NAME = 'trend_analysis_mk_wrapper.R'
+        r_file_name = 'trend_analysis_mk_wrapper.R'
         r_args = [in_data_url, in_rel_cols, in_time_colname, in_value_colname, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
-        returncode, stdout, stderr = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
+        returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)
         LOGGER.info('Running R script done: Exit code %s' % returncode)
 
         if not returncode == 0:

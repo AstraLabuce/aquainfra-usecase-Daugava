@@ -55,11 +55,11 @@ class MeanByGroupProcessor(BaseProcessor):
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
-        R_SCRIPT_NAME = 'mean_by_group_wrapper.R'
+        r_file_name = 'mean_by_group_wrapper.R'
         r_args = [input_data_url, in_cols_to_group_by, in_value_col, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
-        returncode, stdout, stderr = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
+        returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)
         LOGGER.info('Running R script done: Exit code %s' % returncode)
 
         if not returncode == 0:

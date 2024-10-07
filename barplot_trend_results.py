@@ -63,11 +63,11 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
-        R_SCRIPT_NAME = 'barplot_trend_results_wrapper.R'
+        r_file_name = 'barplot_trend_results_wrapper.R'
         r_args = [input_data_url, in_id_col, in_test_value, p_value, in_p_value_threshold, in_group, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
-        returncode, stdout, stderr = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
+        returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)
         LOGGER.info('Running R script done: Exit code %s' % returncode)
 
         if not returncode == 0:

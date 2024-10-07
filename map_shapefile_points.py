@@ -17,7 +17,7 @@ curl --location 'http://localhost:5000/processes/map-shapefile-points/execution'
         "input_data": "https://aqua.igb-berlin.de/download/testinputs/data_merged_with_regions.csv",
         "colname_value_name": "transparency_m",
         "colname_region_id": "HELCOM_ID"
-    } 
+    }
 }'
 '''
 
@@ -63,11 +63,11 @@ class MapShapefilePointsProcessor(BaseProcessor):
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
-        R_SCRIPT_NAME = 'map_shapefile_points_wrapper.R'
+        r_file_name = 'map_shapefile_points_wrapper.R'
         r_args = [in_shp_url, in_dpoints_url, in_long_col_name, in_lat_col_name, in_value_name, in_region_col_name, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
-        returncode, stdout, stderr = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
+        returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)
         LOGGER.info('Running R script done: Exit code %s' % returncode)
 
         if not returncode == 0:

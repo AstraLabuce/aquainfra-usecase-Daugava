@@ -62,11 +62,11 @@ class MapTrendsStaticProcessor(BaseProcessor):
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
-        R_SCRIPT_NAME = 'map_trends_static_wrapper.R'
+        r_file_name = 'map_trends_static_wrapper.R'
         r_args = [in_shp_url, in_trend_results_url, in_id_trend_col, in_id_shp_col, in_group, in_p_value_col, in_p_value_threshold, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
-        returncode, stdout, stderr = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
+        returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)
         LOGGER.info('Running R script done: Exit code %s' % returncode)
 
         if not returncode == 0:
