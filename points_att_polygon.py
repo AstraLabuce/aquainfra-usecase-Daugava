@@ -52,6 +52,12 @@ class PointsAttPolygonProcessor(BaseProcessor):
         in_regions_url = data.get('regions')
         in_dpoints_url = data.get('input_data')
 
+        # Check:
+        if in_regions_url is None:
+            raise ProcessorExecuteError('Missing parameter "regions". Please provide a URL to your input study area (as zipped shapefile).')
+        if in_dpoints_url is None:
+            raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input table.')
+
         # Where to store output data
         downloadfilename = 'data_merged_with_regions-%s.csv' % self.my_job_id
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
