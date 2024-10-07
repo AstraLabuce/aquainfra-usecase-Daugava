@@ -59,11 +59,15 @@ class MeanByGroupProcessor(BaseProcessor):
         r_args = [input_data_url, in_cols_to_group_by, in_value_col, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
-        exit_code, err_msg = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
-        LOGGER.info('Running R script done: Exit code %s' % exit_code)
+        returncode, stdout, stderr = call_r_script(LOGGER, R_SCRIPT_NAME, r_script_dir, r_args)
+        LOGGER.info('Running R script done: Exit code %s' % returncode)
 
-        if not exit_code == 0:
-            raise ProcessorExecuteError(user_msg="R script failed with exit code %s" % exit_code)
+        if not returncode == 0:
+            err_msg = 'R script "%s" failed.' % r_file_name
+            for line in stderr.split('\n'):
+                if line.startswith('Error'):
+                    err_msg = 'R script "%s" failed: %s' % (r_file_name, line)
+            raise ProcessorExecuteError(user_msg = err_msg)
 
         else:
             # Create download link:
@@ -109,4 +113,4 @@ def call_r_script(LOGGER, r_file_name, path_rscripts, r_args):
         err_and_out = 'R stdour:\n___PROCESS OUTPUT {name} ___\n___stdout___\n{stdout}\n___stderr___\n___(Nothing written to stderr)___\n___END PROCESS OUTPUT {name} ___\n______________________'.format(
             name=r_file_name, stdout=stdouttext)
         LOGGER.info(err_and_out)
-    return p.returncode, err_and_out
+    return p.returncode, stdouttext, stderrtext
