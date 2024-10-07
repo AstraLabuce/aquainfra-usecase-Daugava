@@ -7,16 +7,19 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
+
+Output file name: barplot_image-xyz.png
+
 curl --location 'http://localhost:5000/processes/barplot-trend-results/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
         "input_data": "https://testserver.de/download/trend_analysis_results.csv",
-        "colname_id": "polygon_id",
+        "colname_id": "HELCOM_ID",
         "colname_test_value": "Tau_Value",
         "colname_p_value": "P_Value",
         "p_value_threshold": "0.05",
-        "colname_group": "season"
+        "colname_group": "period"
     } 
 }'
 '''

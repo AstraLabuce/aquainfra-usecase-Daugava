@@ -7,6 +7,9 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
+
+Output file name: interactive_map-xyz.html
+
 curl --location 'http://localhost:5000/processes/map-shapefile-points/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 

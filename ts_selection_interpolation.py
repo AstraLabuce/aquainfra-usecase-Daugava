@@ -7,6 +7,10 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
+
+Output file name: interpolated_time_series-xyz.csv
+
+
 curl --location 'http://localhost:5000/processes/ts-selection-interpolation/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
@@ -15,7 +19,7 @@ curl --location 'http://localhost:5000/processes/ts-selection-interpolation/exec
         "colnames_relevant": "group_labels,HELCOM_ID",
         "missing_threshold_percentage": "40",
         "colname_year": "Year_adj_generated",
-        "colname_value": "Secchi_m_mean_annual",
+        "colname_value": "transparency_m",
         "min_data_point": "10"
     } 
 }'

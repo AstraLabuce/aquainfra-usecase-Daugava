@@ -7,6 +7,8 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
+Output file name: map_trends_static-xyz.png
+
 curl --location 'http://localhost:5000/processes/map-trends-static/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
@@ -15,7 +17,7 @@ curl --location 'http://localhost:5000/processes/map-trends-static/execution' \
         "input_data": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
         "colname_id_trend": "polygon_id",
         "colname_region_id": "HELCOM_ID",
-        "colname_group": "season",
+        "colname_group": "period",
         "colname_p_value": "P_Value",
         "p_value_threshold": "0.05"
     } 

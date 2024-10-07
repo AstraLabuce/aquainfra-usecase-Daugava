@@ -7,14 +7,18 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
+
+Output file name: trend_analysis_results-xyz.csv
+
+
 curl --location 'http://localhost:5000/processes/trend-analysis-mk/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "https://testserver.de/download/ts_selection_interpolation.csv",
+        "input_data": "https://testserver.de/download/interpolated_time_series.csv",
         "colnames_relevant": "season,polygon_id",
         "colname_time": "Year_adj_generated",
-        "colname_value": "Secchi_m_mean_annual"
+        "colname_value": "transparency_m"
     }
 }'
 '''

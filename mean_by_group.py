@@ -7,6 +7,9 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
+
+Output file name: mean_by_group-xyz.csv
+
 curl --location 'http://localhost:5000/processes/mean-by-group/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
@@ -51,7 +54,7 @@ class MeanByGroupProcessor(BaseProcessor):
         in_value_col = data.get('colname_value', 'value') # default was: "transparency_m"
 
         # Where to store output data
-        downloadfilename = 'mean_by_group_%s.csv' % self.my_job_id # or seasonal_means.csv?
+        downloadfilename = 'mean_by_group-%s.csv' % self.my_job_id # or seasonal_means.csv?
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:

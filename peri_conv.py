@@ -7,6 +7,8 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
+Output file name: peri_conv-xyz.csv
+
 curl --location 'http://localhost:5000/processes/peri-conv/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
@@ -60,7 +62,7 @@ class PeriConvProcessor(BaseProcessor):
         date_format = data.get('date_format', '%Y-%m-%d')
 
         # Where to store output data
-        downloadfilename = 'peri_conv_%s.csv' % self.my_job_id
+        downloadfilename = 'peri_conv-%s.csv' % self.my_job_id
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:

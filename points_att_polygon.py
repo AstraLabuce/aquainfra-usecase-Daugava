@@ -7,6 +7,9 @@ from urllib.parse import urlparse
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 '''
+Output file name: "data_merged_with_regions-xyz.csv"
+
+
 curl --location 'http://localhost:5000/processes/points-att-polygon/execution' \
 --header 'Content-Type: application/json' \
 --data '{ 
