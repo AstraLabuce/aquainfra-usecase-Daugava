@@ -49,8 +49,8 @@ class PointsAttPolygonProcessor(BaseProcessor):
         # Get user inputs
         in_long_col_name = data.get('colname_long', 'longitude')
         in_lat_col_name = data.get('colname_lat', 'latitude')
-        in_regions_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
-        in_dpoints_url = data.get('input_data', 'https://raw.githubusercontent.com/AstraLabuce/aquainfra-usecase-Daugava/main/in_situ_data/in_situ_example.xlsx')
+        in_regions_url = data.get('regions')
+        in_dpoints_url = data.get('input_data')
 
         # Where to store output data
         downloadfilename = 'data_merged_with_regions-%s.csv' % self.my_job_id
