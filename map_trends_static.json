@@ -25,7 +25,7 @@
             },
             "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "input_data": {
             "title": "Input table",
@@ -35,57 +35,59 @@
             },
             "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_id_trend": {
             "title": "Column name of study region identifier",
-            "description": "The name of the column containing identifiers for study regions, which must correspond to the identifiers in the shapefile (shp). Default = \"id\"",
+            "description": "The name of the column containing identifiers for study regions, which must correspond to the identifiers in the shapefile (shp). Example = \"id\"",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_region_id": {
             "title": "Column name of study region identifier",
-            "description": "    The name of the column in the input data that contains identifiers for study regions, corresponding to the identifiers in the shapefile. Default = \"id\"",
+            "description": "The name of the column in the input data that contains identifiers for study regions, corresponding to the identifiers in the shapefile. Example = \"id\"",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_group": {
             "title": "Column name for subgroups",
-            "description": "The name of the column that defines the subgroups or categories to be displayed on the X-axis, e.g., seasons for every polygon_id. Default = \"group\"",
+            "description": "The name of the column that defines the subgroups or categories to be displayed on the X-axis, e.g., seasons for every polygon_id.",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "p_value_threshold": {
             "title": "p value threshold for significance",
             "description": "The threshold for distinguishing significant from insignificant values. It adjusts the transparency of bars in the plot. Default = 0.05",
             "schema": {
-                "type": "string"
+                "type": "number",
+                "minimum": 0.01,
+                "maximum": 0.1
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_p_value": {
             "title": "Column name for p value",
-            "description": "The name of the column containing p values, used to determine bar transparency. Default = \"p_value\"",
+            "description": "The name of the column containing p values, used to determine bar transparency. Example = \"p_value\"",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         }
     },
     "outputs": {

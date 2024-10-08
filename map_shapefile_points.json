@@ -25,7 +25,7 @@
             },
             "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "input_data": {
             "title": "Data table to be plotted on top of study regions",
@@ -35,7 +35,7 @@
             },
             "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_long": {
             "title": "Column name for longitude",
@@ -43,9 +43,9 @@
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_lat": {
             "title": "Column name for latitude",
@@ -53,9 +53,9 @@
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_value_name": {
             "title": "Column name of data point identifier",
@@ -63,9 +63,9 @@
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_region_id": {
             "title": "Column name of region identifier",
@@ -73,9 +73,9 @@
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         }
     },
     "outputs": {

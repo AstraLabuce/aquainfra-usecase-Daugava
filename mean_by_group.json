@@ -23,27 +23,27 @@
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["csv"]
         },
         "colnames_to_group_by": {
             "title": "Column names identifying group",
-            "description": "One or more column names identifying the group. A combination of all specified columns will be used to define unique groups for calculating the average value. Default = \"group\". Example: \"longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID\". Another example: \"Year_adj_generated, group_labels, HELCOM_ID\".",
+            "description": "One or more column names identifying the group. A combination of all specified columns will be used to define unique groups for calculating the average value. Example: \"longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID\". Another example: \"Year_adj_generated, group_labels, HELCOM_ID\".",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["csv"]
         },
         "colname_value": {
             "title": "Column name for column containing values",
-            "description": "The name of the column that contains the values for which the average will be calculated. Only one column name can be included. Default = \"value\". Examples: \"transparency_m\", \"mean\"",
+            "description": "The name of the column that contains the values for which the average will be calculated. Only one column name can be included. Examples: \"transparency_m\", \"mean\"",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["csv"]
         }
@@ -51,7 +51,7 @@
     "outputs": {
         "mean_by_group": {
             "title": "Group average values (result table)",
-            "description": "A table containing the unique groups defined by cols_to_group_by and the corresponding average values for each group, based on the column specified in value_col.",
+            "description": "A table containing the unique groups defined by \"colnames_to_group_by\" and the corresponding average values for each group, based on the column specified in \"colname_value\".",
             "schema": {
                 "type": "object",
                 "contentMediaType": "application/json"

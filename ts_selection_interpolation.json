@@ -23,7 +23,7 @@
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["table", "csv"]
         },
@@ -33,47 +33,50 @@
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["points"]
         },
         "missing_threshold_percentage": {
             "title": "Threshold for missing values",
-            "description": "Threshold for the allowed percentage of missing data points (NAs). For example, a value of 40 means series with more than 40% missing data will be removed. Default = 30",
+            "description": "Threshold for the allowed percentage of missing data points (NAs). For example, a value of 40 means series with more than 40% missing data will be removed. Example = \"40\".",
             "schema": {
-                "type": "string"
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["percent"]
         },
         "colname_year": {
             "title": "Column name for time",
-            "description": "The name of the column containing the year (or other time identifier, such as quarter, month, or day). Default = \"Year\"",
+            "description": "The name of the column containing the year (or other time identifier, such as quarter, month, or day). Example = \"year\"",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["year", "column"]
         },
         "colname_value": {
             "title": "Column name for values",
-            "description": "The name of the column containing the values to be considered for interpolation. Default = \"value\".",
+            "description": "The name of the column containing the values to be considered for interpolation.",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["column"]
         },
         "min_data_point": {
             "title": "Minimum number of data points required",
-            "description": "The minimum number of data points required in a time series for it to be included in the interpolation process. Default = 10.",
+            "description": "The minimum number of data points required in a time series for it to be included in the interpolation process. Example = \"10\".",
             "schema": {
-                "type": "string"
+                "type": "integer",
+                "minimum": 0,
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["point"]
         }

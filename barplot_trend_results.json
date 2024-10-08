@@ -25,57 +25,59 @@
             },
             "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_id": {
             "title": "Column name for identifier",
-            "description": "The name of the column containing group or sample identifiers, e.g., polygon id. Default = \"polygon_id\"",
+            "description": "The name of the column containing group or sample identifiers, e.g., polygon id. Example = \"polygon_id\"",
             "schema": {
                 "type": "string"
             },
             "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_test_value": {
             "title": "Column name for test value",
-            "description": "The name of the column containing the test values (e.g., statistical coefficients) to be plotted on the Y-axis, e.g., Tau for Mann-Kendall test. Default = \"value\".",
+            "description": "The name of the column containing the test values (e.g., statistical coefficients) to be plotted on the Y-axis, e.g., Tau for Mann-Kendall test.",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_p_value": {
             "title": "Column name for p value",
-            "description": "The name of the column containing p values, used to determine bar transparency. Default = \"p_value\"",
+            "description": "The name of the column containing p values, used to determine bar transparency. Example = \"p_value\"",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "p_value_threshold": {
             "title": "p value threshold for significance",
-            "description": "The threshold for distinguishing significant from insignificant values. It adjusts the transparency of bars in the plot. Default = 0.05",
+            "description": "The threshold for distinguishing significant from insignificant values. It adjusts the transparency of bars in the plot. Example = \"0.05\"",
             "schema": {
-                "type": "string"
+                "type": "number",
+                "minimum": 0.01,
+                "maximum": 0.1
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         },
         "colname_group": {
             "title": "Column name for subgroups",
-            "description": "The name of the column that defines the subgroups or categories to be displayed on the X-axis, e.g., seasons for every polygon_id. Default = \"group\"",
+            "description": "The name of the column that defines the subgroups or categories to be displayed on the X-axis, e.g., seasons for every polygon_id.",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["full name", "personal"]
+            "keywords": []
         }
     },
     "outputs": {

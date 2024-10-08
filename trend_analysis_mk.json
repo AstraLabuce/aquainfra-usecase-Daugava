@@ -23,7 +23,7 @@
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
             "keywords": ["table", "csv"]
         },
@@ -33,29 +33,29 @@
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["TODO"]
+            "keywords": []
         },
         "colname_time": {
             "title": "Column name for time",
-            "description": "The name of the column containing the time variable (e.g., year, month) to be used in the trend analysis. Default = \"year\".",
+            "description": "The name of the column containing the time variable (e.g., year, month) to be used in the trend analysis. Example = \"year\".",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["TODO"]
+            "keywords": []
         },
         "colname_value": {
             "title": "Column name for values",
-            "description": "The name of the column containing the values to be analyzed in the Man-Kendall trend test. Default = \"value\"",
+            "description": "The name of the column containing the values to be analyzed in the Man-Kendall trend test.",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 0,
+            "minOccurs": 1,
             "maxOccurs": 1,
-            "keywords": ["TODO"]
+            "keywords": []
         }
     },
     "outputs": {
