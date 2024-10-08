@@ -29,7 +29,7 @@
         },
         "colname_date": {
             "title": "Date column name",
-            "description": "Column name of the date column in the format defined above. Example: \"visit date\".",
+            "description": "Column name of the date column in the format defined above. Example: \"visit_date\".",
 
             "schema": {
                 "type": "string"
