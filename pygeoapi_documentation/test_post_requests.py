@@ -119,6 +119,12 @@ if resp.status_code == 200:
     result_application_json = resp.json()
     print('Result (JSON document): %s' % result_application_json)
 
+if not resp.status_code == 200:
+    try:
+        print('Result (error): %s' % resp.json())
+    except Error as e:
+        print('Ran into error %s...' % e)
+
 # or async:
 if not resp.status_code == 200 or force_async:
     print('asynchronous... (with excel inputs)')
@@ -161,6 +167,12 @@ print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 if resp.status_code == 200:
     result_application_json = resp.json()
     print('Result (JSON document): %s' % result_application_json)
+
+if not resp.status_code == 200:
+    try:
+        print('Result (error): %s' % resp.json())
+    except Error as e:
+        print('Ran into error %s...' % e)
 
 # or async:
 if not resp.status_code == 200 or force_async:
@@ -295,6 +307,12 @@ if resp.status_code == 200:
     result_application_json = resp.json()
     print('Result (JSON document): %s' % result_application_json)
 
+if not resp.status_code == 200:
+    try:
+        print('Result (error): %s' % resp.json())
+    except Error as e:
+        print('Ran into error %s...' % e)
+
 # or async:
 if not resp.status_code == 200 or force_async:
     print('asynchronous...')
@@ -339,6 +357,12 @@ if resp.status_code == 200:
     result_application_json = resp.json()
     print('Result (JSON document): %s' % result_application_json)
 
+if not resp.status_code == 200:
+    try:
+        print('Result (error): %s' % resp.json())
+    except Error as e:
+        print('Ran into error %s...' % e)
+
 # or async:
 if not resp.status_code == 200 or force_async:
     print('asynchronous...')
@@ -380,6 +404,12 @@ print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 if resp.status_code == 200:
     result_application_json = resp.json()
     print('Result (JSON document): %s' % result_application_json)
+
+if not resp.status_code == 200:
+    try:
+        print('Result (error): %s' % resp.json())
+    except Error as e:
+        print('Ran into error %s...' % e)
 
 # or async:
 if not resp.status_code == 200 or force_async:
@@ -423,6 +453,12 @@ if resp.status_code == 200:
     result_application_json = resp.json()
     print('Result (JSON document): %s' % result_application_json)
 
+if not resp.status_code == 200:
+    try:
+        print('Result (error): %s' % resp.json())
+    except Error as e:
+        print('Ran into error %s...' % e)
+
 # or async:
 if not resp.status_code == 200 or force_async:
     print('asynchronous...')
@@ -465,6 +501,12 @@ print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 if resp.status_code == 200:
     result_application_json = resp.json()
     print('Result (JSON document): %s' % result_application_json)
+
+if not resp.status_code == 200:
+    try:
+        print('Result (error): %s' % resp.json())
+    except Error as e:
+        print('Ran into error %s...' % e)
 
 # or async:
 if not resp.status_code == 200 or force_async:
@@ -516,6 +558,12 @@ print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 if resp.status_code == 200:
     result_application_json = resp.json()
     print('Result (JSON document): %s' % result_application_json)
+
+if not resp.status_code == 200:
+    try:
+        print('Result (error): %s' % resp.json())
+    except Error as e:
+        print('Ran into error %s...' % e)
 
 # or async:
 if not resp.status_code == 200 or force_async:
