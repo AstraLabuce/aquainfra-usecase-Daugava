@@ -1,6 +1,7 @@
 {
     "version": "0.1.0",
     "id": "peri-conv",
+    "use_case": "Daugava",
     "title": {
         "en": "Group data to groups based on date"
     },

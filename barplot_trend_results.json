@@ -1,6 +1,7 @@
 {
     "version": "0.1.0",
     "id": "barplot-trend-results",
+    "use_case": "Daugava",
     "title": {
         "en": "Visualisation of statistical analysis results"
     },

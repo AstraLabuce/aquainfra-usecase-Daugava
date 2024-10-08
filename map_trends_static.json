@@ -1,6 +1,7 @@
 {
     "version": "0.1.0",
     "id": "map-trends-static",
+    "use_case": "Daugava",
     "title": {
         "en": "Spatial visualisation of regions and data points "
     },

@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "id": "trend-analysis-mk",
+    "use_case": "Daugava",
     "title": {
         "en": "Man-Kendall Trend Analysis on Time Series"
     },

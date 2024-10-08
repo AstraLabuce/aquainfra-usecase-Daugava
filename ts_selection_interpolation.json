@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "id": "ts-selection-interpolation",
+    "use_case": "Daugava",
     "title": {
         "en": "Select and Interpolate Time Series"
     },

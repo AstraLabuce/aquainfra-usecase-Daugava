@@ -1,6 +1,7 @@
 {
     "version": "0.1.0",
     "id": "points-att-polygon",
+    "use_case": "Daugava",
     "title": {
         "en": "Group points by region"
     },

@@ -1,6 +1,7 @@
 {
     "version": "0.1.0",
     "id": "mean-by-group",
+    "use_case": "Daugava",
     "title": {
         "en": "Return group average"
     },
