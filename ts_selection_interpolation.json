@@ -43,7 +43,7 @@
             "schema": {
                 "type": "number",
                 "minimum": 0,
-                "maximum": 100,
+                "maximum": 100
             },
             "minOccurs": 1,
             "maxOccurs": 1,
@@ -74,7 +74,7 @@
             "description": "The minimum number of data points required in a time series for it to be included in the interpolation process. Example = \"10\".",
             "schema": {
                 "type": "integer",
-                "minimum": 0,
+                "minimum": 0
             },
             "minOccurs": 1,
             "maxOccurs": 1,
