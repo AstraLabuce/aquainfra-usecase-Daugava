@@ -103,7 +103,7 @@ url = base_url+'/processes/points-att-polygon/execution'
 inputs = { 
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "colname_lon": "longitude",
+        "colname_long": "longitude",
         "colname_lat": "latitude",
         "input_data": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx" # date format: 1998-02-14T12:30:00
     } 
@@ -409,7 +409,7 @@ inputs = {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "colname_long": "longitude",
         "colname_lat": "latitude",
-        "points": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
+        "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
         "colname_value_name": "transparency_m",
         "colname_region_id": "HELCOM_ID"
     }
