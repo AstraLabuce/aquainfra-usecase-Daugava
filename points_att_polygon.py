@@ -53,16 +53,20 @@ class PointsAttPolygonProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_long_col_name = data.get('colname_long', 'longitude')
-        in_lat_col_name = data.get('colname_lat', 'latitude')
         in_regions_url = data.get('regions')
         in_dpoints_url = data.get('input_data')
+        in_long_col_name = data.get('colname_long')
+        in_lat_col_name = data.get('colname_lat')
 
         # Check:
         if in_regions_url is None:
             raise ProcessorExecuteError('Missing parameter "regions". Please provide a URL to your input study area (as zipped shapefile).')
         if in_dpoints_url is None:
             raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input table.')
+        if in_long_col_name is None:
+            raise ProcessorExecuteError('Missing parameter "colname_long". Please provide a column name.')
+        if in_lat_col_name is None:
+            raise ProcessorExecuteError('Missing parameter "colname_lat". Please provide a column name.')
 
         # Where to store output data
         downloadfilename = 'data_merged_with_regions-%s.csv' % self.my_job_id

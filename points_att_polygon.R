@@ -10,6 +10,7 @@ library(sp)
 library(data.table)
 
 points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name="lat") {
+  # TODO: Should we really have defaults here?
   #shp - shapefile
   #dpoints - dataframe with values and numeric variables for coordinates:
   #long - longitude column name in dpoints; default "long"

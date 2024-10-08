@@ -54,12 +54,26 @@ class MapShapefilePointsProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_shp_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
-        in_dpoints_url = data.get('input_data', 'https://aqua.igb-berlin.de/download/testinputs/data_merged_with_regions.csv')
-        in_long_col_name = data.get('colname_long', 'longitude')
-        in_lat_col_name = data.get('colname_lat', 'latitude')
-        in_value_name = data.get('colname_value_name', 'transparency_m')
-        in_region_col_name = data.get('colname_region_id', 'HELCOM_ID')
+        in_shp_url = data.get('regions') # 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
+        in_dpoints_url = data.get('input_data')
+        in_long_col_name = data.get('colname_long') # 'longitude'
+        in_lat_col_name = data.get('colname_lat') # 'latitude'
+        in_value_name = data.get('colname_value_name') # 'transparency_m'
+        in_region_col_name = data.get('colname_region_id') # 'HELCOM_ID'
+
+        # Check
+        if in_shp_url is None:
+            raise ProcessorExecuteError('Missing parameter "regions". Please provide a URL to your input data.')
+        if in_dpoints_url is None:
+            raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input data.')
+        if in_long_col_name is None:
+            raise ProcessorExecuteError('Missing parameter "colname_long". Please provide a column name.')
+        if in_lat_col_name is None:
+            raise ProcessorExecuteError('Missing parameter "colname_lat". Please provide a column name.')
+        if in_value_name is None:
+            raise ProcessorExecuteError('Missing parameter "colname_value_name". Please provide a column name.')
+        if in_region_col_name is None:
+            raise ProcessorExecuteError('Missing parameter "colname_region_id". Please provide a column name.')
 
         # Where to store output data
         downloadfilename = 'interactive_map-%s.html' % self.my_job_id

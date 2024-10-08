@@ -16,7 +16,7 @@ curl --location 'http://localhost:5000/processes/peri-conv/execution' \
         "input_data": "https://testserver.de/download/data_merged_with_regions.csv",
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
-        "group_labels": "winter,spring,summer,autumn",
+        "period_labels": "winter,spring,summer,autumn",
         "year_starts_at_Dec1": "True",
         "date_format": "%Y-%m-%d"
     } 
@@ -54,12 +54,33 @@ class PeriConvProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        input_data_url = data.get('input_data', 'http://.../point_att_polygon.csv')
-        date_col_name = data.get('colname_date', 'visit_date')
+        input_data_url = data.get('input_data')
+        date_col_name = data.get('colname_date') # e.g. visit_date
         group_to_periods = data.get('group_to_periods', 'Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30')
-        group_labels = data.get('group_labels', 'winter,spring,summer,autumn')
-        year_starts_at_Dec1 = data.get('year_starts_at_Dec1', 'True')
-        date_format = data.get('date_format', '%Y-%m-%d')
+        period_labels = data.get('period_labels', 'winter,spring,summer,autumn')
+        year_starts_at_Dec1 = data.get('year_starts_at_Dec1', True)
+        date_format = data.get('date_format', 'y-m-d') # '%Y-%m-%d'
+
+        # Check
+        if input_data_url is None:
+            raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input table.')
+        if date_col_name is None:
+            raise ProcessorExecuteError('Missing parameter "colname_date". Please provide a column name.')
+
+        # Parse date format: y-m-d to %Y-%m-%d
+        date_format = date_format.lower()
+        tmp = ''
+        for char in date_format:
+            if char == 'y':
+                tmp += '%Y'
+            elif char == 'm':
+                tmp += '%m'
+            elif char == 'd':
+                tmp += '%d'
+            else:
+                tmp += char
+        LOGGER.debug('Replaced date format "%s" by "%s"!' % (date_format, tmp))
+        date_format = tmp
 
         # Where to store output data
         downloadfilename = 'peri_conv-%s.csv' % self.my_job_id
@@ -67,7 +88,8 @@ class PeriConvProcessor(BaseProcessor):
 
         # Run the R script:
         r_file_name = 'peri_conv_wrapper.R'
-        r_args = [input_data_url, date_col_name, group_to_periods, group_labels, date_format, year_starts_at_Dec1, downloadfilepath]
+        year_starts_at_Dec1 = 'true' if year_starts_at_Dec1 else 'false' # does this work at all?
+        r_args = [input_data_url, date_col_name, group_to_periods, period_labels, date_format, year_starts_at_Dec1, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)

@@ -50,22 +50,38 @@ class MapTrendsStaticProcessor(BaseProcessor):
         own_url = configJSON["own_url"]
         r_script_dir = configJSON["r_script_dir"]
 
-        # Get user inputs
-        in_shp_url = data.get('regions', 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
-        in_trend_results_url = data.get('input_data', 'https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv')
-        in_id_trend_col = data.get('colname_id_trend', 'id') # default was: polygon_id
-        in_id_shp_col = data.get('colname_region_id', 'id') # default was: HELCOM_ID
-        in_group = data.get('colname_group', 'group') # default was: season
-        in_p_value_threshold = data.get('p_value_threshold', '0.05')
-        in_p_value_col = data.get('colname_p_value', 'p_Value')
-        
+        # User inputs
+        in_shp_url = data.get('regions') # 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
+        in_trend_results_url = data.get('input_data')
+        in_id_trend_col = data.get('colname_id_trend') # default was: polygon_id, id
+        in_id_shp_col = data.get('colname_region_id') # default was: HELCOM_ID, id
+        in_group = data.get('colname_group') # default was: season, group
+        in_p_value_threshold = data.get('p_value_threshold') # 0.05
+        in_p_value_col = data.get('colname_p_value') # p_Value
+
+        # Check user inputs
+        if in_shp_url is None:
+            raise ProcessorExecuteError('Missing parameter "regions". Please provide a URL to your input data.')
+        if in_trend_results_url is None:
+            raise ProcessorExecuteError('Missing parameter "input_data". Please provide a column name.')
+        if in_id_trend_col is None:
+            raise ProcessorExecuteError('Missing parameter "colname_id_trend". Please provide a column name.')
+        if in_id_shp_col is None:
+            raise ProcessorExecuteError('Missing parameter "colname_region_id". Please provide a column name.')
+        if in_group is None:
+            raise ProcessorExecuteError('Missing parameter "colname_group". Please provide a column name.')
+        if in_p_value_threshold is None:
+            raise ProcessorExecuteError('Missing parameter "p_value_threshold". Please provide a value.')
+        if in_p_value_col is None:
+            raise ProcessorExecuteError('Missing parameter "colname_p_value". Please provide a column name.')
+
         # Where to store output data
         downloadfilename = 'map_trends_static-%s.png' % self.my_job_id
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
         r_file_name = 'map_trends_static_wrapper.R'
-        r_args = [in_shp_url, in_trend_results_url, in_id_trend_col, in_id_shp_col, in_group, in_p_value_col, in_p_value_threshold, downloadfilepath]
+        r_args = [in_shp_url, in_trend_results_url, in_id_trend_col, in_id_shp_col, in_group, in_p_value_col, str(in_p_value_threshold), downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)

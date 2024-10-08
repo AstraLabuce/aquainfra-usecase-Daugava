@@ -53,21 +53,35 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         own_url = configJSON["own_url"]
         r_script_dir = configJSON["r_script_dir"]
 
-        # Get user inputs
-        input_data_url = data.get('input_data', 'https://.../trend_analysis_results.csv')
-        in_id_col = data.get('colname_id', 'polygon_id')
-        in_test_value = data.get('colname_test_value', 'value') # default was: Tau_Value
-        p_value = data.get('colname_p_value', 'p_value')
-        in_p_value_threshold = data.get('p_value_threshold', '0.05')
-        in_group = data.get('colname_group', 'group') # default was: season
-        
+        # User inputs
+        input_data_url = data.get('input_data')
+        in_id_col = data.get('colname_id') # 'polygon_id'
+        in_test_value = data.get('colname_test_value') # default was: Tau_Value
+        p_value = data.get('colname_p_value') # 'p_value'
+        in_p_value_threshold = data.get('p_value_threshold') # '0.05'
+        in_group = data.get('colname_group') # default was: season, or group
+
+        # Check user inputs
+        if input_data_url is None:
+            raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input data.')
+        if in_id_col is None:
+            raise ProcessorExecuteError('Missing parameter "colname_id". Please provide a column name.')
+        if in_test_value is None:
+            raise ProcessorExecuteError('Missing parameter "colname_test_value". Please provide a column name.')
+        if p_value is None:
+            raise ProcessorExecuteError('Missing parameter "colname_p_value". Please provide a column name.')
+        if in_p_value_threshold is None:
+            raise ProcessorExecuteError('Missing parameter "p_value_threshold". Please provide a column name.')
+        if in_group is None:
+            raise ProcessorExecuteError('Missing parameter "colname_group". Please provide a column name.')
+
         # Where to store output data
         downloadfilename = 'barplot_image-%s.png' % self.my_job_id
         downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         # Run the R script:
         r_file_name = 'barplot_trend_results_wrapper.R'
-        r_args = [input_data_url, in_id_col, in_test_value, p_value, in_p_value_threshold, in_group, downloadfilepath]
+        r_args = [input_data_url, in_id_col, in_test_value, p_value, str(in_p_value_threshold), in_group, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)

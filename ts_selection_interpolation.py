@@ -56,12 +56,26 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        in_data_url = data.get('input_data', 'https://.../mean_by_group.csv')
-        in_rel_cols = data.get('colnames_relevant', '(no-default)')
-        in_missing_threshold_percentage = data.get('missing_threshold_percentage', '30')
-        in_year_colname = data.get('colname_year', 'Year')
-        in_value_colname = data.get('colname_value', 'value')
-        in_min_data_point = data.get('min_data_point', '10')
+        in_data_url = data.get('input_data')
+        in_rel_cols = data.get('colnames_relevant')
+        in_missing_threshold_percentage = data.get('missing_threshold_percentage') # 30.0
+        in_year_colname = data.get('colname_year') # 'Year'
+        in_value_colname = data.get('colname_value') # 'value'
+        in_min_data_point = data.get('min_data_point') # 10
+
+        # Checks
+        if in_data_url is None:
+            raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input table.')
+        if in_rel_cols is None:
+            raise ProcessorExecuteError('Missing parameter "in_rel_cols". Please provide a value.')
+        if in_missing_threshold_percentage is None:
+            raise ProcessorExecuteError('Missing parameter "in_missing_threshold_percentage". Please provide a value.')
+        if in_year_colname is None:
+            raise ProcessorExecuteError('Missing parameter "colname_year". Please provide a column name.')
+        if in_value_colname is None:
+            raise ProcessorExecuteError('Missing parameter "colname_value". Please provide a column name.')
+        if in_min_data_point is None:
+            raise ProcessorExecuteError('Missing parameter "min_data_point". Please provide a value.')
 
         # Where to store output data
         downloadfilename = 'interpolated_time_series-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
@@ -69,7 +83,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
 
         # Run the R script:
         r_file_name = 'ts_selection_interpolation_wrapper.R'
-        r_args = [in_data_url, in_rel_cols, in_missing_threshold_percentage, in_year_colname, in_value_colname, in_min_data_point, downloadfilepath]
+        r_args = [in_data_url, in_rel_cols, str(in_missing_threshold_percentage), in_year_colname, in_value_colname, str(in_min_data_point), downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)

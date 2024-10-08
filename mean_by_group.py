@@ -49,9 +49,17 @@ class MeanByGroupProcessor(BaseProcessor):
         r_script_dir = configJSON["r_script_dir"]
 
         # Get user inputs
-        input_data_url = data.get('input_data', 'http://...peri_conv.csv')
-        in_cols_to_group_by = data.get('colnames_to_group_by', 'group') # default was: "longitude,latitude, Year_adj_generated, group_labels, HELCOM_ID"
-        in_value_col = data.get('colname_value', 'value') # default was: "transparency_m"
+        input_data_url = data.get('input_data')
+        in_cols_to_group_by = data.get('colnames_to_group_by') # "group", default was: "longitude,latitude, Year_adj_generated, group_labels, HELCOM_ID"
+        in_value_col = data.get('colname_value') # "value", default was: "transparency_m"
+
+        # Check:
+        if input_data_url is None:
+            raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input data.')
+        if in_cols_to_group_by is None:
+            raise ProcessorExecuteError('Missing parameter "colnames_to_group_by". Please provide column name(s).')
+        if in_value_col is None:
+            raise ProcessorExecuteError('Missing parameter "in_value_col". Please provide a column name.')
 
         # Where to store output data
         downloadfilename = 'mean_by_group-%s.csv' % self.my_job_id # or seasonal_means.csv?

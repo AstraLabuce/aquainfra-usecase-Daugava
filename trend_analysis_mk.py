@@ -53,11 +53,21 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         own_url = configJSON["own_url"]
         r_script_dir = configJSON["r_script_dir"]
 
-        # Get user inputs
-        in_data_url = data.get('input_data', 'https://.../ts_selection_interpolation.csv') # or selected_interpolated.csv ?
-        in_rel_cols = data.get('colnames_relevant', '(no-default)') # TODO empty or error? min occurs 0 or 1?
-        in_time_colname = data.get('colname_time', 'year')
-        in_value_colname = data.get('colname_value', 'value')
+        # User inputs
+        in_data_url = data.get('input_data') # or selected_interpolated.csv ?
+        in_rel_cols = data.get('colnames_relevant')
+        in_time_colname = data.get('colname_time') # 'year'
+        in_value_colname = data.get('colname_value') # 'value'
+
+        # Check
+        if in_data_url is None:
+            raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input data.')
+        if in_rel_cols is None:
+            raise ProcessorExecuteError('Missing parameter "colnames_relevant". Please provide column name(s).')
+        if in_time_colname is None:
+            raise ProcessorExecuteError('Missing parameter "colname_time". Please provide a column name.')
+        if in_value_colname is None:
+            raise ProcessorExecuteError('Missing parameter "colname_value". Please provide a column name.')
 
         # Where to store output data
         downloadfilename = 'trend_analysis_results-%s.csv' % self.my_job_id # or selected_interpolated.csv ?

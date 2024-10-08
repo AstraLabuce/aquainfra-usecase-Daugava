@@ -25,6 +25,7 @@ peri_conv <- function(data,
            call. = FALSE)
     }
 
+    print(paste('Value and type of year_starts_at_Dec1:', year_starts_at_Dec1, typeof(year_starts_at_Dec1)))
     if (!is.logical(year_starts_at_Dec1)) {
       stop(paste0('The parameter "year_starts_at_Dec1" is not a boolean value, but a ',
         typeof(year_starts_at_Dec1), ' value (', year_starts_at_Dec1, ')!'))
