@@ -44,6 +44,10 @@
             "description": "The date format used to parse the date, i.e. to extract day, month and year from the date column, e.g.  or \"y-m-d\" for dates like \"1998-08-22\" (this is the default) or \"y/m/d\" for dates like \"1998/08/22\".",
             "schema": {
                 "type": "string",
+                "enum": [
+                    "y-m-d",
+                    "y/m/d"
+                ],
                 "default": "y-m-d"
             },
             "minOccurs": 0,
