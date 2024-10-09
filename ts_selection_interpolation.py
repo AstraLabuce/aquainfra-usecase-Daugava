@@ -86,14 +86,10 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         r_args = [in_data_url, in_rel_cols, str(in_missing_threshold_percentage), in_year_colname, in_value_colname, str(in_min_data_point), downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
-        returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)
+        returncode, stdout, stderr, err_msg = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)
         LOGGER.info('Running R script done: Exit code %s' % returncode)
 
         if not returncode == 0:
-            err_msg = 'R script "%s" failed.' % r_file_name
-            for line in stderr.split('\n'):
-                if line.startswith('Error'):
-                    err_msg = 'R script "%s" failed: %s' % (r_file_name, line)
             raise ProcessorExecuteError(user_msg = err_msg)
 
         else:
@@ -117,18 +113,41 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
 def call_r_script(LOGGER, r_file_name, path_rscripts, r_args):
     # TODO: Move function to some module, same in all processes
 
-    LOGGER.debug('Now calling bash which calls R: %s' % r_file_name)
+    # Call R script:
     r_file = path_rscripts.rstrip('/')+os.sep+r_file_name
     cmd = ["/usr/bin/Rscript", "--vanilla", r_file] + r_args
+    LOGGER.debug('Running command %s ... (Output will be shown once finished)' % r_file_name)
     LOGGER.info(cmd)
-    LOGGER.debug('Running command... (Output will be shown once finished)')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     stdoutdata, stderrdata = p.communicate()
     LOGGER.debug("Done running command! Exit code from bash: %s" % p.returncode)
 
-    ### Print stdout and stderr
+    # Retrieve stdout and stderr
     stdouttext = stdoutdata.decode()
     stderrtext = stderrdata.decode()
+
+    # Remove empty lines:
+    stderrtext_new = ''
+    for line in stderrtext.split('\n'):
+        if len(line.strip())==0:
+            LOGGER.debug('Empty line!')
+        else:
+            LOGGER.debug('Non-empty line: %s' % line)
+            stderrtext_new += line+'\n'
+
+    # Remove empty lines:
+    stdouttext_new = ''
+    for line in stdouttext.split('\n'):
+        if len(line.strip())==0:
+            LOGGER.debug('Empty line!')
+        else:
+            LOGGER.debug('Non-empty line: %s' % line)
+            stdouttext_new += line+'\n'
+
+    stderrtext = stderrtext_new
+    stdouttext = stdouttext_new
+
+    # Format stderr/stdout for logging:
     if len(stderrdata) > 0:
         err_and_out = 'R stdout and stderr:\n___PROCESS OUTPUT {name} ___\n___stdout___\n{stdout}\n___stderr___\n{stderr}\n___END PROCESS OUTPUT {name} ___\n______________________'.format(
             name=r_file_name, stdout=stdouttext, stderr=stderrtext)
@@ -137,4 +156,15 @@ def call_r_script(LOGGER, r_file_name, path_rscripts, r_args):
         err_and_out = 'R stdour:\n___PROCESS OUTPUT {name} ___\n___stdout___\n{stdout}\n___stderr___\n___(Nothing written to stderr)___\n___END PROCESS OUTPUT {name} ___\n______________________'.format(
             name=r_file_name, stdout=stdouttext)
         LOGGER.info(err_and_out)
-    return p.returncode, stdouttext, stderrtext
+
+    # Extract error message from R output, if applicable:
+    err_msg = None
+    if not p.returncode == 0:
+        err_msg = 'R script "%s" failed.' % r_file_name
+        for line in stderrtext.split('\n'):
+            if line.startswith('Error') or line.startswith('Fatal'):
+                LOGGER.error('FOUND R ERROR LINE: %s' % line)
+                err_msg += ' '+line.strip()
+                LOGGER.error('ENTIRE R ERROR MSG NOW: %s' % err_msg)
+
+    return p.returncode, stdouttext, stderrtext, err_msg
