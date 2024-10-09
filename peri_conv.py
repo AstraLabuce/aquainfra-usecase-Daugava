@@ -17,7 +17,7 @@ curl --location 'http://localhost:5000/processes/peri-conv/execution' \
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "period_labels": "winter,spring,summer,autumn",
-        "year_starts_at_Dec1": "True",
+        "year_starts_at_dec1": "True",
         "date_format": "%Y-%m-%d"
     } 
 }'
@@ -58,7 +58,7 @@ class PeriConvProcessor(BaseProcessor):
         date_col_name = data.get('colname_date') # e.g. visit_date
         group_to_periods = data.get('group_to_periods', 'Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30')
         period_labels = data.get('period_labels', 'winter,spring,summer,autumn')
-        year_starts_at_Dec1 = data.get('year_starts_at_Dec1', True)
+        year_starts_at_dec1 = data.get('year_starts_at_dec1', True)
         date_format = data.get('date_format', 'y-m-d') # '%Y-%m-%d'
 
         # Check
@@ -88,8 +88,8 @@ class PeriConvProcessor(BaseProcessor):
 
         # Run the R script:
         r_file_name = 'peri_conv_wrapper.R'
-        year_starts_at_Dec1 = 'true' if year_starts_at_Dec1 else 'false' # does this work at all?
-        r_args = [input_data_url, date_col_name, group_to_periods, period_labels, date_format, year_starts_at_Dec1, downloadfilepath]
+        year_starts_at_dec1 = 'true' if year_starts_at_dec1 else 'false' # does this work at all?
+        r_args = [input_data_url, date_col_name, group_to_periods, period_labels, date_format, year_starts_at_dec1, downloadfilepath]
         LOGGER.info('Run R script and store result to %s!' % downloadfilepath)
         LOGGER.debug('R args: %s' % r_args)
         returncode, stdout, stderr = call_r_script(LOGGER, r_file_name, r_script_dir, r_args)

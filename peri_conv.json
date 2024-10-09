@@ -76,7 +76,7 @@
             "maxOccurs": 1,
             "keywords": ["period"]
         },
-        "year_starts_at_Dec1": {
+        "year_starts_at_dec1": {
             "title": "Include December into next year",
             "description": "Tell whether the years in your grouping starts at first of December (\"true\") or not (\"false\"). This has to be reflected in the period definitions, these should not contradict each other. Defaults to \"true\".",
             "schema": {
