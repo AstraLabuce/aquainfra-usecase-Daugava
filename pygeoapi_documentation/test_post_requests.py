@@ -117,7 +117,7 @@ resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 200
 if resp.status_code == 200:
     result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
+    print('  Result (JSON document): %s' % result_application_json)
 
 if not resp.status_code == 200:
     try:
@@ -131,15 +131,15 @@ if not resp.status_code == 200 or force_async:
     resp = session.post(url, headers=headers_async, json=inputs)
     print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
     result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
+    print('  Result (JSON document): %s' % result_application_json)
 
 # Results (sync / async, does not matter):
 href = result_application_json['outputs']['data_merged_with_regions']['href']
 result_points_att_polygon_url = href
-print('It contains a link to our ACTUAL result: %s' % result_points_att_polygon_url)
+print('  It contains a link to our ACTUAL result: %s' % result_points_att_polygon_url)
 # Check out result itself:
 final_result = session.get(result_points_att_polygon_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
+print('  Result content: %s...' % str(final_result.content)[0:200])
 
 
 #################
@@ -166,7 +166,7 @@ resp = session.post(url, headers=headers_sync, json=inputs)
 print('Calling %s... done. HTTP %s' % (name, resp.status_code))
 if resp.status_code == 200:
     result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
+    print('  Result (JSON document): %s' % result_application_json)
 
 if not resp.status_code == 200:
     try:
@@ -202,10 +202,10 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 name = "points_att_polygon"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/points-att-polygon/execution'
-inputs = { 
+inputs = {
     "inputs": {
         "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "colname_lon": "longitude",
+        "colname_long": "longitude",
         "colname_lat": "latitude",
         "input_data": "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # date format: 1998/02/14 12:30:00.000
     } 
