@@ -40,21 +40,21 @@
         },
         "colname_long": {
             "title": "Column name for longitude",
-            "description": "Name of the column that contains longitude values (in WGS84).",
+            "description": "Only needed for data other than geojson. Name of the column that contains longitude values (in WGS84).",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 1,
+            "minOccurs": 0,
             "maxOccurs": 1,
             "keywords": ["longitude", "column", "wgs84"]
         },
         "colname_lat": {
             "title": "Column name for latiitude",
-            "description": "Name of the column that contains latitude values (in WGS84).",
+            "description": "Only needed for data other than geojson. Name of the column that contains latitude values (in WGS84).",
             "schema": {
                 "type": "string"
             },
-            "minOccurs": 1,
+            "minOccurs": 0,
             "maxOccurs": 1,
             "keywords": ["latitude", "column", "wgs84"]
         }
