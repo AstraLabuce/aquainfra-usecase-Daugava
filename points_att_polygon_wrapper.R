@@ -152,11 +152,11 @@ read_data <- function(table_file_path) {
     {
       data_raw <- NULL
 
-      if (grepl("f=csv", table_file_path)) {
+      if (grepl("f=csv", table_file_path) | grepl("\\.csv$", table_file_path)) {
         data_raw <- read.csv(table_file_path) %>%
           janitor::clean_names()
         print(paste0("CSV file ", table_file_path, " read"))
-      } else if (grepl("f=json", table_file_path)) {
+      } else if (grepl("f=json", table_file_path) | grepl("\\.json$", table_file_path)) {
         data_raw <- st_read(table_file_path) %>%
           janitor::clean_names()
         print(paste0("GeoJSON file ", table_file_path, " read"))
