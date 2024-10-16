@@ -29,19 +29,7 @@ points_att_polygon <- function(shp, dpoints, long_col_name="long", lat_col_name=
     stop("missing shp")
   if (missing(dpoints))
     stop("missing dpoints")
-  if (! long_col_name %in% colnames(dpoints))
-    stop(paste0("input data does not have column ", long_col_name))
-  if (! lat_col_name %in% colnames(dpoints))
-    stop(paste0("input data does not have column ", lat_col_name))
 
-  # TODO: long and lat hardcoded!
-  err = paste0("Error: `", long_col_name, "` is not numeric.")
-  stopifnot(err =
-              is.numeric(as.data.frame(dpoints)[, names(dpoints) == long_col_name]))
-  err = paste0("Error: `", lat_col_name, "` is not numeric.")
-  stopifnot(err =
-              is.numeric(as.data.frame(dpoints)[, names(dpoints) == lat_col_name]))
-  
   #dpoints to spatial
   print('Making input data spatial based on long, lat...')
   data_spatial <- sf::st_as_sf(dpoints, coords = c(long_col_name, lat_col_name))

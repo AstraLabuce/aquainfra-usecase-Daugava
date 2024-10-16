@@ -147,23 +147,52 @@ if (!file.exists(table_file_path)) {
 # from DDAS: https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=10000
 # in_situ_data/in_situ_example.xlsx : example data from https://latmare.lhei.lv/
 # in_situ_data/Latmare_20240111_secchi_color.xlsx : # data from LIAE data base from https://latmare.lhei.lv/
-data_raw <-tryCatch(
-  {
-    data_raw <- readxl::read_excel(table_file_path) %>%
-      janitor::clean_names()
-    print(paste0("Excel file ", table_file_path, " read"))
-    data_raw # this is needed so it is stored in data_raw! return(data_raw) does not work!
-  },
-  error = function(err) {
-    data_raw <- read.csv(table_file_path) %>% janitor::clean_names()
+read_data <- function(table_file_path) {
+  data_raw <- tryCatch(
+    {
+      data_raw <- NULL
 
-    # Apparently col names are shortened when loading from csv:
-    # TODO (Astra?): This depends on the column names the user passes/ the rel_columns. How to make this generic...
-    colnames(data_raw)[colnames(data_raw)=="transparen"] <- "transparency_m"
-    print(paste0("CSV file ", table_file_path, " read"))
-    return(data_raw)
-  }
-)
+      if (grepl("f=csv", table_file_path)) {
+        data_raw <- read.csv(table_file_path) %>%
+          janitor::clean_names()
+        print(paste0("CSV file ", table_file_path, " read"))
+      } else if (grepl("f=json", table_file_path)) {
+        data_raw <- st_read(table_file_path) %>%
+          janitor::clean_names()
+        print(paste0("GeoJSON file ", table_file_path, " read"))
+      } else if (grepl("\\.xlsx$", table_file_path)) {
+        data_raw <- readxl::read_excel(table_file_path) %>%
+          janitor::clean_names()
+        print(paste0("Excel file ", table_file_path, " read"))
+      } else {
+        stop("Unsupported file format: only CSV, JSON, or Excel accepted.")
+      }
+
+      if (!is.null(data_raw)) {
+        if ("transparen" %in% colnames(data_raw)) {
+          colnames(data_raw)[colnames(data_raw) == "transparen"] <- "transparency_m"
+        }
+        return(data_raw)
+      } else {
+        stop("data_raw is NULL: No data read.")
+      }
+    },
+    error = function(err) {
+      print(paste("Error:", err$message))
+      return(NULL)
+    }
+  )
+  return(data_raw)
+}
+
+data_raw <- read_data(table_file_path)
+
+if (is.null(data_raw)) {
+  print("Data reading failed or no valid data.")
+} else {
+  print("Data read successfully.")
+}
+
 
 # list relevant columns: geolocation (lat and lon), date and values for data points are mandatory
 rel_columns <- c(
