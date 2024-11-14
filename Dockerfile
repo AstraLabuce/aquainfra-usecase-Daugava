@@ -17,6 +17,11 @@ RUN R -e "install.packages('remotes', repos='https://cran.rstudio.com/')"
 COPY /install.R /src/install.R
 RUN Rscript /src/install.R
 
+# Install Python packages (Jupyter, Notebook, and JupyterHub)
+RUN apt-get update && apt-get install -y python3-pip
+RUN python3 -m pip install --no-cache-dir notebook jupyterlab
+RUN pip install --no-cache-dir jupyterhub
+
 # Set user-related variables
 ARG NB_USER=jovyan
 ARG NB_UID=1000
