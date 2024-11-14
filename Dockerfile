@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 RUN R -e "install.packages('remotes', repos='https://cran.rstudio.com/')"
 
 # Copy the install.R file and run it to install the R packages
-COPY src/install.R /src/install.R
+COPY /install.R /src/install.R
 RUN Rscript /src/install.R
 
 # Copy the entire src directory, excluding install.R
