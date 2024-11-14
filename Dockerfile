@@ -14,33 +14,8 @@ RUN apt-get update && apt-get install -y \
 RUN R -e "install.packages('remotes', repos='https://cran.rstudio.com/')"
 
 # Copy the install.R file and run it to install the R packages
-COPY /install.R /src/install.R
+COPY /.binder/install.R /src/install.R
 RUN Rscript /src/install.R
-
-# Install Python packages (Jupyter, Notebook, and JupyterHub)
-RUN apt-get update && apt-get install -y python3-pip
-RUN python3 -m pip install --no-cache-dir notebook jupyterlab
-RUN pip install --no-cache-dir jupyterhub
-
-# Set user-related variables
-ARG NB_USER=jovyan
-ARG NB_UID=1000
-ENV USER ${NB_USER}
-ENV NB_UID ${NB_UID}
-ENV HOME /home/${NB_USER}
-
-# Create the user, set up home directory and permissions
-RUN adduser --disabled-password --gecos "Default user" --uid ${NB_UID} ${NB_USER} \
-    && mkdir -p ${HOME} \
-    && chown -R ${NB_UID}:${NB_UID} ${HOME}
-
-# Make sure the contents of our repo are in the user's home directory
-COPY . ${HOME}
-
-# Change user to ${NB_USER}
-USER ${NB_USER}
-
-
 
 # Copy the entire src directory, excluding install.R
 COPY src /src
