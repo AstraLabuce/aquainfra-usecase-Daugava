@@ -1,5 +1,5 @@
 # Use the official R image as the base image
-FROM rocker/r-ver:4.4.2
+FROM rocker/r-ver:4.3.0
 
 # Install system dependencies for R packages (spatial packages and others)
 RUN apt-get update && apt-get install -y \
