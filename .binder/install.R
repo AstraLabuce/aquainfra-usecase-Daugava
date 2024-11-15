@@ -13,7 +13,9 @@ required_packages_versions <- list(
   "janitor" = "2.2.0",
   "sp" = "2.0-0",
   "data.table" = "1.14.8",
-  "readxl" = "1.4.3"
+  "readxl" = "1.4.3",
+  "jsonlite" = "1.8.7",
+  "lubridate" = "1.9.3"
 )
 
 # Install specific versions using remotes
