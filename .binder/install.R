@@ -12,7 +12,9 @@ required_packages_versions <- list(
   "readxl" = "1.4.3",
   "jsonlite" = "1.8.7",
   "lubridate" = "1.9.3",
-  "curl" = "5.2.1"
+  "curl" = "5.2.1",
+  "zoo" = "1.8-12",
+  "tidyr" = "1.3.0"
 )
 
 install_if_missing <- function(pkg, version) {
