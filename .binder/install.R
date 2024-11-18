@@ -14,7 +14,8 @@ required_packages_versions <- list(
   "lubridate" = "1.9.3",
   "curl" = "5.2.1",
   "zoo" = "1.8-12",
-  "tidyr" = "1.3.0"
+  "tidyr" = "1.3.0",
+  "Kendall" = "2.2.1"
 )
 
 install_if_missing <- function(pkg, version) {
