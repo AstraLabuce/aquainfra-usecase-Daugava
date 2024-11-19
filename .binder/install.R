@@ -21,7 +21,7 @@ required_packages_versions <- list(
   "mapview" = "2.11.2",
   "webshot" = "0.5.5",
   "tmap" = "3.3-3",
-  "tmaptools" = "3.3-1",
+  "tmaptools" = "3.1-1",
   "rosm" = "0.3.0"
 )
 
