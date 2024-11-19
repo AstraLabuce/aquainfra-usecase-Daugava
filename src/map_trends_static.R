@@ -59,7 +59,7 @@ map_trends_static <- function(shp, data,
                 colorNA = NULL, 
                 colorNULL = NULL, 
                 textNA = "not tested") +
-    tm_facets(by = in_group, sync = TRUE)+
+    tm_facets(by = group, sync = TRUE)+
     tm_tiles("Stamen.TonerLabels")
 }
 
