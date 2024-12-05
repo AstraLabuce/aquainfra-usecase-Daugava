@@ -1,0 +1,115 @@
+{
+    "version": "0.1.0",
+    "id": "map-trends-static",
+    "use_case": "Daugava",
+    "title": {
+        "en": "Spatial visualisation of regions and data points "
+    },
+    "description": {
+        "en": "This process maps the trend analysis results onto a study region map, visually representing each region according to the statistical results (significant increase vs. significant decrease vs. insignificant trend). The map helps in understanding the spatial distribution of trends across different areas (R function 'map_trends_static')."
+    },
+    "jobControlOptions": ["sync-execute", "async-execute"],
+    "keywords": ["daugava use case", "AquaINFRA", "map_trends_static", "R"],
+    "links": [{
+        "type": "text/html",
+        "rel": "about",
+        "title": "information",
+        "href": "https://example.org/process",
+        "hreflang": "en-US"
+    }],
+    "inputs": {
+        "regions": {
+            "title": "Study region or study subregions",
+            "description": "URL to the study region, or several regions, used to classify the input data into groups of interest. Currently it has to be provided as a shapefile. It can be in any coordinate system and will be transformed to WGS84 during this process.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "input_data": {
+            "title": "Input table",
+            "description": "URL to the input table containing statistical analysis results. The table must include columns for test values, p-values, and identifiers linking to study region.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "colname_id_trend": {
+            "title": "Column name of study region identifier",
+            "description": "The name of the column containing identifiers for study regions, which must correspond to the identifiers in the shapefile (shp). Example = \"id\"",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "colname_region_id": {
+            "title": "Column name of study region identifier",
+            "description": "The name of the column in the input data that contains identifiers for study regions, corresponding to the identifiers in the shapefile. Example = \"id\"",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "colname_group": {
+            "title": "Column name for subgroups",
+            "description": "The name of the column that defines the subgroups or categories to be displayed on the X-axis, e.g., seasons for every polygon_id.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "p_value_threshold": {
+            "title": "p value threshold for significance",
+            "description": "The threshold for distinguishing significant from insignificant values. It adjusts the transparency of bars in the plot. Default = 0.05",
+            "schema": {
+                "type": "number",
+                "minimum": 0.01,
+                "maximum": 0.1
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "colname_p_value": {
+            "title": "Column name for p value",
+            "description": "The name of the column containing p values, used to determine bar transparency. Example = \"p_value\"",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        }
+    },
+    "outputs": {
+        "trend_map": {
+            "title": "Trend map",
+            "description": "A visual representation of the study region, with areas colored based on the statistical results (significant increase vs. significant decrease vs. insignificant trend). The map will provide an intuitive understanding of trend distributions across regions.",
+            "schema": {
+                "type": "object",
+                "contentMediaType": "application/html"
+            }
+        }
+    },
+    "example": {
+        "inputs": {
+            "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+            "input_data": "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
+            "colname_id_trend": "polygon_id",
+            "colname_region_id": "HELCOM_ID",
+            "colname_group": "season",
+            "colname_p_value": "P_Value",
+            "p_value_threshold": "0.05"
+        }
+    }
+}

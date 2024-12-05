@@ -1,0 +1,102 @@
+{
+    "version": "0.1.0",
+    "id": "map-shapefile-points",
+    "use_case": "Daugava",
+    "title": {
+        "en": "Spatial visualisation of regions and data points "
+    },
+    "description": {
+        "en": "This process maps the study region and data point locations on OpenStreetMap, providing a visual representation of the geographic distribution of in-situ data points within the defined study area (R function 'map_shapefile_points')."
+    },
+    "jobControlOptions": ["sync-execute", "async-execute"],
+    "keywords": ["daugava use case", "AquaINFRA", "map_shapefile_points", "R"],
+    "links": [{
+        "type": "text/html",
+        "rel": "about",
+        "title": "information",
+        "href": "https://example.org/process",
+        "hreflang": "en-US"
+    }],
+    "inputs": {
+        "regions": {
+            "title": "Study region or study subregions",
+            "description": "URL to the study region, or several regions, to classify the input data into groups of interest. Currently it has to be provided as a shapefile. It can be in any coordinate system and will be transformed to WGS84 during this process.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "input_data": {
+            "title": "Data table to be plotted on top of study regions",
+            "description": "URL to the input table containing the in-situ data points with coordinates.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "colname_long": {
+            "title": "Column name for longitude",
+            "description": "The name of the column containing longitude values for the data points.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "colname_lat": {
+            "title": "Column name for latitude",
+            "description": "The name of the column containing latitude values for the data points.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "colname_value_name": {
+            "title": "Column name of data point identifier",
+            "description": "The name of the column containing identifier (e.g., site name) or values (e.g., depth) to color the points according to their corresponding values.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        },
+        "colname_region_id": {
+            "title": "Column name of region identifier",
+            "description": "The name of the column containing identifiers (e.g., basin name) to distinguish the polygons on the map if multiple regions are present.",
+            "schema": {
+                "type": "string"
+            },
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "keywords": []
+        }
+    },
+    "outputs": {
+        "interactive_map": {
+            "title": "Interactive map",
+            "description": "A visual representation of the study region overlaid with in-situ data points, plotted on OpenStreetMap. The image will include color-coded points and option to pop-up information about regions.",
+            "schema": {
+                "type": "object",
+                "contentMediaType": "application/html"
+            }
+        }
+    },
+    "example": {
+        "inputs": {
+            "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+            "input_data": "https://aqua.igb-berlin.de/download/testinputs/data_merged_with_regions.csv",
+            "colname_long": "longitude",
+            "colname_lat": "latitude",
+            "colname_value_name": "transparency_m",
+            "colname_region_id": "HELCOM_ID"
+        }
+    }
+}
