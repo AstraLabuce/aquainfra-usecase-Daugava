@@ -98,7 +98,7 @@ class MapShapefilePointsProcessor(BaseProcessor):
 
         else:
             # Create download link:
-            downloadlink = own_url.rstrip('/')+os.sep+downloadfilename
+            downloadlink = own_url.rstrip('/')+os.sep+"out"+os.sep+downloadfilename
 
             # Return link to file:
             response_object = {
