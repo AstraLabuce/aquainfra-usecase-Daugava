@@ -50,6 +50,7 @@ class PeriConvProcessor(BaseProcessor):
 
         download_dir = configJSON["download_dir"]
         own_url = configJSON["own_url"]
+        docker_executable = configJSON.get("docker_executable", "docker")
 
         # Get user inputs
         input_data_url = data.get('input_data')
@@ -85,6 +86,7 @@ class PeriConvProcessor(BaseProcessor):
         #downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         returncode, stdout, stderr = run_docker_container(
+            docker_executable,
             input_data_url, 
             date_col_name, 
             group_to_periods, 
@@ -118,6 +120,7 @@ class PeriConvProcessor(BaseProcessor):
 
 
 def run_docker_container(
+        docker_executable,
         input_data_url, 
         date_col_name, 
         group_to_periods, 
@@ -149,7 +152,7 @@ def run_docker_container(
 
     # Mount volumes and set command
     docker_command = [
-        "sudo", "docker", "run", "--rm", "--name", container_name,
+        docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{local_in}:{container_in}",
         "-v", f"{local_out}:{container_out}",
         "-e", f"R_SCRIPT={script}",  # Set the R_SCRIPT environment variable

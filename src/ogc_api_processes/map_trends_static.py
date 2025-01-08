@@ -48,6 +48,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
 
         download_dir = configJSON["download_dir"]
         own_url = configJSON["own_url"]
+        docker_executable = configJSON.get("docker_executable", "docker")
 
         # User inputs
         in_shp_url = data.get('regions') # 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
@@ -79,6 +80,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
         #downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         returncode, stdout, stderr = run_docker_container(
+            docker_executable,
             in_shp_url, 
             in_trend_results_url, 
             in_id_trend_col, 
@@ -119,6 +121,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
 
 
 def run_docker_container(
+        docker_executable,
         in_shp_url, 
         in_trend_results_url, 
         in_id_trend_col, 
@@ -151,7 +154,7 @@ def run_docker_container(
 
     # Mount volumes and set command
     docker_command = [
-        "sudo", "docker", "run", "--rm", "--name", container_name,
+        docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{local_in}:{container_in}",
         "-v", f"{local_out}:{container_out}",
         "-e", f"R_SCRIPT={script}",  # Set the R_SCRIPT environment variable

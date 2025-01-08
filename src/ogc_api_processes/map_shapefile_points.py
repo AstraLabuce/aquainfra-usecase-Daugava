@@ -51,6 +51,7 @@ class MapShapefilePointsProcessor(BaseProcessor):
 
         download_dir = configJSON["download_dir"]
         own_url = configJSON["own_url"]
+        docker_executable = configJSON.get("docker_executable", "docker")
 
         # Get user inputs
         in_shp_url = data.get('regions') # 'https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip')
@@ -79,6 +80,7 @@ class MapShapefilePointsProcessor(BaseProcessor):
         #downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
 
         returncode, stdout, stderr = run_docker_container(
+            docker_executable,
             in_shp_url, 
             in_dpoints_url, 
             in_long_col_name, 
@@ -115,6 +117,7 @@ class MapShapefilePointsProcessor(BaseProcessor):
 
 
 def run_docker_container(
+        docker_executable,
         in_shp_url, 
         in_dpoints_url, 
         in_long_col_name,
@@ -146,7 +149,7 @@ def run_docker_container(
 
     # Mount volumes and set command
     docker_command = [
-        "sudo", "docker", "run", "--rm", "--name", container_name,
+        docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{local_in}:{container_in}",
         "-v", f"{local_out}:{container_out}",
         "-e", f"R_SCRIPT={script}",  # Set the R_SCRIPT environment variable

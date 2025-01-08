@@ -53,6 +53,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
 
         download_dir = configJSON["download_dir"]
         own_url = configJSON["own_url"]
+        docker_executable = configJSON.get("docker_executable", "docker")
 
         # Get user inputs
         in_regions_url = data.get('regions')
@@ -69,6 +70,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
         downloadfilename = 'data_merged_with_regions-%s.csv' % self.my_job_id
         
         returncode, stdout, stderr = run_docker_container(
+            docker_executable,
             in_regions_url, 
             in_dpoints_url, 
             in_long_col_name, 
@@ -99,6 +101,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
             return 'application/json', response_object
 
 def run_docker_container(
+        docker_executable,
         regions_url, 
         dpoints_url, 
         long_col_name, 
@@ -130,7 +133,7 @@ def run_docker_container(
 
     # Mount volumes and set command
     docker_command = [
-        "sudo", "docker", "run", "--rm", "--name", container_name,
+        docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{local_in}:{container_in}",
         "-v", f"{local_out}:{container_out}",
         "-e", f"R_SCRIPT={script}",  # Set the R_SCRIPT environment variable
