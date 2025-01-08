@@ -16,7 +16,7 @@ curl --location 'http://localhost:5000/processes/peri-conv/execution' \
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "period_labels": "winter,spring,summer,autumn",
-        "year_starts_at_dec1": "True",
+        "year_starts_at_dec1": true,
         "date_format": "y/m/d"
     } 
 }'
@@ -65,6 +65,10 @@ class PeriConvProcessor(BaseProcessor):
             raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input table.')
         if date_col_name is None:
             raise ProcessorExecuteError('Missing parameter "colname_date". Please provide a column name.')
+
+        # Make string from boolean, otherwise it fails:
+        year_starts_at_dec1 = 'true' if year_starts_at_dec1 else 'false'
+
 
         # Parse date format: y-m-d to %Y-%m-%d
         date_format = date_format.lower()

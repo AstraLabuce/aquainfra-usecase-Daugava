@@ -156,7 +156,7 @@ inputs = {
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
-        "year_starts_at_Dec1": "True",
+        "year_starts_at_Dec1": true,
         "date_format": "%Y-%m-%d" # correct for excel inputs!
     }
 }
