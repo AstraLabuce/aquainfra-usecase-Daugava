@@ -78,11 +78,21 @@ class PointsAttPolygonProcessor(BaseProcessor):
             download_dir, 
             downloadfilename
         )
+
+        # print R stderr/stdout to debug log:
+        for line in stdout.split("\n"):
+            if not len(line.strip()) == 0:
+                LOGGER.debug('R stdout: %s' % line)
+
+        for line in stderr.split("\n"):
+            if not len(line.strip()) == 0:
+                LOGGER.debug('R stderr: %s' % line)
+
         
         if not returncode == 0:
             err_msg = 'Running docker container failed.'
             for line in stderr.split('\n'):
-                if line.startswith('Error'):
+                if line.startswith('Error'): # TODO: Sometimes error messages span several lines.
                     err_msg = 'Running docker container failed: %s' % (line)
             raise ProcessorExecuteError(user_msg = err_msg)
 
