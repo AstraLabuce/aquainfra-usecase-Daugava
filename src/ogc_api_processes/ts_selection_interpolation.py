@@ -134,7 +134,7 @@ def run_docker_container(
         download_dir, 
         outputFilename
     ):
-    LOGGER.debug('Start running docker container')
+    LOGGER.debug('Prepare running docker container')
     container_name = f'daugava-workflow-image_{os.urandom(5).hex()}'
     image_name = 'daugava-workflow-image'
 
@@ -170,13 +170,18 @@ def run_docker_container(
         in_min_data_point,
         f"{container_out}/{outputFilename}"  # Output filename
     ]
+
+    LOGGER.debug('Docker command: %s' % docker_command)
     
     # Run container
     try:
+        LOGGER.debug('Start running docker container')
         result = subprocess.run(docker_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout = result.stdout.decode()
         stderr = result.stderr.decode()
+        LOGGER.debug('Finished running docker container')
         return result.returncode, stdout, stderr
 
     except subprocess.CalledProcessError as e:
+        LOGGER.debug('Failed running docker container')
         return e.returncode, e.stdout.decode(), e.stderr.decode()
