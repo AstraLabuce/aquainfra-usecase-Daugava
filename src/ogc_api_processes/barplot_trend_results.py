@@ -85,7 +85,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
             in_id_col, 
             in_test_value, 
             p_value,
-            in_p_value_threshold,
+            str(in_p_value_threshold),
             in_group, 
             download_dir, 
             downloadfilename

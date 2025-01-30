@@ -84,10 +84,10 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
             docker_executable,
             in_data_url, 
             in_rel_cols, 
-            in_missing_threshold_percentage, 
+            str(in_missing_threshold_percentage),
             in_year_colname,
             in_value_colname,
-            in_min_data_point, 
+            str(in_min_data_point),
             download_dir, 
             downloadfilename
         )

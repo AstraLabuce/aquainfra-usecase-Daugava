@@ -86,7 +86,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
             in_id_trend_col, 
             in_id_shp_col,
             in_group,
-            in_p_value_threshold,
+            str(in_p_value_threshold),
             in_p_value_col,
             download_dir, 
             downloadfilename
