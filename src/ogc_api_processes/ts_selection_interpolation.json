@@ -40,11 +40,12 @@
         },
         "missing_threshold_percentage": {
             "title": "Threshold for missing values",
-            "description": "Threshold for the allowed percentage of missing data points (NAs). For example, a value of 40 means series with more than 40% missing data will be removed. Example = \"40\".",
+            "description": "Threshold for the allowed percentage of missing data points (NAs). For example, a value of 80 means series with more than 80% missing data will be removed. Example = \"80\".",
             "schema": {
                 "type": "number",
                 "minimum": 0,
-                "maximum": 100
+                "maximum": 100,
+                "default": 80
             },
             "minOccurs": 1,
             "maxOccurs": 1,
@@ -75,7 +76,8 @@
             "description": "The minimum number of data points required in a time series for it to be included in the interpolation process. Example = \"10\".",
             "schema": {
                 "type": "integer",
-                "minimum": 0
+                "minimum": 0,
+                "default": 10
             },
             "minOccurs": 1,
             "maxOccurs": 1,

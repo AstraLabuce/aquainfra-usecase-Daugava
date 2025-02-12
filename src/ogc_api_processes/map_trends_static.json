@@ -74,7 +74,8 @@
             "schema": {
                 "type": "number",
                 "minimum": 0.01,
-                "maximum": 0.1
+                "maximum": 0.1,
+                "default": 0.05
             },
             "minOccurs": 1,
             "maxOccurs": 1,
