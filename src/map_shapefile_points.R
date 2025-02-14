@@ -1,5 +1,3 @@
-
-install.packages("mapview")
 library(sp)
 library(sf)
 library(mapview)

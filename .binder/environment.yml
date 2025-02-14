@@ -19,3 +19,5 @@ dependencies:
   - r-sp=2.2_0
   - r-data.table=1.16.4
   - r-viridis=0.6.5
+  - r-mapview
+  - r-webshot
