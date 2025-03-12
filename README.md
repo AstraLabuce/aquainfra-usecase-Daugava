@@ -46,6 +46,16 @@ python script `pygeoapi_documentation/test_post_requests.py` .
 
 For help and more details, please contact the AquaINFRA project.
 
+## Building Docker image
+
+```
+git clone https://github.com/AstraLabuce/aquainfra-usecase-Daugava.git
+
+cd aquainfra-usecase-Daugava
+
+docker build -t daugava-workflow-image .
+```
+
 ## Running functions via Docker 
 
 `docker run -it -v ./in:/in -v ./out:/out -e R_SCRIPT="points_att_polygon.R" daugava-workflow-image -- "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip" "https://vm4072.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=json&limit=3000" "longitude" "latitude" "/out/tmp1.csv"`
