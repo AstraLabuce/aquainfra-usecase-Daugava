@@ -10,13 +10,57 @@
     },
     "jobControlOptions": ["sync-execute", "async-execute"],
     "keywords": ["daugava use case", "AquaINFRA", "points_att_polygon", "R"],
-    "links": [{
-        "type": "text/html",
-        "rel": "about",
-        "title": "GitHub repo",
-        "href": "https://github.com/AstraLabuce/aquainfra-usecase-Daugava",
-        "hreflang": "en-US"
-    }],
+    "links":[
+        {
+            "type":"text/html",
+            "rel":"about",
+            "title":"GitHub repo",
+            "href":"https://github.com/AstraLabuce/aquainfra-usecase-Daugava",
+            "hreflang":"en-US"
+        },
+        {
+            "type":"text/html",
+            "rel":"about",
+            "title":"Zenodo repo",
+            "href":"https://doi.org/10.5281/zenodo.14810797",
+            "hreflang":"en-US"
+        },
+        {
+            "type":"application/json",
+            "rel":"self",
+            "href":"https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/points-att-polygon?f=json",
+            "title":"Process description as JSON",
+            "hreflang":"en-US"
+        },
+        {
+            "type":"text/html",
+            "rel":"alternate",
+            "href":"https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/points-att-polygon?f=html",
+            "title":"Process description as HTML",
+            "hreflang":"en-US"
+        },
+        {
+            "type":"text/html",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/job-list",
+            "href":"https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs?f=html",
+            "title":"Jobs list as HTML",
+            "hreflang":"en-US"
+        },
+        {
+            "type":"application/json",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/job-list",
+            "href":"https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs?f=json",
+            "title":"Jobs list as JSON",
+            "hreflang":"en-US"
+        },
+        {
+            "type":"application/json",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/execute",
+            "href":"https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/points-att-polygon/execution?f=json",
+            "title":"Execution for this process as JSON",
+            "hreflang":"en-US"
+        }
+    ],
     "inputs": {
         "input_data": {
             "title": "Table to be merged with study region",
