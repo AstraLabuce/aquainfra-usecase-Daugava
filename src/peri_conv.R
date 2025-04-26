@@ -90,8 +90,8 @@ peri_conv <- function(data,
     
     data$period_label <- "NA" #making period_label column as 'character'
     data$dayoy <-
-      as.numeric(format(as.Date(data$visit_date, format = date_format), "%j"))
-    data$leap_year <- lubridate::leap_year(data$visit_date)
+      as.numeric(format(as.Date(get(date_col_name, data), format = date_format), "%j"))
+    data$leap_year <- lubridate::leap_year(get(date_col_name, data))
     
     period <-
       expand.grid(periods = group_to_periods,
