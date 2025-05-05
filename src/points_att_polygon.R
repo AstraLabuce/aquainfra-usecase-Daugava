@@ -82,12 +82,9 @@ if (is.null(data_raw)) {
   print("Data read successfully.")
 }
 
-source("points_att_polygon_preprocessing.R")
-data_rel <- get_relevant_data(data_raw)
-
 # Run the function "points_att_polygon"
 out_points_att_polygon <- points_att_polygon(shp = shapefile,
-                                             dpoints = data_rel,
+                                             dpoints = data_raw,
                                              long_col_name = in_long_col_name,
                                              lat_col_name = in_lat_col_name)
 

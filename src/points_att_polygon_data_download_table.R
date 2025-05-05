@@ -37,9 +37,8 @@ read_data <- function(table_file_path) {
   data_raw <- tryCatch(
     {
       data_raw <- NULL
-
       if (grepl("f=csv", table_file_path) | grepl("\\.csv$", table_file_path)) {
-        data_raw <- read.csv(table_file_path) 
+        data_raw <- data.table::fread(table_file_path) 
         print(paste0("CSV file ", table_file_path, " read"))
       } else if (grepl("f=json", table_file_path) | grepl("\\.json$", table_file_path)) {
         data_raw <- st_read(table_file_path) 
