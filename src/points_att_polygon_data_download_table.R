@@ -39,25 +39,19 @@ read_data <- function(table_file_path) {
       data_raw <- NULL
 
       if (grepl("f=csv", table_file_path) | grepl("\\.csv$", table_file_path)) {
-        data_raw <- read.csv(table_file_path) %>%
-          janitor::clean_names()
+        data_raw <- read.csv(table_file_path) 
         print(paste0("CSV file ", table_file_path, " read"))
       } else if (grepl("f=json", table_file_path) | grepl("\\.json$", table_file_path)) {
-        data_raw <- st_read(table_file_path) %>%
-          janitor::clean_names()
+        data_raw <- st_read(table_file_path) 
         print(paste0("GeoJSON file ", table_file_path, " read"))
       } else if (grepl("\\.xlsx$", table_file_path)) {
-        data_raw <- readxl::read_excel(table_file_path) %>%
-          janitor::clean_names()
+        data_raw <- readxl::read_excel(table_file_path) 
         print(paste0("Excel file ", table_file_path, " read"))
       } else {
         stop("Unsupported file format: only CSV, JSON, or Excel accepted.")
       }
 
       if (!is.null(data_raw)) {
-        if ("transparen" %in% colnames(data_raw)) {
-          colnames(data_raw)[colnames(data_raw) == "transparen"] <- "transparency_m"
-        }
         return(data_raw)
       } else {
         stop("data_raw is NULL: No data read.")
