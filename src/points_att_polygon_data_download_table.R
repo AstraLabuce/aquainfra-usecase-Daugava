@@ -1,7 +1,6 @@
 # Define directory and path for the data points file
 in_situ_directory <- paste0(input_data_dir, "in_situ_data/")
-url_parts_table <- strsplit(in_dpoints_url, "/")[[1]]
-table_file_name <- url_parts_table[length(url_parts_table)]
+table_file_name <- "input_data"
 table_file_path <- paste0(in_situ_directory, table_file_name)
 
 # Ensure the in_situ_data directory exists, create if not
@@ -32,34 +31,53 @@ if (!file.exists(table_file_path)) {
   print(paste0("File ", table_file_path, " already exists. Skipping download."))
 }
 
-# Define the data reading function
 read_data <- function(table_file_path) {
-  data_raw <- tryCatch(
-    {
-      data_raw <- NULL
-      if (grepl("f=csv", table_file_path) | grepl("\\.csv$", table_file_path)) {
-        data_raw <- data.table::fread(table_file_path) 
-        print(paste0("CSV file ", table_file_path, " read"))
-      } else if (grepl("f=json", table_file_path) | grepl("\\.json$", table_file_path)) {
-        data_raw <- st_read(table_file_path) 
-        print(paste0("GeoJSON file ", table_file_path, " read"))
-      } else if (grepl("\\.xlsx$", table_file_path)) {
-        data_raw <- readxl::read_excel(table_file_path) 
-        print(paste0("Excel file ", table_file_path, " read"))
-      } else {
-        stop("Unsupported file format: only CSV, JSON, or Excel accepted.")
-      }
 
-      if (!is.null(data_raw)) {
-        return(data_raw)
-      } else {
-        stop("data_raw is NULL: No data read.")
-      }
-    },
-    error = function(err) {
-      print(paste("Error:", err$message))
-      return(NULL)
-    }
-  )
-  return(data_raw)
+  # Check file to guess format
+  file_head <- readLines(table_file_path, n = 10, warn = FALSE)
+  file_head <- file_head[nzchar(trimws(file_head))]  # remove empty lines
+  first_line <- if (length(file_head) > 0) file_head[1] else ""
+
+  format_guess <- if (grepl("^\\s*\\{", first_line) || grepl("^\\s*\\[", first_line)) {
+    "json"
+  } else if (grepl("^[^,]+(,[^,]+)+$", first_line)) {
+    "csv"
+  } else {
+    "unknown"
+  }
+
+  message(paste("Guessed format:", format_guess))
+
+  if (format_guess == "json") {
+    data <- tryCatch({
+      message("Trying GeoJSON...")
+      sf::st_read(table_file_path, quiet = TRUE)
+    }, error = function(e) NULL)
+
+    if (!is.null(data)) return(data)
+  }
+
+  if (format_guess == "csv" || format_guess == "unknown") {
+    data <- tryCatch({
+      message("Trying CSV...")
+      data.table::fread(table_file_path)
+    }, error = function(e) NULL)
+
+    if (!is.null(data)) return(data)
+  }
+
+  data <- tryCatch({
+    message("Trying Excel...")
+    readxl::read_excel(table_file_path)
+  }, error = function(e) NULL)
+  if (!is.null(data)) return(data)
+
+  # Last resort: try reading as spatial (GeoJSON, shapefile, etc.)
+  data <- tryCatch({
+    message("Trying spatial format (sf)...")
+    sf::st_read(table_file_path, quiet = TRUE)
+  }, error = function(e) NULL)
+  if (!is.null(data)) return(data)
+
+  stop("Could not detect or read the file format.")
 }

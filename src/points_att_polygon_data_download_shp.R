@@ -1,6 +1,3 @@
-# data_download.R
-input_data_dir <- "/in/"
-
 # Define shapefile directory and path
 url_parts_shp <- strsplit(in_shp_url, "/")[[1]]
 shp_file_name <- url_parts_shp[length(url_parts_shp)]

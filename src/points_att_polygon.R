@@ -69,6 +69,8 @@ cat("Longitude column:", in_long_col_name, "\n")
 cat("Latitude column:", in_lat_col_name, "\n")
 cat("Output file:", out_result_path, "\n")
 
+input_data_dir <- "/in/"
+
 source("points_att_polygon_data_download_shp.R")
 source("points_att_polygon_data_download_table.R")
 # Read the shapefile
