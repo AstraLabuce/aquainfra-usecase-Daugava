@@ -1,6 +1,6 @@
 # Define directory and path for the data points file
 in_situ_directory <- paste0(input_data_dir, "in_situ_data/")
-table_file_name <- "input_data"
+table_file_name <- "input_data_points"
 table_file_path <- paste0(in_situ_directory, table_file_name)
 
 # Ensure the in_situ_data directory exists, create if not
@@ -13,23 +13,18 @@ if (!dir.exists(in_situ_directory)) {
   }
 }
 
-# Download data file if it doesn't exist
-if (!file.exists(table_file_path)) {
-  tryCatch(
-    {
-      download.file(in_dpoints_url, table_file_path, mode = "wb")
-      print(paste0("File ", table_file_path, " downloaded."))
-    },
-    warning = function(warn) {
-      message(paste("Download of input table failed, reason: ", warn[1]))
-    },
-    error = function(err) {
-      message(paste("Download of input table failed, reason: ", err[1]))
-    }
-  )
-} else {
-  print(paste0("File ", table_file_path, " already exists. Skipping download."))
-}
+tryCatch(
+  {
+    download.file(in_dpoints_url, table_file_path, mode = "wb")
+    print(paste0("File ", table_file_path, " downloaded."))
+  },
+  warning = function(warn) {
+    message(paste("Download of input table failed, reason: ", warn[1]))
+  },
+  error = function(err) {
+    message(paste("Download of input table failed, reason: ", err[1]))
+  }
+)
 
 read_data <- function(table_file_path) {
 

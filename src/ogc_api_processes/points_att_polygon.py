@@ -125,25 +125,19 @@ def run_docker_container(
     # Prepare container command
 
     # Define paths inside the container
-    container_in = '/in'
     container_out = '/out'
 
     # Define local paths
-    local_in = os.path.join(download_dir, "in")
     local_out = os.path.join(download_dir, "out")
 
     # Ensure directories exist
-    os.makedirs(local_in, exist_ok=True)
     os.makedirs(local_out, exist_ok=True)
 
     script = 'points_att_polygon.R'
 
-    print("------------------------------------------------")
-
     # Mount volumes and set command
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
-        "-v", f"{local_in}:{container_in}",
         "-v", f"{local_out}:{container_out}",
         "-e", f"R_SCRIPT={script}",  # Set the R_SCRIPT environment variable
         image_name,
