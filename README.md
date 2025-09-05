@@ -26,6 +26,143 @@ g) Trend representation in a static bar plot summarizing detected significant tr
 
 This modular and adaptable toolbox is applicable to various environmental studies, beyond the Gulf of Riga (Baltic Sea) use case, where it has been applied to analyze water transparency (Secchi depth) trends.
 
+## Building Docker image
+
+```
+git clone https://github.com/AstraLabuce/aquainfra-usecase-Daugava.git
+
+cd aquainfra-usecase-Daugava
+
+docker build -t daugava-workflow-image .
+```
+
+## Running functions via Docker 
+
+The following commands were implemented and tested on Ubuntu 22.04.5 LTS. Other operating systems might require adjustments regarding file paths. The commands can be executed one after the other.  
+
+`docker run -it -v ./out:/out -e R_SCRIPT="points_att_polygon.R" daugava-workflow-image -- "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "https://zenodo.org/records/15234377/files/inputdata_points.json?download=1" "longitude" "latitude" "/out/output1_pointsAttPolygon.csv"`
+
+`docker run -it -v ./out:/out -e R_SCRIPT="peri_conv.R" daugava-workflow-image -- "/out/output1_pointsAttPolygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" "y/m/d" "true" "/out/output2_periConv.csv"`
+
+`docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image -- "/out/output2_periConv.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output3_meanByGropup.csv"`
+
+`docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image -- "/out/output3_meanByGropup.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output4_meanByGropup.csv"`
+
+`docker run -it -v ./out:/out -e R_SCRIPT="ts_selection_interpolation.R" daugava-workflow-image -- "/out/output4_meanByGropup.csv" "group_labels,HELCOM_ID" 80 "Year_adj_generated" "transparen" 10 "/out/output5_tsSelectionInterpolation.csv"`
+
+`docker run -it -v ./out:/out -e R_SCRIPT="trend_analysis_mk.R" daugava-workflow-image -- "/out/output5_tsSelectionInterpolation.csv" "group_labels,HELCOM_ID" "Year_adj_generated" "transparen" "/out/output6_trendAnalysisMk.csv"`
+
+`docker run -it -v ./out:/out -e R_SCRIPT="barplot_trend_results.R" daugava-workflow-image -- "/out/output6_trendAnalysisMk.csv" "HELCOM_ID" "Tau_Value" "P_Value" 0.05 "group_labels" "/out/output7_barplotTrendResults.png"`
+
+`docker run -it -v ./out:/out -e R_SCRIPT="map_shapefile_points.R" daugava-workflow-image -- "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "/out/output1_pointsAttPolygon.csv" "longitude" "latitude" "transparen" "HELCOM_ID" "/out/output8_mapShapefilePoints.html"`
+
+## Running functions via cURL commands
+
+The response of the commands include a jobID, which can be attached to the URL `https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs/", e.g., https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs/bde6c077-8a26-11f0-960c-fa163e42fba0`. Under `https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs/bde6c077-8a26-11f0-960c-fa163e42fba0/results?f=json` you can find the URL ot the resulting output under `href`. This URL can be used as input for the next function. 
+
+`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/points-att-polygon/execution' \
+--header 'Content-Type: application/json' \
+--header 'Prefer: respond-async' \
+--data '{ 
+    "inputs": {
+        "regions": "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1",
+        "input_data": "https://zenodo.org/records/15234377/files/inputdata_points.json?download=1",
+        "colname_long": "longitude",
+        "colname_lat": "latitude"
+    }
+}'`
+
+`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/peri-conv/execution' \
+--header 'Content-Type: application/json' \
+--header 'Prefer: respond-async' \
+--data '{ 
+    "inputs": {
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/download/out/data_merged_with_regions-9c71a3f5-8a36-11f0-84b2-fa163e42fba0.csv",
+        "colname_date": "visit_date",
+        "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
+        "period_labels": "winter,spring,summer,autumn",
+        "year_starts_at_dec1": "True",
+        "date_format": "y/m/d"
+    } 
+}'`
+
+`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/mean-by-group/execution' \
+--header 'Prefer: respond-async' \
+--header 'Content-Type: application/json' \
+--data '{ 
+    "inputs": {
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/download/out/peri_conv-e44223d5-8a36-11f0-b067-fa163e42fba0.csv",
+        "colnames_to_group_by": "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID",
+        "colname_value": "transparen"
+    } 
+}'`
+
+`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/mean-by-group/execution' \
+--header 'Prefer: respond-async' \
+--header 'Content-Type: application/json' \
+--data '{ 
+    "inputs": {
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/download/out/mean_by_group-01fb02d1-8a37-11f0-bc88-fa163e42fba0.csv",
+        "colnames_to_group_by": "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID",
+        "colname_value": "transparen"
+    } 
+}'`
+
+`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/ts-selection-interpolation/execution' \
+--header 'Prefer: respond-async' \
+--header 'Content-Type: application/json' \
+--data '{ 
+    "inputs": {
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/download/out/mean_by_group-3d4aa80c-8a37-11f0-b32f-fa163e42fba0.csv",
+        "colnames_relevant": "group_labels,HELCOM_ID",
+        "missing_threshold_percentage": 80.0,
+        "colname_year": "Year_adj_generated",
+        "colname_value": "transparen",
+        "min_data_point": "10"
+    } 
+}'`
+
+`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/trend-analysis-mk/execution' \
+--header 'Prefer: respond-async' \
+--header 'Content-Type: application/json' \
+--data '{ 
+    "inputs": {
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/download/out/interpolated_time_series-559099a4-8a37-11f0-a0ff-fa163e42fba0.csv",
+        "colnames_relevant": "group_labels,HELCOM_ID",
+        "colname_time": "Year_adj_generated",
+        "colname_value": "transparen"
+    } 
+}'`
+
+`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/barplot-trend-results/execution' \
+--header 'Prefer: respond-async' \
+--header 'Content-Type: application/json' \
+--data '{
+    "inputs": {
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/download/out/trend_analysis_results-68929f43-8a37-11f0-b329-fa163e42fba0.csv",
+        "colname_id": "HELCOM_ID",
+        "colname_test_value": "Tau_Value",
+        "colname_p_value": "P_Value",
+        "p_value_threshold": "0.05",
+        "colname_group": "group_labels"
+    } 
+}'`
+
+`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/map-shapefile-points/execution' \
+--header 'Prefer: respond-async' \
+--header 'Content-Type: application/json' \
+--data '{ 
+    "inputs": {
+        "regions": "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1",
+        "colname_long": "longitude",
+        "colname_lat": "latitude",
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/download/out/data_merged_with_regions-aa74c30a-8a2a-11f0-a3e3-fa163e42fba0.csv",
+        "colname_value_name": "transparen",
+        "colname_region_id": "HELCOM_ID"
+    } 
+}'`
+
+
 ## OGC processes
 
 It is possible to install the functionality, or parts of it, as OGC processing
@@ -45,37 +182,3 @@ To test an instance of this, you can use the
 python script `pygeoapi_documentation/test_post_requests.py` .
 
 For help and more details, please contact the AquaINFRA project.
-
-## Building Docker image
-
-```
-git clone https://github.com/AstraLabuce/aquainfra-usecase-Daugava.git
-
-cd aquainfra-usecase-Daugava
-
-docker build -t daugava-workflow-image .
-```
-
-## Running functions via Docker 
-
-`docker run -it -v ./out:/out -e R_SCRIPT="points_att_polygon.R" daugava-workflow-image -- "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip" "https://vm4072.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=json&limit=5871" "longitude" "latitude" "/out/tmp1.csv"`
-
-`docker run -it -v ./out:/out -e R_SCRIPT="peri_conv.R" daugava-workflow-image -- "https://aquainfra.ogc.igb-berlin.de/download/out/data_merged_with_regions-57068ada-2a85-11f0-9159-fa163e42fba0.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" "y/m/d" "true" "/out/tmp2.csv"`
-
-`docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image -- "https://aquainfra.ogc.igb-berlin.de/download/out/peri_conv-a45b847e-2a85-11f0-b44f-fa163e42fba0.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/tmp3.csv"`
-
-`docker run -it -v ./out:/out -e R_SCRIPT="ts_selection_interpolation.R" daugava-workflow-image -- "https://aquainfra.ogc.igb-berlin.de/download/out/mean_by_group-52f1dd4f-2a86-11f0-9c65-fa163e42fba0.csv" "group_labels,HELCOM_ID" 80 "Year_adj_generated" "transparen" 10 "/out/tmp4.csv"`
-
-`docker run -it -v ./out:/out -e R_SCRIPT="trend_analysis_mk.R" daugava-workflow-image -- "https://aquainfra.ogc.igb-berlin.de/download/out/interpolated_time_series-967ce25e-2a86-11f0-82fd-fa163e42fba0.csv" "group_labels,HELCOM_ID" "Year_adj_generated" "transparen" "/out/tmp5.csv"`
-
-`docker run -it -v ./out:/out -e R_SCRIPT="barplot_trend_results.R" daugava-workflow-image -- "https://aquainfra.ogc.igb-berlin.de/download/out/trend_analysis_results-e3a22388-2a86-11f0-b08d-fa163e42fba0.csv" "HELCOM_ID" "Tau_Value" "P_Value" 0.05 "group_labels" "/out/tmp6.png"`
-
-`docker run -it -v ./out:/out -e R_SCRIPT="map_shapefile_points.R" daugava-workflow-image -- "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip" "https://aquainfra.ogc.igb-berlin.de/download/out/data_merged_with_regions-57068ada-2a85-11f0-9159-fa163e42fba0.csv" "longitude" "latitude" "transparen" "HELCOM_ID" "/out/tmp7.html"`
-
-## Create conda environment
-
-`cd .binder`
-
-`conda env create -f environment.yml`
-
-`conda activate r-environment`
