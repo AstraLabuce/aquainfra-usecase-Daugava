@@ -165,8 +165,8 @@ The response of the commands include a jobID, which can be attached to the URL `
 
 ## OGC processes
 
-It is possible to install the functionality, or parts of it, as OGC processing
-services using pygeoapi. That way, they can be called via http.
+It is possible to install the functionality, or parts of it, as OGC API Processes
+using pygeoapi. That way, they can be called via HTTP.
 
 The `<name>.py` files in this repository contain the python modules that act as
 wrapper to the functionality in the `<name>.R` functions, and the `<name>.json`
@@ -176,9 +176,6 @@ To run the python files, a `config.json` file is needed. The program looks for i
 at the location given in the environment variable `DAUGAVA_CONFIG_FILE` which can
 be set using `export DAUGAVA_CONFIG_FILE=/home/something/myconfig.json`. If that
 environment variable is not set, the program looks in its current working dir
-(`./config.json`)
+(`./config.json`).
 
-To test an instance of this, you can use the
-python script `pygeoapi_documentation/test_post_requests.py` .
-
-For help and more details, please contact the AquaINFRA project.
+For more details on the installation process, we refer to the online resources, e.g., https://pygeoapi.io/.
