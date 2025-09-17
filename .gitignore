@@ -20,7 +20,7 @@ shp/HELCOM_subbasins_with_coastal_WFD_waterbodies_or_watertypes_2022.shx
 __pycache__
 OLD
 config.json
-*.png
-*.html
+#*.png
+#*.html
 rosm.cache
 map_shapefile_insitu_files
