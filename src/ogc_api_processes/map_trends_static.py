@@ -36,6 +36,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
         super().__init__(processor_def, PROCESS_METADATA)
         self.supports_outputs = True
         self.my_job_id = 'nothing-yet'
+        self.process_id = self.metadata["id"]
 
     def set_job_id(self, job_id: str):
         self.my_job_id = job_id
@@ -46,8 +47,8 @@ class MapTrendsStaticProcessor(BaseProcessor):
         with open(config_file_path, 'r') as configFile:
             configJSON = json.load(configFile)
 
-        download_dir = configJSON["download_dir"]
-        own_url = configJSON["download_url"]
+        self.download_dir = configJSON["download_dir"]
+        self.download_url = configJSON["download_url"]
         docker_executable = configJSON.get("docker_executable", "docker")
 
         # User inputs
@@ -76,11 +77,18 @@ class MapTrendsStaticProcessor(BaseProcessor):
             raise ProcessorExecuteError('Missing parameter "colname_p_value". Please provide a column name.')
 
         # Where to store output data
+        output_dir = f'{self.download_dir}/out/{self.process_id}/job_{self.job_id}'
+        output_url = f'{self.download_url}/out/{self.process_id}/job_{self.job_id}'
+        os.makedirs(output_dir, exist_ok=True)
+        LOGGER.debug(f'All results will be stored     in: {output_dir}')
+        LOGGER.debug(f'All results will be accessible in: {output_url}')
         downloadfilename = 'map_trends_static-%s.png' % self.my_job_id
-        #downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
+        downloadlink = f'{output_url}/{downloadfilename}'
 
+        # Run docker container
         returncode, stdout, stderr = run_docker_container(
             docker_executable,
+            output_dir,
             in_shp_url, 
             in_trend_results_url, 
             in_id_trend_col, 
@@ -109,8 +117,6 @@ class MapTrendsStaticProcessor(BaseProcessor):
             raise ProcessorExecuteError(user_msg = err_msg)
 
         else:
-            # Create download link:
-            downloadlink = own_url.rstrip('/')+os.sep+"out"+os.sep+downloadfilename
 
             # Return link to file:
             response_object = {
@@ -131,6 +137,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
 
 def run_docker_container(
         docker_executable,
+        output_dir,
         in_shp_url, 
         in_trend_results_url, 
         in_id_trend_col, 
@@ -150,18 +157,12 @@ def run_docker_container(
     # Define paths inside the container
     container_out = '/out'
 
-    # Define local paths
-    local_out = os.path.join(download_dir, "out")
-
-    # Ensure directories exist
-    os.makedirs(local_out, exist_ok=True)
-
     script = 'map_trends_static.R'
 
     # Mount volumes and set command
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
-        "-v", f"{local_out}:{container_out}",
+        "-v", f"{output_dir}:{container_out}",
         "-e", f"R_SCRIPT={script}",  # Set the R_SCRIPT environment variable
         image_name,
         "--",  # Indicates the end of Docker's internal arguments and the start of the user's arguments

@@ -34,6 +34,7 @@ class PeriConvProcessor(BaseProcessor):
         super().__init__(processor_def, PROCESS_METADATA)
         self.supports_outputs = True
         self.my_job_id = 'nothing-yet'
+        self.process_id = self.metadata["id"]
 
     def set_job_id(self, job_id: str):
         self.my_job_id = job_id
@@ -48,8 +49,8 @@ class PeriConvProcessor(BaseProcessor):
         with open(config_file_path) as configFile:
             configJSON = json.load(configFile)
 
-        download_dir = configJSON["download_dir"]
-        own_url = configJSON["download_url"]
+        self.download_dir = configJSON["download_dir"]
+        self.download_url = configJSON["download_url"]
         docker_executable = configJSON.get("docker_executable", "docker")
 
         # Get user inputs
@@ -86,11 +87,18 @@ class PeriConvProcessor(BaseProcessor):
         date_format = tmp
 
         # Where to store output data
+        output_dir = f'{self.download_dir}/out/{self.process_id}/job_{self.job_id}'
+        output_url = f'{self.download_url}/out/{self.process_id}/job_{self.job_id}'
+        os.makedirs(output_dir, exist_ok=True)
+        LOGGER.debug(f'All results will be stored     in: {output_dir}')
+        LOGGER.debug(f'All results will be accessible in: {output_url}')
         downloadfilename = 'peri_conv-%s.csv' % self.my_job_id
-        #downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
+        downloadlink = f'{output_url}/{downloadfilename}'
 
+        # Run docker container
         returncode, stdout, stderr = run_docker_container(
             docker_executable,
+            output_dir,
             input_data_url, 
             date_col_name, 
             group_to_periods, 
@@ -118,7 +126,6 @@ class PeriConvProcessor(BaseProcessor):
             raise ProcessorExecuteError(user_msg = err_msg)
 
         else:
-            downloadlink = own_url.rstrip('/')+os.sep+"out"+os.sep+downloadfilename
             response_object = {
                 "outputs": {
                     "data_grouped_by_date": {
@@ -134,6 +141,7 @@ class PeriConvProcessor(BaseProcessor):
 
 def run_docker_container(
         docker_executable,
+        output_dir,
         input_data_url, 
         date_col_name, 
         group_to_periods, 
@@ -152,18 +160,12 @@ def run_docker_container(
     # Define paths inside the container
     container_out = '/out'
 
-    # Define local paths
-    local_out = os.path.join(download_dir, "out")
-
-    # Ensure directories exist
-    os.makedirs(local_out, exist_ok=True)
-
     script = 'peri_conv.R'
 
     # Mount volumes and set command
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
-        "-v", f"{local_out}:{container_out}",
+        "-v", f"{output_dir}:{container_out}",
         "-e", f"R_SCRIPT={script}",  # Set the R_SCRIPT environment variable
         image_name,
         "--",  # Indicates the end of Docker's internal arguments and the start of the user's arguments

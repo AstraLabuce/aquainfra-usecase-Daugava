@@ -37,6 +37,7 @@ class PointsAttPolygonProcessor(BaseProcessor):
         super().__init__(processor_def, PROCESS_METADATA)
         self.supports_outputs = True
         self.my_job_id = 'nothing-yet'
+        self.process_id = self.metadata["id"]
 
     def set_job_id(self, job_id: str):
         self.my_job_id = job_id
@@ -51,8 +52,8 @@ class PointsAttPolygonProcessor(BaseProcessor):
         with open(config_file_path, 'r') as configFile:
             configJSON = json.load(configFile)
 
-        download_dir = configJSON["download_dir"]
-        own_url = configJSON["download_url"]
+        self.download_dir = configJSON["download_dir"]
+        self.download_url = configJSON["download_url"]
         docker_executable = configJSON.get("docker_executable", "docker")
 
         # Get user inputs
@@ -67,8 +68,16 @@ class PointsAttPolygonProcessor(BaseProcessor):
         if in_dpoints_url is None:
             raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input table.')
 
+        # Where to store output data
+        output_dir = f'{self.download_dir}/out/{self.process_id}/job_{self.job_id}'
+        output_url = f'{self.download_url}/out/{self.process_id}/job_{self.job_id}'
+        os.makedirs(output_dir, exist_ok=True)
+        LOGGER.debug(f'All results will be stored     in: {output_dir}')
+        LOGGER.debug(f'All results will be accessible in: {output_url}')
         downloadfilename = 'data_merged_with_regions-%s.csv' % self.my_job_id
-        
+        downloadlink = f'{output_url}/{downloadfilename}'
+
+        # Run docker container
         returncode, stdout, stderr = run_docker_container(
             docker_executable,
             in_regions_url, 
@@ -96,7 +105,6 @@ class PointsAttPolygonProcessor(BaseProcessor):
             raise ProcessorExecuteError(user_msg = err_msg)
 
         else:
-            downloadlink = own_url.rstrip('/')+os.sep+"out"+os.sep+downloadfilename
             response_object = {
                 "outputs": {
                     "data_merged_with_regions": {
