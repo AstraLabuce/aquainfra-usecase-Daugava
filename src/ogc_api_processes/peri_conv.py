@@ -35,6 +35,14 @@ class PeriConvProcessor(BaseProcessor):
         self.supports_outputs = True
         self.job_id = 'nothing-yet'
         self.process_id = self.metadata["id"]
+        self.image_name = "daugava-workflow-image:20250522"
+        self.script_name = "peri_conv.R"
+        config_file_path = os.environ.get('AQUAINFRA_CONFIG_FILE', "./config.json")
+        with open(config_file_path) as config_file:
+            config = json.load(config_file)
+            self.download_dir = config["download_dir"]
+            self.download_url = config["download_url"]
+            self.docker_executable = config.get("docker_executable", "docker")
 
     def set_job_id(self, job_id: str):
         self.job_id = job_id
@@ -43,15 +51,6 @@ class PeriConvProcessor(BaseProcessor):
         return f'<PeriConvProcessor> {self.name}'
 
     def execute(self, data, outputs=None):
-
-        # Get config
-        config_file_path = os.environ.get('AQUAINFRA_CONFIG_FILE', "./config.json")
-        with open(config_file_path) as configFile:
-            configJSON = json.load(configFile)
-
-        self.download_dir = configJSON["download_dir"]
-        self.download_url = configJSON["download_url"]
-        docker_executable = configJSON.get("docker_executable", "docker")
 
         # Get user inputs
         input_data_url = data.get('input_data')
@@ -69,7 +68,6 @@ class PeriConvProcessor(BaseProcessor):
 
         # Make string from boolean, otherwise it fails:
         year_starts_at_dec1 = 'true' if year_starts_at_dec1 else 'false'
-
 
         # Parse date format: y-m-d to %Y-%m-%d
         date_format = date_format.lower()
@@ -97,7 +95,9 @@ class PeriConvProcessor(BaseProcessor):
 
         # Run docker container
         returncode, stdout, stderr = run_docker_container(
-            docker_executable,
+            self.docker_executable,
+            self.image_name,
+            self.script_name,
             output_dir,
             input_data_url, 
             date_col_name, 
@@ -141,6 +141,8 @@ class PeriConvProcessor(BaseProcessor):
 
 def run_docker_container(
         docker_executable,
+        image_name,
+        script_name,
         output_dir,
         input_data_url, 
         date_col_name, 
@@ -151,22 +153,22 @@ def run_docker_container(
         download_dir, 
         outputFilename
     ):
-    LOGGER.debug('Prepare running docker container')
-    container_name = f'daugava-workflow-image_{os.urandom(5).hex()}'
-    image_name = 'daugava-workflow-image:20250522'
+    LOGGER.debug('Will use this image: %s' % image_name)
 
-    # Prepare container command
+    # Create container name
+    # Note: Only [a-zA-Z0-9][a-zA-Z0-9_.-] are allowed
+    #container_name = "%s_%s" % (image_name.split(':')[0], os.urandom(5).hex())
+    container_name = "%s_%s" % (image_name.split(':')[0], job_id)
+    LOGGER.debug(f'Prepare running docker (image {image_name}, container: {container_name})')
 
     # Define paths inside the container
     container_out = '/out'
-
-    script = 'peri_conv.R'
 
     # Mount volumes and set command
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{output_dir}:{container_out}",
-        "-e", f"R_SCRIPT={script}",  # Set the R_SCRIPT environment variable
+        "-e", f"R_SCRIPT={script_name}",  # Set the R_SCRIPT environment variable
         image_name,
         "--",  # Indicates the end of Docker's internal arguments and the start of the user's arguments
         input_data_url, 
