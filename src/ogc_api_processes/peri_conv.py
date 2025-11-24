@@ -33,11 +33,11 @@ class PeriConvProcessor(BaseProcessor):
     def __init__(self, processor_def):
         super().__init__(processor_def, PROCESS_METADATA)
         self.supports_outputs = True
-        self.my_job_id = 'nothing-yet'
+        self.job_id = 'nothing-yet'
         self.process_id = self.metadata["id"]
 
     def set_job_id(self, job_id: str):
-        self.my_job_id = job_id
+        self.job_id = job_id
 
     def __repr__(self):
         return f'<PeriConvProcessor> {self.name}'
@@ -92,7 +92,7 @@ class PeriConvProcessor(BaseProcessor):
         os.makedirs(output_dir, exist_ok=True)
         LOGGER.debug(f'All results will be stored     in: {output_dir}')
         LOGGER.debug(f'All results will be accessible in: {output_url}')
-        downloadfilename = 'peri_conv-%s.csv' % self.my_job_id
+        downloadfilename = 'peri_conv-%s.csv' % self.job_id
         downloadlink = f'{output_url}/{downloadfilename}'
 
         # Run docker container

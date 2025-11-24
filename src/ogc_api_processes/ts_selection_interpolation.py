@@ -35,11 +35,11 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
     def __init__(self, processor_def):
         super().__init__(processor_def, PROCESS_METADATA)
         self.supports_outputs = True
-        self.my_job_id = 'nnothing-yet'
+        self.job_id = 'nothing-yet'
         self.process_id = self.metadata["id"]
 
     def set_job_id(self, job_id: str):
-        self.my_job_id = job_id
+        self.job_id = job_id
 
     def __repr__(self):
         return f'<TsSelectionInterpolationProcessor> {self.name}'
@@ -83,7 +83,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         os.makedirs(output_dir, exist_ok=True)
         LOGGER.debug(f'All results will be stored     in: {output_dir}')
         LOGGER.debug(f'All results will be accessible in: {output_url}')
-        downloadfilename = 'interpolated_time_series-%s.csv' % self.my_job_id # or selected_interpolated.csv ?
+        downloadfilename = 'interpolated_time_series-%s.csv' % self.job_id # or selected_interpolated.csv ?
         downloadlink = f'{output_url}/{downloadfilename}'
 
         # Run docker container

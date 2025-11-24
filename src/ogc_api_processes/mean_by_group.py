@@ -30,11 +30,11 @@ class MeanByGroupProcessor(BaseProcessor):
     def __init__(self, processor_def):
         super().__init__(processor_def, PROCESS_METADATA)
         self.supports_outputs = True
-        self.my_job_id = 'nothing-yet'
+        self.job_id = 'nothing-yet'
         self.process_id = self.metadata["id"]
 
     def set_job_id(self, job_id: str):
-        self.my_job_id = job_id
+        self.job_id = job_id
 
     def __repr__(self):
         return f'<MeanByGroupProcessor> {self.name}'
@@ -73,7 +73,7 @@ class MeanByGroupProcessor(BaseProcessor):
         os.makedirs(output_dir, exist_ok=True)
         LOGGER.debug(f'All results will be stored     in: {output_dir}')
         LOGGER.debug(f'All results will be accessible in: {output_url}')
-        downloadfilename = 'mean_by_group-%s.csv' % self.my_job_id # or seasonal_means.csv?
+        downloadfilename = 'mean_by_group-%s.csv' % self.job_id # or seasonal_means.csv?
         downloadlink = f'{output_url}/{downloadfilename}'
 
         returncode, stdout, stderr = run_docker_container(

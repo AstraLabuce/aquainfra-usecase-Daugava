@@ -35,11 +35,11 @@ class MapTrendsStaticProcessor(BaseProcessor):
     def __init__(self, processor_def):
         super().__init__(processor_def, PROCESS_METADATA)
         self.supports_outputs = True
-        self.my_job_id = 'nothing-yet'
+        self.job_id = 'nothing-yet'
         self.process_id = self.metadata["id"]
 
     def set_job_id(self, job_id: str):
-        self.my_job_id = job_id
+        self.job_id = job_id
 
     def execute(self, data, outputs=None):
         # Get config
@@ -82,7 +82,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
         os.makedirs(output_dir, exist_ok=True)
         LOGGER.debug(f'All results will be stored     in: {output_dir}')
         LOGGER.debug(f'All results will be accessible in: {output_url}')
-        downloadfilename = 'map_trends_static-%s.png' % self.my_job_id
+        downloadfilename = 'map_trends_static-%s.png' % self.job_id
         downloadlink = f'{output_url}/{downloadfilename}'
 
         # Run docker container

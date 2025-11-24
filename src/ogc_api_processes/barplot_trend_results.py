@@ -35,11 +35,11 @@ class BarplotTrendResultsProcessor(BaseProcessor):
     def __init__(self, processor_def):
         super().__init__(processor_def, PROCESS_METADATA)
         self.supports_outputs = True
-        self.my_job_id = 'nothing-yet'
+        self.job_id = 'nothing-yet'
         self.process_id = self.metadata["id"]
 
     def set_job_id(self, job_id: str):
-        self.my_job_id = job_id
+        self.job_id = job_id
 
     def __repr__(self):
         return f'<BarplotTrendResultsProcessor> {self.name}'
@@ -82,7 +82,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         os.makedirs(output_dir, exist_ok=True)
         LOGGER.debug(f'All results will be stored     in: {output_dir}')
         LOGGER.debug(f'All results will be accessible in: {output_url}')
-        downloadfilename = 'barplot_image-%s.png' % self.my_job_id
+        downloadfilename = 'barplot_image-%s.png' % self.job_id
         #downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
         downloadpath = f'{output_dir}/{downloadfilename}'
         downloadlink = f'{output_url}/{downloadfilename}'
