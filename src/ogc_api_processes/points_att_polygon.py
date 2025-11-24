@@ -128,7 +128,7 @@ def run_docker_container(
     ):
     LOGGER.debug('Prepare running docker container')
     container_name = f'daugava-workflow-image_{os.urandom(5).hex()}'
-    image_name = 'daugava-workflow-image'
+    image_name = 'daugava-workflow-image:20250522'
 
     # Prepare container command
 
