@@ -8,11 +8,11 @@ from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 '''
 Output file name: peri_conv-xyz.csv
 
-curl --location 'http://localhost:5000/processes/peri-conv/execution' \
+curl -X POST https://${PYSERVER}/processes/peri-conv/execution \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "https://aqua.igb-berlin.de/download/data_merged_with_regions-50af6b5e-9500-11ef-aad4-8935a9f30073.csv",
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/peri-conv/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv",
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "period_labels": "winter,spring,summer,autumn",

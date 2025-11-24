@@ -10,15 +10,15 @@ from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 Output file name: barplot_image-xyz.png
 
-curl --location 'http://localhost:5000/processes/barplot-trend-results/execution' \
+curl -X POST https://${PYSERVER}/processes/barplot-trend-results/execution \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "https://testserver.de/download/trend_analysis_results.csv",
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv",
         "colname_id": "HELCOM_ID",
         "colname_test_value": "Tau_Value",
         "colname_p_value": "P_Value",
-        "p_value_threshold": "0.05",
+        "p_value_threshold": 0.05,
         "colname_group": "period"
     } 
 }'

@@ -8,13 +8,13 @@ from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 '''
 Output file name: mean_by_group-xyz.csv
 
-curl --location 'http://localhost:5000/processes/mean-by-group/execution' \
+curl -X POST https://${PYSERVER}/processes/mean-by-group/execution \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "https://aqua.igb-berlin.de/download/peri_conv-e53a2f66-9500-11ef-aad4-8935a9f30073.csv",
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/mean-by-group/peri_conv.csv",
         "colnames_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
-        "colname_value": "transparency_m"
+        "colname_value": "transparen"
     } 
 }'
 '''

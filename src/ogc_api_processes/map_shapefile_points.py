@@ -9,16 +9,17 @@ from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 '''
 
 Output file name: interactive_map-xyz.html
+Input file: Output from points-att-polygon!
 
-curl --location 'http://localhost:5000/processes/map-shapefile-points/execution' \
+curl -X POST https://${PYSERVER}/processes/map-shapefile-points/execution \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
         "colname_long": "longitude",
         "colname_lat": "latitude",
-        "input_data": "https://aqua.igb-berlin.de/download/testinputs/data_merged_with_regions.csv",
-        "colname_value_name": "transparency_m",
+        "input_data":"https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/out/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv",
+        "colname_value_name": "transparen",
         "colname_region_id": "HELCOM_ID"
     }
 }'

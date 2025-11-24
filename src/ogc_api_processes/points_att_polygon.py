@@ -13,13 +13,13 @@ https://maps.helcom.fi/website/MADS/download/?id=67d653b1-aad1-4af4-920e-0683af3
 
 Long/lat are optional
 
-curl --location 'http://localhost:5000/processes/points-att-polygon/execution' \
+curl -X POST https://${PYSERVER}/processes/points-att-polygon/execution \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "colname_long": "",
-        "colname_lat": "",
+        "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
+        "colname_long": "long",
+        "colname_lat": "lat",
         "input_data": "https://vm4072.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=json&limit=3000"
     } 
 }'

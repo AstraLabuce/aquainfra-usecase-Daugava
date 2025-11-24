@@ -9,17 +9,16 @@ from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 Output file name: interpolated_time_series-xyz.csv
 
-
-curl --location 'http://localhost:5000/processes/ts-selection-interpolation/execution' \
+curl -X POST https://${PYSERVER}/processes/ts-selection-interpolation/execution \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "https://aqua.igb-berlin.de/download/mean_by_group-58327a2c-8fb2-11ef-aad4-8935a9f30073.csv",
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/ts-selection-interpolation/mean_by_group.csv",
         "colnames_relevant": "group_labels,HELCOM_ID",
-        "missing_threshold_percentage": "40",
+        "missing_threshold_percentage": 60,
         "colname_year": "Year_adj_generated",
-        "colname_value": "transparency_m",
-        "min_data_point": "10"
+        "colname_value": "transparen",
+        "min_data_point": 5
     } 
 }'
 '''

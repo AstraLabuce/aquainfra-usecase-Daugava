@@ -9,15 +9,14 @@ from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
 Output file name: trend_analysis_results-xyz.csv
 
-
-curl --location 'http://localhost:5000/processes/trend-analysis-mk/execution' \
+curl -X POST https://${PYSERVER}/processes/trend-analysis-mk/execution \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "https://aqua.igb-berlin.de/download/trend_analysis_results-c66cecda-9501-11ef-aad4-8935a9f30073.csv",
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/ts-selection-interpolation/out/interpolated_time_series-8c61e7b0-0845-11f1-a4fe-fa163e42fba0.csv",
         "colnames_relevant": "group_labels,HELCOM_ID",
         "colname_time": "Year_adj_generated",
-        "colname_value": "transparency_m"
+        "colname_value": "transparen"
     }
 }'
 '''
