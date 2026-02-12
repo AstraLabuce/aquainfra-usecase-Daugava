@@ -65,9 +65,9 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         if in_data_url is None:
             raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input table.')
         if in_rel_cols is None:
-            raise ProcessorExecuteError('Missing parameter "in_rel_cols". Please provide a value.')
+            raise ProcessorExecuteError('Missing parameter "colnames_relevant". Please provide a value.')
         if in_missing_threshold_percentage is None:
-            raise ProcessorExecuteError('Missing parameter "in_missing_threshold_percentage". Please provide a value.')
+            raise ProcessorExecuteError('Missing parameter "missing_threshold_percentage". Please provide a value.')
         if in_year_colname is None:
             raise ProcessorExecuteError('Missing parameter "colname_year". Please provide a column name.')
         if in_value_colname is None:
