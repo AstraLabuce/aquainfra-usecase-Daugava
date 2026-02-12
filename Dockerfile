@@ -22,6 +22,12 @@ WORKDIR /src
 
 COPY /.binder/environment.yml /src/environment.yml
 
+# Throws error: Terms of Service have not been accepted for the following channels. Please accept or remove them before proceeding...
+#RUN conda env create -f /src/environment.yml
+# Accept Anaconda TOS (required for non-interactive builds)
+RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
+    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
 RUN conda env create -f /src/environment.yml
 
 COPY src /src
@@ -29,3 +35,7 @@ COPY src /src
 WORKDIR /src
 
 ENTRYPOINT ["conda", "run", "-n", "r-environment", "/bin/bash", "-c", "Rscript /src/${R_SCRIPT} $@"]
+
+# Example build command:
+#today=$(date '+%Y%m%d')
+#docker build . -t daugava-workflow-image:${today}
