@@ -2,6 +2,7 @@ import logging
 import subprocess
 import json
 import os
+import requests
 from pathlib import Path
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
@@ -64,6 +65,11 @@ class MeanByGroupProcessor(BaseProcessor):
             raise ProcessorExecuteError('Missing parameter "colnames_to_group_by". Please provide column name(s).')
         if in_value_col is None:
             raise ProcessorExecuteError('Missing parameter "in_value_col". Please provide a column name.')
+
+
+        # Quickly check whether the input data url is reachable
+        resp = requests.head(in_data_url)
+        resp.raise_for_status()
 
 
         # Where to store output data

@@ -77,6 +77,13 @@ class MapShapefilePointsProcessor(BaseProcessor):
         if in_region_col_name is None:
             raise ProcessorExecuteError('Missing parameter "colname_region_id". Please provide a column name.')
 
+        # Quickly check whether the input data url is reachable
+        resp = requests.head(in_shp_url)
+        resp.raise_for_status()
+        resp = requests.head(in_dpoints_url)
+        resp.raise_for_status()
+
+
         # Where to store output data
         output_dir = f'{self.download_dir}/out/{self.process_id}/job_{self.job_id}'
         output_url = f'{self.download_url}/out/{self.process_id}/job_{self.job_id}'

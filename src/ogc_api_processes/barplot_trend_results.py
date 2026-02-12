@@ -76,6 +76,10 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         if in_group is None:
             raise ProcessorExecuteError('Missing parameter "colname_group". Please provide a column name.')
 
+        # Quickly check whether the input data url is reachable
+        resp = requests.head(in_data_url)
+        resp.raise_for_status()
+
         # Where to store output data
         output_dir = f'{self.download_dir}/out/{self.process_id}/job_{self.job_id}'
         output_url = f'{self.download_url}/out/{self.process_id}/job_{self.job_id}'

@@ -2,6 +2,7 @@ import logging
 import subprocess
 import json
 import os
+import requests
 from pathlib import Path
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
@@ -95,6 +96,9 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
             raise ProcessorExecuteError(err_msg)
 
 
+        # Quickly check whether the input data url is reachable
+        resp = requests.head(in_data_url)
+        resp.raise_for_status()
 
 
         # Where to store output data

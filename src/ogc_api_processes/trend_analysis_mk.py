@@ -2,6 +2,7 @@ import logging
 import subprocess
 import json
 import os
+import requests
 from pathlib import Path
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
@@ -66,6 +67,11 @@ class TrendAnalysisMkProcessor(BaseProcessor):
             raise ProcessorExecuteError('Missing parameter "colname_time". Please provide a column name.')
         if in_value_colname is None:
             raise ProcessorExecuteError('Missing parameter "colname_value". Please provide a column name.')
+
+        # Quickly check whether the input data url is reachable
+        resp = requests.head(in_data_url)
+        resp.raise_for_status()
+
 
         # Where to store output data
         output_dir = f'{self.download_dir}/out/{self.process_id}/job_{self.job_id}'
