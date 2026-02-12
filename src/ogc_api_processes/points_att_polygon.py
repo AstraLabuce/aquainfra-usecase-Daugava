@@ -144,7 +144,7 @@ def run_docker_container(
 
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
-        "-v", f"{local_out}:{container_out}",
+        "-v", f"{output_dir}:{container_out}",
         "-e", f"R_SCRIPT={script_name}",  # Set the R_SCRIPT environment variable
         image_name,
         "--",  # Indicates the end of Docker's internal arguments and the start of the user's arguments
