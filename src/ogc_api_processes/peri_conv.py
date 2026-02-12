@@ -40,8 +40,8 @@ class PeriConvProcessor(BaseProcessor):
         config_file_path = os.environ.get('AQUAINFRA_CONFIG_FILE', "./config.json")
         with open(config_file_path) as config_file:
             config = json.load(config_file)
-            self.download_dir = config["download_dir"]
-            self.download_url = config["download_url"]
+            self.download_dir = config["download_dir"].rstrip('/')
+            self.download_url = config["download_url"].rstrip('/')
             self.docker_executable = config.get("docker_executable", "docker")
 
     def set_job_id(self, job_id: str):
