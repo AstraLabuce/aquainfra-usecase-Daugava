@@ -26,13 +26,17 @@ ts_selection_interpolation <- function(
     stop("Package \"zoo\" must be installed to use this function.",
          call. = FALSE)
   }
-
+  if (value_col %in% rel_cols) {
+    stop(paste0("Value column '", value_col, "' may not be included in columns '", paste0(rel_cols, collapse=","),"'."))
+  }
   list_groups <- suppressWarnings( vector("list", length(rel_cols)))
-  
+
+  # convert to dataframe and keep only columns value_col, year_col and rel_cols...
   data <- as.data.frame(data)[, names(data) %in% rel_cols | names(data) == value_col | names(data) == year_col]
+
+  # keep all columns but value_col, and then only keep unique rows...
   groups <- as.data.frame(unique(as.data.frame(data)[, ! names(data) == value_col]))
 
-  
   groups$group_id <- seq(from = 1, to = dim(groups)[1], by = 1)
   data <- dplyr::left_join(data, groups, by = c(rel_cols, year_col))
   groups_mean <- aggregate(subset(data, select = names(data) == value_col), list(data$group_id), FUN=mean)
