@@ -75,6 +75,28 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         if in_min_data_point is None:
             raise ProcessorExecuteError('Missing parameter "min_data_point". Please provide a value.')
 
+        try:
+            int(in_min_data_point)
+        except ValueError as e:
+            err_msg = f'Malformed parameter "min_data_point". Expecting integer, not {type(in_min_data_point)}'
+            LOGGER.warning(err_msg)
+            raise e
+
+        try:
+            float(in_missing_threshold_percentage)
+        except ValueError as e:
+            err_msg = f'Malformed parameter "missing_threshold_percentage". Expecting number, not {type(in_min_data_point)}.'
+            LOGGER.warning(err_msg)
+            raise e
+
+        if float(in_missing_threshold_percentage) > 100:
+            err_msg = f'Malformed parameter "missing_threshold_percentage". Expecting number < 100, not {type(in_min_data_point)}.'
+            LOGGER.warning(err_msg)
+            raise ProcessorExecuteError(err_msg)
+
+
+
+
         # Where to store output data
         output_dir = f'{self.download_dir}/out/{self.process_id}/job_{self.job_id}'
         output_url = f'{self.download_url}/out/{self.process_id}/job_{self.job_id}'
