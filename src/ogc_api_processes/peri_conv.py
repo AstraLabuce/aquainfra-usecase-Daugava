@@ -99,13 +99,13 @@ class PeriConvProcessor(BaseProcessor):
             self.image_name,
             self.script_name,
             output_dir,
+            self.job_id,
             input_data_url, 
             date_col_name, 
             group_to_periods, 
             period_labels,
             year_starts_at_dec1,
             date_format, 
-            download_dir, 
             downloadfilename
         )
 
@@ -144,13 +144,13 @@ def run_docker_container(
         image_name,
         script_name,
         output_dir,
+        job_id,
         input_data_url, 
         date_col_name, 
         group_to_periods, 
         period_labels, 
         year_starts_at_dec1, 
         date_format, 
-        download_dir, 
         outputFilename
     ):
     LOGGER.debug('Will use this image: %s' % image_name)

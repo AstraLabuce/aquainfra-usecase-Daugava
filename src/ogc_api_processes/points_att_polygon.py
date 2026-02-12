@@ -81,11 +81,12 @@ class PointsAttPolygonProcessor(BaseProcessor):
             self.docker_executable,
             self.image_name,
             self.script_name,
+            output_dir,
+            self.job_id,
             in_regions_url, 
             in_dpoints_url, 
             in_long_col_name, 
             in_lat_col_name, 
-            download_dir, 
             downloadfilename
         )
 
@@ -122,11 +123,12 @@ def run_docker_container(
         docker_executable,
         image_name,
         script_name,
+        output_dir,
+        job_id,
         regions_url, 
         dpoints_url, 
         long_col_name, 
         lat_col_name, 
-        download_dir, 
         outputFilename
     ):
     LOGGER.debug('Will use this image: %s' % image_name)

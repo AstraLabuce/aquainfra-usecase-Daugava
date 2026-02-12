@@ -91,6 +91,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
             self.image_name,
             self.script_name,
             output_dir,
+            self.job_id,
             in_shp_url, 
             in_trend_results_url, 
             in_id_trend_col, 
@@ -98,7 +99,6 @@ class MapTrendsStaticProcessor(BaseProcessor):
             in_group,
             str(in_p_value_threshold),
             in_p_value_col,
-            download_dir, 
             downloadfilename
         )
 
@@ -139,7 +139,10 @@ class MapTrendsStaticProcessor(BaseProcessor):
 
 def run_docker_container(
         docker_executable,
+        image_name,
+        script_name,
         output_dir,
+        job_id,
         in_shp_url, 
         in_trend_results_url, 
         in_id_trend_col, 
@@ -147,7 +150,6 @@ def run_docker_container(
         in_group,
         in_p_value_threshold,
         in_p_value_col,
-        download_dir, 
         outputFilename
     ):
     LOGGER.debug('Will use this image: %s' % image_name)

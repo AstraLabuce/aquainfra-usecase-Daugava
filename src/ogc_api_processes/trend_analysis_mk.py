@@ -82,11 +82,11 @@ class TrendAnalysisMkProcessor(BaseProcessor):
             self.image_name,
             self.script_name,
             output_dir,
+            self.job_id,
             in_data_url, 
             in_rel_cols, 
             in_time_colname, 
             in_value_colname,
-            download_dir, 
             downloadfilename
         )
 
@@ -126,11 +126,11 @@ def run_docker_container(
         image_name,
         script_name,
         output_dir,
+        job_id,
         in_data_url, 
         in_rel_cols, 
         in_time_colname, 
         in_value_colname,
-        download_dir, 
         outputFilename
     ):
     LOGGER.debug('Will use this image: %s' % image_name)

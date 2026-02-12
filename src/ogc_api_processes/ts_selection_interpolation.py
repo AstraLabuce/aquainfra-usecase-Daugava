@@ -90,13 +90,13 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
             self.image_name,
             self.script_name,
             output_dir,
+            self.job_id,
             in_data_url, 
             in_rel_cols, 
             str(in_missing_threshold_percentage),
             in_year_colname,
             in_value_colname,
             str(in_min_data_point),
-            download_dir, 
             downloadfilename
         )
 
@@ -135,13 +135,13 @@ def run_docker_container(
         image_name,
         script_name,
         output_dir,
+        job_id,
         in_data_url, 
         in_rel_cols, 
         in_missing_threshold_percentage, 
         in_year_colname, 
         in_value_colname, 
         in_min_data_point, 
-        download_dir, 
         outputFilename
     ):
     LOGGER.debug('Will use this image: %s' % image_name)

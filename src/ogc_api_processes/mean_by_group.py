@@ -81,10 +81,10 @@ class MeanByGroupProcessor(BaseProcessor):
             self.image_name,
             self.script_name,
             output_dir,
+            self.job_id,
             input_data_url, 
             in_cols_to_group_by, 
             in_value_col, 
-            download_dir, 
             downloadfilename
         )
 
@@ -122,10 +122,10 @@ def run_docker_container(
         image_name,
         script_name,
         output_dir,
+        job_id,
         input_data_url, 
         in_cols_to_group_by, 
         in_value_col, 
-        download_dir, 
         outputFilename
     ):
     LOGGER.debug('Will use this image: %s' % image_name)

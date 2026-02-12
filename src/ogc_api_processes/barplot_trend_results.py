@@ -93,13 +93,13 @@ class BarplotTrendResultsProcessor(BaseProcessor):
             self.image_name,
             self.script_name,
             output_dir,
+            self.job_id,
             input_data_url, 
             in_id_col, 
             in_test_value, 
             p_value,
             str(in_p_value_threshold),
             in_group, 
-            download_dir, 
             downloadfilename
         )
 
@@ -131,13 +131,13 @@ def run_docker_container(
         image_name,
         script_name,
         output_dir,
+        job_id,
         input_data_url, 
         in_id_col, 
         in_test_value, 
         p_value, 
         in_p_value_threshold, 
         in_group, 
-        download_dir, 
         outputFilename
     ):
     LOGGER.debug('Will use this image: %s' % image_name)
