@@ -51,6 +51,9 @@ class MapTrendsStaticProcessor(BaseProcessor):
     def set_job_id(self, job_id: str):
         self.job_id = job_id
 
+    def __repr__(self):
+        return f'<MapTrendsStaticProcessor> {self.name}'
+
     def execute(self, data, outputs=None):
 
         # User inputs
@@ -134,7 +137,4 @@ class MapTrendsStaticProcessor(BaseProcessor):
 
         return 'application/json', response_object
 
-
-    def __repr__(self):
-        return f'<MapTrendsStaticProcessor> {self.name}'
 
