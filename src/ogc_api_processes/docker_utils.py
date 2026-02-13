@@ -13,25 +13,36 @@ def run_docker_container(
         job_id,
         script_args
     ):
-    LOGGER.debug('Will use this image: %s' % image_name)
+
+    LOGGER.debug('Prepare running docker container')
 
     # Create container name
     # Note: Only [a-zA-Z0-9][a-zA-Z0-9_.-] are allowed
     #container_name = "%s_%s" % (image_name.split(':')[0], os.urandom(5).hex())
     container_name = "%s_%s" % (image_name.split(':')[0], job_id)
-    LOGGER.debug(f'Prepare running docker (image {image_name}, container: {container_name})')
+    LOGGER.debug(f'Image: {image_name}, container: {container_name})')
 
     # Define paths inside the container
     container_out = '/out'
 
     # Replace host out with container out:
+    LOGGER.debug('Script args (before sanitizing): %s' % script_args)
+
+    # Sanitizing args: They have to be strings to be passed to docker-run via
+    # subprocess library, and paths have to be modified to match the bind-mounted
+    # paths inside the container:
     sanitized_args = []
     for arg in script_args:
+
+        # For files, replace the host path with the in-container path:
         if isinstance(arg, str) and output_dir is not None and output_dir in arg:
             newarg = arg.replace(output_dir, container_out)
+
+        # In any case, the newarg has to be a string:
         else:
-            # In any case, the newarg has to be a string:
             newarg = str(arg)
+
+        # All arguments have to be added to the new list:
         sanitized_args.append(newarg)
 
     # Assemble docker command:
@@ -56,6 +67,9 @@ def run_docker_container(
         return result.returncode, stdout, stderr
 
     except subprocess.CalledProcessError as e:
-        LOGGER.debug('Failed running docker container')
-        return e.returncode, e.stdout.decode(), e.stderr.decode()
+        returncode = e.returncode
+        stdout = e.stdout.decode()
+        stderr = e.stderr.decode()
+        LOGGER.error('Failed running docker container (exit code %s)' % returncode)
+        return returncode, stdout, stderr
 
