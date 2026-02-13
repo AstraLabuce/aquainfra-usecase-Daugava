@@ -106,16 +106,16 @@ class MeanByGroupProcessor(BaseProcessor):
             err_msg = f'Running docker container failed: {user_err_msg}'
             raise ProcessorExecuteError(user_msg = err_msg)
 
-        else:
-            response_object = {
-                "outputs": {
-                    "mean_by_group": {
-                        "title": self.metadata['outputs']['mean_by_group']['title'],
-                        "description": self.metadata['outputs']['mean_by_group']['description'],
-                        "href": out_result_url
-                    }
+        # Return link to file:
+        response_object = {
+            "outputs": {
+                "mean_by_group": {
+                    "title": self.metadata['outputs']['mean_by_group']['title'],
+                    "description": self.metadata['outputs']['mean_by_group']['description'],
+                    "href": out_result_url
                 }
             }
+        }
 
-            return 'application/json', response_object
+        return 'application/json', response_object
 

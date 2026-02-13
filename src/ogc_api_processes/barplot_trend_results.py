@@ -120,18 +120,16 @@ class BarplotTrendResultsProcessor(BaseProcessor):
             err_msg = f'Running docker container failed: {user_err_msg}'
             raise ProcessorExecuteError(user_msg = err_msg)
 
-        else:
-
-            # Return link to file:
-            response_object = {
-                "outputs": {
-                    "barplot_image": {
-                        "title": self.metadata['outputs']['barplot_image']['title'],
-                        "description": self.metadata['outputs']['barplot_image']['description'],
-                        "href": out_result_url
-                    }
+        # Return link to file:
+        response_object = {
+            "outputs": {
+                "barplot_image": {
+                    "title": self.metadata['outputs']['barplot_image']['title'],
+                    "description": self.metadata['outputs']['barplot_image']['description'],
+                    "href": out_result_url
                 }
             }
+        }
 
-            return 'application/json', response_object
+        return 'application/json', response_object
 

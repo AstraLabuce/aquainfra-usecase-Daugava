@@ -121,20 +121,19 @@ class MapTrendsStaticProcessor(BaseProcessor):
             err_msg = f'Running docker container failed: {user_err_msg}'
             raise ProcessorExecuteError(user_msg = err_msg)
 
-        else:
-
-            # Return link to file:
-            response_object = {
-                "outputs": {
-                    "trend_map": {
-                        "title": self.metadata['outputs']['trend_map']['title'],
-                        "description": self.metadata['outputs']['trend_map']['description'],
-                        "href": out_result_url
-                    }
+        # Return link to file:
+        response_object = {
+            "outputs": {
+                "trend_map": {
+                    "title": self.metadata['outputs']['trend_map']['title'],
+                    "description": self.metadata['outputs']['trend_map']['description'],
+                    "href": out_result_url
                 }
             }
+        }
 
-            return 'application/json', response_object
+        return 'application/json', response_object
+
 
     def __repr__(self):
         return f'<MapTrendsStaticProcessor> {self.name}'

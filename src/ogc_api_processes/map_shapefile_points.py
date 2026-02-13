@@ -121,19 +121,17 @@ class MapShapefilePointsProcessor(BaseProcessor):
             err_msg = f'Running docker container failed: {user_err_msg}'
             raise ProcessorExecuteError(user_msg = err_msg)
 
-        else:
-
-            # Return link to file:
-            response_object = {
-                "outputs": {
-                    "interactive_map": {
-                        "title": self.metadata['outputs']['interactive_map']['title'],
-                        "description": self.metadata['outputs']['interactive_map']['description'],
-                        "href": out_result_url
-                    }
+        # Return link to file:
+        response_object = {
+            "outputs": {
+                "interactive_map": {
+                    "title": self.metadata['outputs']['interactive_map']['title'],
+                    "description": self.metadata['outputs']['interactive_map']['description'],
+                    "href": out_result_url
                 }
             }
+        }
 
-            return 'application/json', response_object
+        return 'application/json', response_object
 
 

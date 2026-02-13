@@ -139,16 +139,16 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
             err_msg = f'Running docker container failed: {user_err_msg}'
             raise ProcessorExecuteError(user_msg = err_msg)
 
-        else:
-            response_object = {
-                "outputs": {
-                    "data_grouped_by_date": {
-                        "title": self.metadata['outputs']['interpolated_time_series']['title'],
-                        "description": self.metadata['outputs']['interpolated_time_series']['description'],
-                        "href": out_result_url
-                    }
+        # Return link to file:
+        response_object = {
+            "outputs": {
+                "data_grouped_by_date": {
+                    "title": self.metadata['outputs']['interpolated_time_series']['title'],
+                    "description": self.metadata['outputs']['interpolated_time_series']['description'],
+                    "href": out_result_url
                 }
             }
+        }
 
-            return 'application/json', response_object
+        return 'application/json', response_object
 

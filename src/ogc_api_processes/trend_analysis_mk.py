@@ -110,18 +110,17 @@ class TrendAnalysisMkProcessor(BaseProcessor):
             err_msg = f'Running docker container failed: {user_err_msg}'
             raise ProcessorExecuteError(user_msg = err_msg)
 
-        else:
 
-            # Return link to file:
-            response_object = {
-                "outputs": {
-                    "trend_analysis_results": {
-                        "title": self.metadata['outputs']['trend_analysis_results']['title'],
-                        "description": self.metadata['outputs']['trend_analysis_results']['description'],
-                        "href": out_result_url
-                    }
+        # Return link to file:
+        response_object = {
+            "outputs": {
+                "trend_analysis_results": {
+                    "title": self.metadata['outputs']['trend_analysis_results']['title'],
+                    "description": self.metadata['outputs']['trend_analysis_results']['description'],
+                    "href": out_result_url
                 }
             }
+        }
 
-            return 'application/json', response_object
+        return 'application/json', response_object
 
