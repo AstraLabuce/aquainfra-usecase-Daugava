@@ -38,6 +38,11 @@ def run_docker_container(
         if isinstance(arg, str) and output_dir is not None and output_dir in arg:
             newarg = arg.replace(output_dir, container_out)
 
+        # R scripts may be more familiar with receiving "null" than "None"
+        # But they still have to parse them to a proper NULL data type.
+        elif arg == 'None' or arg is None:
+            newarg = 'null'
+
         # In any case, the newarg has to be a string:
         else:
             newarg = str(arg)
