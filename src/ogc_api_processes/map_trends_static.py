@@ -108,7 +108,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
         ]
 
         # Run docker container
-        returncode, stdout, stderr = docker_utils.run_docker_container(
+        returncode, stdout, stderr, user_err_msg = docker_utils.run_docker_container(
             LOGGER,
             self.docker_executable,
             self.image_name,
