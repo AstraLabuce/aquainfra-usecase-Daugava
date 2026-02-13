@@ -75,8 +75,17 @@ class MeanByGroupProcessor(BaseProcessor):
         os.makedirs(output_dir, exist_ok=True)
         LOGGER.debug(f'All results will be stored     in: {output_dir}')
         LOGGER.debug(f'All results will be accessible in: {output_url}')
-        downloadfilename = 'mean_by_group-%s.csv' % self.job_id # or seasonal_means.csv?
-        downloadlink = f'{output_url}/{downloadfilename}'
+        # Output filename
+        out_result_path = f'{output_dir}/mean_by_group_{self.job_id}.csv'
+        out_result_url  = f'{output_url}/mean_by_group_{self.job_id}.csv'
+
+        # Assemble arguments for R script:
+        r_args = [
+            input_data_url,
+            in_cols_to_group_by,
+            in_value_col,
+            out_result_path
+        ]
 
         # Run docker container
         returncode, stdout, stderr = run_docker_container(
@@ -85,10 +94,7 @@ class MeanByGroupProcessor(BaseProcessor):
             self.script_name,
             output_dir,
             self.job_id,
-            input_data_url, 
-            in_cols_to_group_by, 
-            in_value_col, 
-            downloadfilename
+            r_args
         )
 
         # print R stderr/stdout to debug log:
@@ -113,7 +119,7 @@ class MeanByGroupProcessor(BaseProcessor):
                     "mean_by_group": {
                         "title": self.metadata['outputs']['mean_by_group']['title'],
                         "description": self.metadata['outputs']['mean_by_group']['description'],
-                        "href": downloadlink
+                        "href": out_result_url
                     }
                 }
             }
@@ -126,10 +132,7 @@ def run_docker_container(
         script_name,
         output_dir,
         job_id,
-        input_data_url, 
-        in_cols_to_group_by, 
-        in_value_col, 
-        outputFilename
+        script_args
     ):
     LOGGER.debug('Will use this image: %s' % image_name)
 
@@ -142,18 +145,26 @@ def run_docker_container(
     # Define paths inside the container
     container_out = '/out'
 
-    # Mount volumes and set command
+    # Replace host out with container out:
+    sanitized_args = []
+    for arg in script_args:
+        if isinstance(arg, str) and output_dir is not None and output_dir in arg:
+            newarg = arg.replace(output_dir, container_out)
+        else:
+            # In any case, the newarg has to be a string:
+            newarg = str(arg)
+        sanitized_args.append(newarg)
+
+    # Assemble docker command:
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{output_dir}:{container_out}",
         "-e", f"R_SCRIPT={script_name}",  # Set the R_SCRIPT environment variable
         image_name,
         "--",  # Indicates the end of Docker's internal arguments and the start of the user's arguments
-        input_data_url, 
-        in_cols_to_group_by,  
-        in_value_col,  
-        f"{container_out}/{outputFilename}"  # Output filename
     ]
+    docker_command = docker_command + sanitized_args
+
 
     LOGGER.debug('Docker command: %s' % docker_command)
     

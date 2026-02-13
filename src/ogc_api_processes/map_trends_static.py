@@ -86,8 +86,21 @@ class MapTrendsStaticProcessor(BaseProcessor):
         os.makedirs(output_dir, exist_ok=True)
         LOGGER.debug(f'All results will be stored     in: {output_dir}')
         LOGGER.debug(f'All results will be accessible in: {output_url}')
-        downloadfilename = 'map_trends_static-%s.png' % self.job_id
-        downloadlink = f'{output_url}/{downloadfilename}'
+        # Output filename
+        out_result_path = f'{output_dir}/map_trends_static_{self.job_id}.png'
+        out_result_url  = f'{output_url}/map_trends_static_{self.job_id}.png'
+
+        # Assemble arguments for R script:
+        r_args = [
+            in_shp_url,
+            in_trend_results_url,
+            in_id_trend_col,
+            in_id_shp_col,
+            in_group,
+            in_p_value_threshold,
+            in_p_value_col,
+            out_result_path
+        ]
 
         # Run docker container
         returncode, stdout, stderr = run_docker_container(
@@ -96,14 +109,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
             self.script_name,
             output_dir,
             self.job_id,
-            in_shp_url, 
-            in_trend_results_url, 
-            in_id_trend_col, 
-            in_id_shp_col,
-            in_group,
-            str(in_p_value_threshold),
-            in_p_value_col,
-            downloadfilename
+            r_args
         )
 
         # print R stderr/stdout to debug log:
@@ -130,7 +136,7 @@ class MapTrendsStaticProcessor(BaseProcessor):
                     "trend_map": {
                         "title": self.metadata['outputs']['trend_map']['title'],
                         "description": self.metadata['outputs']['trend_map']['description'],
-                        "href": downloadlink
+                        "href": out_result_url
                     }
                 }
             }
@@ -147,14 +153,7 @@ def run_docker_container(
         script_name,
         output_dir,
         job_id,
-        in_shp_url, 
-        in_trend_results_url, 
-        in_id_trend_col, 
-        in_id_shp_col,
-        in_group,
-        in_p_value_threshold,
-        in_p_value_col,
-        outputFilename
+        script_args
     ):
     LOGGER.debug('Will use this image: %s' % image_name)
 
@@ -167,22 +166,26 @@ def run_docker_container(
     # Define paths inside the container
     container_out = '/out'
 
-    # Mount volumes and set command
+    # Replace host out with container out:
+    sanitized_args = []
+    for arg in script_args:
+        if isinstance(arg, str) and output_dir is not None and output_dir in arg:
+            newarg = arg.replace(output_dir, container_out)
+        else:
+            # In any case, the newarg has to be a string:
+            newarg = str(arg)
+        sanitized_args.append(newarg)
+
+    # Assemble docker command:
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{output_dir}:{container_out}",
         "-e", f"R_SCRIPT={script_name}",  # Set the R_SCRIPT environment variable
         image_name,
         "--",  # Indicates the end of Docker's internal arguments and the start of the user's arguments
-        in_shp_url, 
-        in_trend_results_url, 
-        in_id_trend_col, 
-        in_id_shp_col,
-        in_group,
-        in_p_value_col,
-        in_p_value_threshold,
-        f"{container_out}/{outputFilename}"  # Output filename
     ]
+    docker_command = docker_command + sanitized_args
+
 
     LOGGER.debug('Docker command: %s' % docker_command)
     

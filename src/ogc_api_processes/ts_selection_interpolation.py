@@ -105,8 +105,20 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         os.makedirs(output_dir, exist_ok=True)
         LOGGER.debug(f'All results will be stored     in: {output_dir}')
         LOGGER.debug(f'All results will be accessible in: {output_url}')
-        downloadfilename = 'interpolated_time_series-%s.csv' % self.job_id # or selected_interpolated.csv ?
-        downloadlink = f'{output_url}/{downloadfilename}'
+        # Output filename
+        out_result_path = f'{output_dir}/interpolated_time_series_{self.job_id}.csv'
+        out_result_url  = f'{output_url}/interpolated_time_series_{self.job_id}.csv'
+
+        # Assemble arguments for R script:
+        r_args = [
+            in_data_url,
+            in_rel_cols,
+            in_missing_threshold_percentage,
+            in_year_colname,
+            in_value_colname,
+            in_min_data_point,
+            out_result_path
+        ]
 
         # Run docker container
         returncode, stdout, stderr = run_docker_container(
@@ -115,13 +127,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
             self.script_name,
             output_dir,
             self.job_id,
-            in_data_url, 
-            in_rel_cols, 
-            str(in_missing_threshold_percentage),
-            in_year_colname,
-            in_value_colname,
-            str(in_min_data_point),
-            downloadfilename
+            r_args
         )
 
         # print R stderr/stdout to debug log:
@@ -146,7 +152,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
                     "data_grouped_by_date": {
                         "title": self.metadata['outputs']['interpolated_time_series']['title'],
                         "description": self.metadata['outputs']['interpolated_time_series']['description'],
-                        "href": downloadlink
+                        "href": out_result_url
                     }
                 }
             }
@@ -160,13 +166,7 @@ def run_docker_container(
         script_name,
         output_dir,
         job_id,
-        in_data_url, 
-        in_rel_cols, 
-        in_missing_threshold_percentage, 
-        in_year_colname, 
-        in_value_colname, 
-        in_min_data_point, 
-        outputFilename
+        script_args
     ):
     LOGGER.debug('Will use this image: %s' % image_name)
 
@@ -179,21 +179,25 @@ def run_docker_container(
     # Define paths inside the container
     container_out = '/out'
 
-    # Mount volumes and set command
+    # Replace host out with container out:
+    sanitized_args = []
+    for arg in script_args:
+        if isinstance(arg, str) and output_dir is not None and output_dir in arg:
+            newarg = arg.replace(output_dir, container_out)
+        else:
+            # In any case, the newarg has to be a string:
+            newarg = str(arg)
+        sanitized_args.append(newarg)
+
+    # Assemble docker command:
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{output_dir}:{container_out}",
         "-e", f"R_SCRIPT={script_name}",  # Set the R_SCRIPT environment variable
         image_name,
         "--",  # Indicates the end of Docker's internal arguments and the start of the user's arguments
-        in_data_url, 
-        in_rel_cols,  
-        in_missing_threshold_percentage,  
-        in_year_colname,
-        in_value_colname,
-        in_min_data_point,
-        f"{container_out}/{outputFilename}"  # Output filename
     ]
+    docker_command = docker_command + sanitized_args
 
     LOGGER.debug('Docker command: %s' % docker_command)
     

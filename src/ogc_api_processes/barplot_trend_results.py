@@ -85,10 +85,20 @@ class BarplotTrendResultsProcessor(BaseProcessor):
         os.makedirs(output_dir, exist_ok=True)
         LOGGER.debug(f'All results will be stored     in: {output_dir}')
         LOGGER.debug(f'All results will be accessible in: {output_url}')
-        downloadfilename = 'barplot_image-%s.png' % self.job_id
-        #downloadfilepath = download_dir.rstrip('/')+os.sep+downloadfilename
-        downloadpath = f'{output_dir}/{downloadfilename}'
-        downloadlink = f'{output_url}/{downloadfilename}'
+        # Output filename
+        out_result_path = f'{output_dir}/barplot_image_{self.job_id}.png'
+        out_result_url  = f'{output_url}/barplot_image_{self.job_id}.png'
+
+        # Assemble arguments for R script:
+        r_args = [
+            input_data_url,
+            in_id_col,
+            in_test_value,
+            p_value,
+            in_p_value_threshold,
+            in_group,
+            out_result_path
+        ]
 
         # Run docker container
         returncode, stdout, stderr = run_docker_container(
@@ -97,13 +107,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
             self.script_name,
             output_dir,
             self.job_id,
-            input_data_url, 
-            in_id_col, 
-            in_test_value, 
-            p_value,
-            str(in_p_value_threshold),
-            in_group, 
-            downloadfilename
+            r_args
         )
 
         if not returncode == 0:
@@ -121,7 +125,7 @@ class BarplotTrendResultsProcessor(BaseProcessor):
                     "barplot_image": {
                         "title": self.metadata['outputs']['barplot_image']['title'],
                         "description": self.metadata['outputs']['barplot_image']['description'],
-                        "href": downloadlink
+                        "href": out_result_url
                     }
                 }
             }
@@ -135,13 +139,7 @@ def run_docker_container(
         script_name,
         output_dir,
         job_id,
-        input_data_url, 
-        in_id_col, 
-        in_test_value, 
-        p_value, 
-        in_p_value_threshold, 
-        in_group, 
-        outputFilename
+        script_args
     ):
     LOGGER.debug('Will use this image: %s' % image_name)
 
@@ -154,21 +152,25 @@ def run_docker_container(
     # Define paths inside the container
     container_out = '/out'
 
-    # Mount volumes and set command
+    # Replace host out with container out:
+    sanitized_args = []
+    for arg in script_args:
+        if isinstance(arg, str) and output_dir is not None and output_dir in arg:
+            newarg = arg.replace(output_dir, container_out)
+        else:
+            # In any case, the newarg has to be a string:
+            newarg = str(arg)
+        sanitized_args.append(newarg)
+
+    # Assemble docker command:
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{output_dir}:{container_out}",
         "-e", f"R_SCRIPT={script_name}",  # Set the R_SCRIPT environment variable
         image_name,
         "--",  # Indicates the end of Docker's internal arguments and the start of the user's arguments
-        input_data_url, 
-        in_id_col,  
-        in_test_value,  
-        p_value,
-        in_p_value_threshold,
-        in_group,
-        f"{container_out}/{outputFilename}"  # Output filename
     ]
+    docker_command = docker_command + sanitized_args
 
     LOGGER.debug('Docker command: %s' % docker_command)
     
