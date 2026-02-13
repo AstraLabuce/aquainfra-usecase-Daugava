@@ -114,15 +114,6 @@ class MapTrendsStaticProcessor(BaseProcessor):
             r_args
         )
 
-        # print R stderr/stdout to debug log:
-        for line in stdout.split("\n"):
-            if not len(line.strip()) == 0:
-                LOGGER.debug('R stdout: %s' % line)
-
-        for line in stderr.split("\n"):
-            if not len(line.strip()) == 0:
-                LOGGER.debug('R stderr: %s' % line)
-
         if not returncode == 0:
             err_msg = 'Running docker container failed.'
             for line in stderr.split('\n'):

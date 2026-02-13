@@ -69,6 +69,7 @@ def run_docker_container(
         stdout = result.stdout.decode()
         stderr = result.stderr.decode()
         LOGGER.debug('Finished running docker container')
+        log_docker_output(stdout, stderr)
         return result.returncode, stdout, stderr
 
     except subprocess.CalledProcessError as e:
@@ -76,5 +77,18 @@ def run_docker_container(
         stdout = e.stdout.decode()
         stderr = e.stderr.decode()
         LOGGER.error('Failed running docker container (exit code %s)' % returncode)
+        log_docker_output(stdout, stderr)
         return returncode, stdout, stderr
+
+
+def log_docker_output(stdout, stderr):
+    # Print docker output:
+    for line in stdout.split('\n'):
+        if not line: continue
+        LOGGER.debug('Docker stdout: %s' % line.strip())
+        # output of print() in R-script
+    for line in stderr.split('\n'):
+        if not line: continue
+        LOGGER.debug('Docker stderr: %s' % line.strip())
+        # output of message() in R-script
 
