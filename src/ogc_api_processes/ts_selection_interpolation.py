@@ -133,11 +133,10 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
             r_args
         )
 
+        # Handle errors:
         if not returncode == 0:
-            err_msg = 'Running docker container failed.'
-            for line in stderr.split('\n'):
-                if line.startswith('Error'):
-                    err_msg = 'Running docker container failed: %s' % (line)
+            user_err_msg = "no message" if len(user_err_msg) == 0 else user_err_msg
+            err_msg = f'Running docker container failed: {user_err_msg}'
             raise ProcessorExecuteError(user_msg = err_msg)
 
         else:
