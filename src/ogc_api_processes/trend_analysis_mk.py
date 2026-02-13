@@ -69,8 +69,7 @@ class TrendAnalysisMkProcessor(BaseProcessor):
             raise ProcessorExecuteError('Missing parameter "colname_value". Please provide a column name.')
 
         # Quickly check whether the input data url is reachable
-        resp = requests.head(in_data_url)
-        resp.raise_for_status()
+        requests.head(in_data_url).raise_for_status()
 
 
         # Where to store output data

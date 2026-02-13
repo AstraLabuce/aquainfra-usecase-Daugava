@@ -69,11 +69,9 @@ class PointsAttPolygonProcessor(BaseProcessor):
             raise ProcessorExecuteError('Missing parameter "input_data". Please provide a URL to your input table.')
 
         # Quickly check whether the input data url is reachable
-        resp = requests.head(in_regions_url)
-        resp.raise_for_status()
+        requests.head(in_regions_url).raise_for_status()
         # This raised HTTP 500 in tests, maybe WFS do not respond to HTTP HEAD?
-        #resp = requests.head(in_dpoints_url)
-        #resp.raise_for_status()
+        #requests.head(in_dpoints_url).raise_for_status()
 
         # Where to store output data
         output_dir = f'{self.download_dir}/out/{self.process_id}/job_{self.job_id}'

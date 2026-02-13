@@ -97,9 +97,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
 
 
         # Quickly check whether the input data url is reachable
-        resp = requests.head(in_data_url)
-        resp.raise_for_status()
-
+        requests.head(in_data_url).raise_for_status()
 
         # Where to store output data
         output_dir = f'{self.download_dir}/out/{self.process_id}/job_{self.job_id}'
