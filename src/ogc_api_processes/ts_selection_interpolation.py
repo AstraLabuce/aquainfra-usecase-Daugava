@@ -39,7 +39,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         self.supports_outputs = True
         self.job_id = 'nothing-yet'
         self.process_id = self.metadata["id"]
-        self.image_name = "daugava-workflow-image:20250522"
+        self.image_name = "daugava-workflow-image:20260212"
         self.script_name = "ts_selection_interpolation.R"
         config_file_path = os.environ.get('AQUAINFRA_CONFIG_FILE', "./config.json")
         with open(config_file_path) as config_file:
