@@ -1,6 +1,7 @@
 import requests
 import time
 import sys
+import os
 
 '''
 This is just a little script to test whether the OGC processing
@@ -17,7 +18,11 @@ Merret Buurman (IGB Berlin), 2024-08-15
 '''
 
 
-base_url = 'https://xxx.xxx/pygeoapi'
+base_url = os.getenv('PYSERVER') # e.g. "our.server.de/pygeoapi"
+# In Linux, define by running:
+# export PYSERVER="our.server.de/pygeoapi"
+base_url = f'https://{base_url}'
+print(f'TESTING THIS SERVER: {base_url}')
 headers_sync = {'Content-Type': 'application/json'}
 headers_async = {'Content-Type': 'application/json', 'Prefer': 'respond-async'}
 
@@ -67,7 +72,9 @@ def poll_for_links(resp201, session, required_type='application/json', seconds_p
 
         elif job_status == 'failed':
             print('Job failed after %s seconds!' % seconds_passed)
+            print('################################# FAILURE #################################')
             print('Debug info: %s' % polling_result.json())
+            print('###########################################################################')
             print('Stopping.')
             sys.exit(1)
 
