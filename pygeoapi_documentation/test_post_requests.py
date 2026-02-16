@@ -59,7 +59,7 @@ def poll_for_links(resp201, session, required_type='application/json', seconds_p
     seconds_passed = 0
     polling_url = resp201.headers['location']
     while True:
-        polling_result = session.get(resp.headers['location'])
+        polling_result = session.get(polling_url)
         job_status = polling_result.json()['status'].lower()
         print(f'[async] job status: {job_status}')
 
