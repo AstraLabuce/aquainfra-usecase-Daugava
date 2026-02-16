@@ -99,14 +99,60 @@ def poll_for_links(resp201, session, required_type='application/json', seconds_p
             print('Stopping.')
             sys.exit(1)
 
+
+# Define request function
+def execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async=False):
+    #print(f'______________________________________________')
+    print(f'\n\n{process_id}')
+    url = f'{base_url}/processes/{process_id}/execution'
+
+    # Try sync:
+    print(f'[sync]  request to: {process_id}')
+    resp = session.post(url, headers=headers_sync, json=inputs)
+    print(f'[sync]  request to: {process_id}: HTTP {resp.status_code}') # should be HTTP 200
+
+    # Handle success:
+    if resp.status_code == 200:
+        result_application_json = resp.json()
+        print(f'[sync]  response: {result_application_json}')
+
+    # Handle error during sync:
+    if not resp.status_code == 200 and not resp.status_code == 405:
+        try:
+            print(f'[ERROR] HTTP: {resp.status_code}')
+            print(f'[ERROR] response: {resp.json()}')
+        except Exception as e:
+            print(f'[ERROR] ran into error: {e}')
+            print('Stopping.')
+            sys.exit(1)
+
+    # Handle Gateway timeout
+    if resp.status_code == 405 or force_async:
+        print(f'[async] request to: {process_id}')
+        resp = session.post(url, headers=headers_async, json=inputs)
+        print(f'[async] request to: {process_id}: HTTP {resp.status_code}') # should be HTTP 201
+        result_application_json = poll_for_json_result(resp, session)
+        print(f'[async] response: {result_application_json}')
+
+    # Get link to result file (sync / async, does not matter):
+    resultlink = result_application_json['outputs'][output_name]['href']
+    print(f'[res]   result link: {resultlink}')
+
+    # Get result file:
+    final_result = session.get(resultlink)
+    final_result.raise_for_status()
+    print('[res]   result content: %s...' % str(final_result.content)[0:200])
+
+    # Return URL for next one:
+    return resultlink
+
 '''
 ############################
 ### 1 points_att_polygon ###
 ### excel                ###
 ############################
-name = "points_att_polygon"
-print('\nCalling %s...' % name)
-url = base_url+'/processes/points-att-polygon/execution'
+process_id = "points-att-polygon"
+output_name = "data_merged_with_regions"
 inputs = { 
     "inputs": {
         #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
@@ -117,37 +163,7 @@ inputs = {
     } 
 }
 
-
-# sync:
-# Often runs into 504 Gateway Error, which is basically a timeout... Try async!
-print('synchronous... (with excel inputs)')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 200
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('  Result (JSON document): %s' % result_application_json)
-
-if not resp.status_code == 200:
-    try:
-        print('Result (error): %s' % resp.json())
-    except Exception as e:
-        print('Ran into error %s...' % e)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous... (with excel inputs)')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('  Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-href = result_application_json['outputs']['data_merged_with_regions']['href']
-result_points_att_polygon_url = href
-print('  It contains a link to our ACTUAL result: %s' % result_points_att_polygon_url)
-# Check out result itself:
-final_result = session.get(result_points_att_polygon_url)
-print('  Result content: %s...' % str(final_result.content)[0:200])
+result_points_att_polygon_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
 
 
 ###################
@@ -157,9 +173,8 @@ print('  Result content: %s...' % str(final_result.content)[0:200])
 ## Input: Result from 1
 inputfile = result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv"
 
-name = "peri_conv"
-print('\nCalling %s...' % name)
-url = base_url+'/processes/peri-conv/execution'
+process_id = "peri-conv"
+output_name = "data_grouped_by_date"
 inputs = {
     "inputs": {
         "input_data": inputfile,
@@ -171,35 +186,7 @@ inputs = {
     }
 }
 
-# sync:
-print('synchronous... (based on excel inputs)')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('  Result (JSON document): %s' % result_application_json)
-
-if not resp.status_code == 200:
-    try:
-        print('Result (error): %s' % resp.json())
-    except Exception as e:
-        print('Ran into error %s...' % e)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous... (based on excel inputs)')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-href = result_application_json['outputs']['data_grouped_by_date']['href']
-result_peri_conv_url = href
-print('It contains a link to our ACTUAL result: %s' % result_peri_conv_url)
-# Check out result itself:
-final_result = session.get(result_peri_conv_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
+result_peri_conv_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
 '''
 
 
@@ -207,11 +194,9 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 ### 1 points_att_polygon ###
 ### csv from ddas        ###
 ############################
-# TODO: Can we use CSV data from https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv ?
-# For points_att_polygon, it is no problem, but later ts_selection_interpolation will fail!
 
-name = "points_att_polygon"
-print('\nCalling %s...' % name)
+process_id = "points-att-polygon"
+output_name = "data_merged_with_regions"
 url = base_url+'/processes/points-att-polygon/execution'
 inputs = {
     "inputs": {
@@ -223,30 +208,7 @@ inputs = {
     } 
 }
 
-# sync:
-# Often runs into 504 Gateway Error, which is basically a timeout... Try async!
-print('synchronous... (with DDAS CSV inputs)')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 200
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous... (with DDAS CSV inputs)')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-href = result_application_json['outputs']['data_merged_with_regions']['href']
-result_points_att_polygon_url = href
-print('It contains a link to our ACTUAL result: %s' % result_points_att_polygon_url)
-# Check out result itself:
-final_result = session.get(result_points_att_polygon_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
+result_points_att_polygon_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
 
 
 #######################
@@ -255,10 +217,8 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 #######################
 ## Input: Result from (1)
 inputfile = result_points_att_polygon_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/out/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv"
-
-name = "peri_conv"
-print('\nCalling %s...' % name)
-url = base_url+'/processes/peri-conv/execution'
+process_id = "peri-conv"
+output_name = "data_grouped_by_date"
 inputs = {
     "inputs": {
         "input_data": inputfile,
@@ -270,30 +230,7 @@ inputs = {
     }
 }
 
-# sync:
-print('synchronous... (based on DDAS CSV inputs)')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous... (based on DDAS CSV inputs)')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-href = result_application_json['outputs']['data_grouped_by_date']['href']
-result_peri_conv_url = href
-print('It contains a link to our ACTUAL result: %s' % result_peri_conv_url)
-# Check out result itself:
-final_result = session.get(result_peri_conv_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
-
+result_peri_conv_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
 
 
 #######################
@@ -301,10 +238,8 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 #######################
 ## Input: Result from (2)
 inputfile = result_peri_conv_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/peri-conv/out/peri_conv-8a753070-cf6f-11f0-b3b0-fa163e42fba0.csv"
-
-name = "mean_by_group"
-print('\nCalling %s...' % name)
-url = base_url+'/processes/mean-by-group/execution'
+process_id = "mean-by-group"
+output_name = "mean_by_group"
 inputs = {
     "inputs": {
         "input_data": inputfile,
@@ -312,39 +247,7 @@ inputs = {
         "colname_value": "transparen"
     }
 }
-# Note: The column name used to be "transparency_m", now it is "transparen", not sure why.
-
-
-# sync:
-print('synchronous...')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
-
-if not resp.status_code == 200:
-    try:
-        print('Result (error): %s' % resp.json())
-    except Exception as e:
-        print('Ran into error %s...' % e)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous...')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-href = result_application_json['outputs']['mean_by_group']['href']
-result_mean_by_group_url = href
-print('It contains a link to our ACTUAL result: %s' % result_mean_by_group_url)
-# Check out result itself:
-final_result = session.get(result_mean_by_group_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
-
+result_mean_by_group_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
 
 
 ####################################
@@ -352,10 +255,8 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 ####################################
 ## Input: Result from (3)
 inputfile = result_mean_by_group_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/mean-by-group/out/mean_by_group-46ee34f0-cf7e-11f0-8673-fa163e42fba0.csv"
-
-name = "ts_selection_interpolation"
-print('\nCalling %s...' % name)
-url = base_url+'/processes/ts-selection-interpolation/execution'
+process_id = "ts-selection-interpolation"
+output_name = "interpolated_time_series"
 inputs = {
     "inputs": {
         "input_data": inputfile,
@@ -367,37 +268,7 @@ inputs = {
     }
 }
 
-
-# sync:
-print('synchronous...')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
-
-if not resp.status_code == 200:
-    try:
-        print('Result (error): %s' % resp.json())
-    except Exception as e:
-        print('Ran into error %s...' % e)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous...')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-href = result_application_json['outputs']['interpolated_time_series']['href']
-result_ts_selection_interpolation_url = href
-print('It contains a link to our ACTUAL result: %s' % result_ts_selection_interpolation_url)
-# Check out result itself:
-final_result = session.get(result_ts_selection_interpolation_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
-
+result_ts_selection_interpolation_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
 
 
 ###########################
@@ -405,12 +276,8 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 ###########################
 ## Input: Result from (4)
 inputfile = result_ts_selection_interpolation_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/ts-selection-interpolation/out/interpolated_time_series-8c61e7b0-0845-11f1-a4fe-fa163e42fba0.csv"
-
-name = "trend_analysis_mk"
-print('\nCalling %s...' % name)
-url = base_url+'/processes/trend-analysis-mk/execution'
-
-
+process_id = "trend-analysis-mk"
+output_name = "trend_analysis_results"
 inputs = {
     "inputs": {
         "input_data": inputfile,
@@ -421,35 +288,7 @@ inputs = {
     }
 }
 
-# sync:
-print('synchronous...')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
-
-if not resp.status_code == 200:
-    try:
-        print('Result (error): %s' % resp.json())
-    except Exception as e:
-        print('Ran into error %s...' % e)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous...')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-href = result_application_json['outputs']['trend_analysis_results']['href']
-result_trend_analysis_url = href
-print('It contains a link to our ACTUAL result: %s' % result_trend_analysis_url)
-# Check out result itself:
-final_result = session.get(result_trend_analysis_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
+result_trend_analysis_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
 
 
 ##############################
@@ -457,10 +296,8 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 ##############################
 ## Input: Result from 1
 inputfile = result_points_att_polygon_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/out/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv"
-
-name = "map_shapefile_points"
-print('\nCalling %s...' % name)
-url = base_url+'/processes/map-shapefile-points/execution'
+process_id = "map-shapefile-points"
+output_name = "interactive_map"
 inputs = {
     "inputs": {
         #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
@@ -473,36 +310,8 @@ inputs = {
     }
 }
 
-# sync:
-print('synchronous...')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
+result_map_shapefile_points_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
 
-if not resp.status_code == 200:
-    try:
-        print('Result (error): %s' % resp.json())
-    except Exception as e:
-        print('Ran into error %s...' % e)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous...')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-print('Result (JSON document): %s' % result_application_json)
-href = result_application_json['outputs']['interactive_map']['href']
-result_map_shapefile_points_url = href
-print('It contains a link to our ACTUAL result: %s' % result_map_shapefile_points_url)
-# Check out result itself:
-final_result = session.get(result_map_shapefile_points_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 ###############################
@@ -510,10 +319,8 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 ###############################
 ## Input: Result from 5
 inputfile = result_trend_analysis_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv"
-
-name = "barplot_trend_results"
-print('\nCalling %s...' % name)
-url = base_url+'/processes/barplot-trend-results/execution'
+process_id = "barplot-trend-results"
+output_name = "barplot_image"
 inputs = {
     "inputs": {
         "input_data": inputfile,
@@ -525,59 +332,26 @@ inputs = {
     }
 }
 
-# sync:
-print('synchronous...')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
-
-if not resp.status_code == 200:
-    try:
-        print('Result (error): %s' % resp.json())
-    except Exception as e:
-        print('Ran into error %s...' % e)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous...')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-print('Result (JSON document): %s' % result_application_json)
-href = result_application_json['outputs']['barplot_image']['href']
-result_barplot_trend_results_url = href
-print('It contains a link to our ACTUAL result: %s' % result_barplot_trend_results_url)
-# Check out result itself:
-final_result = session.get(result_barplot_trend_results_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
-
+result_barplot_trend_results_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
 
 
 ##############################
-### map_trends_interactive ### 6.3
+### map_trends_interactive ###
 ##############################
 
 ## Not implemented!
 
 #########################
-### map_trends_static ### 6.4
+### map_trends_static ###
 #########################
 ## Input: Result from 5
 inputfile = result_trend_analysis_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv"
-
+process_id = "map-trends-static"
+output_name = "trend_map"
 
 ## Missing package tmap!
 ## Has never worked, according to Markus!
 
-'''
-name = "map_trends_static"
-print('\nCalling %s...' % name)
-url = base_url+'/processes/map-trends-static/execution'
 inputs = {
     "inputs": {
         #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
@@ -591,38 +365,9 @@ inputs = {
     }
 }
 
-# sync:
-print('synchronous...')
-resp = session.post(url, headers=headers_sync, json=inputs)
-print('Calling %s... done. HTTP %s' % (name, resp.status_code))
-if resp.status_code == 200:
-    result_application_json = resp.json()
-    print('Result (JSON document): %s' % result_application_json)
-
-if not resp.status_code == 200:
-    try:
-        print('Result (error): %s' % resp.json())
-    except Exception as e:
-        print('Ran into error %s...' % e)
-
-# or async:
-if not resp.status_code == 200 or force_async:
-    print('asynchronous...')
-    resp = session.post(url, headers=headers_async, json=inputs)
-    print('Calling %s... done. HTTP %s' % (name, resp.status_code)) # should be HTTP 201
-    result_application_json = poll_for_json_result(resp, session)
-    print('Result (JSON document): %s' % result_application_json)
-
-# Results (sync / async, does not matter):
-print('Result (JSON document): %s' % result_application_json)
-href = result_application_json['outputs']['trend_map']['href']
-result_map_trends_static_url = href
-print('It contains a link to our ACTUAL result: %s' % result_map_trends_static_url)
-# Check out result itself:
-final_result = session.get(result_map_trends_static_url)
-print('Result content: %s...' % str(final_result.content)[0:200])
 '''
-
+result_map_trends_static_url = execute_and_retrieve_result(base_url, process_id, inputs, output_name, force_async)
+'''
 
 ###################
 ### Finally ... ###
