@@ -142,7 +142,7 @@ class TsSelectionInterpolationProcessor(BaseProcessor):
         # Return link to file:
         response_object = {
             "outputs": {
-                "data_grouped_by_date": {
+                "interpolated_time_series": {
                     "title": self.metadata['outputs']['interpolated_time_series']['title'],
                     "description": self.metadata['outputs']['interpolated_time_series']['description'],
                     "href": out_result_url
