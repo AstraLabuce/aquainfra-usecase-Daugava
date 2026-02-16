@@ -50,61 +50,60 @@ def poll_for_json_result(resp201, session, seconds_polling=2, max_seconds=60*60)
 
 def poll_for_links(resp201, session, required_type='application/json', seconds_polling=2, max_seconds=60*60):
     # Returns link to result in required_type
-    
+
     if not resp201.status_code == 201:
-        print('This should return HTTP status 201, but we got: %s' % resp201.status_code)
-    
-    print('Where to poll for status: %s' % resp201.headers['location'])
-    print('Polling every %s seconds...' % seconds_polling)
+        print(f'[ERROR] This should return HTTP status 201, but we got: {resp201.status_code}.')
+
+    print(f'[async] polling for status at: {resp201.headers['location']}')
+    print(f'[async] polling every {seconds_polling} seconds...')
     seconds_passed = 0
     polling_url = resp201.headers['location']
     while True:
         polling_result = session.get(resp.headers['location'])
         job_status = polling_result.json()['status'].lower()
-        print('Job status: %s' % job_status)
-        
+        print(f'[async] job status: {job_status}')
+
         if job_status == 'accepted' or job_status == 'running':
             if seconds_passed >= max_seconds:
-                print('Polled for %s seconds, giving up...' % max_seconds)
+                print(f'[ERROR] Polled for {max_seconds} seconds, giving up...')
             else:
                 time.sleep(seconds_polling)
                 seconds_passed += seconds_polling
 
         elif job_status == 'failed':
-            print('Job failed after %s seconds!' % seconds_passed)
-            print('################################# FAILURE #################################')
-            print('Debug info: %s' % polling_result.json())
-            print('###########################################################################')
+            print(f'[ERROR] job failed after {seconds_passed} seconds!')
+            print(f'[ERROR] ################################# FAILURE #################################')
+            print(f'[ERROR] ### debug info: {polling_result.json()}')
             print('Stopping.')
             sys.exit(1)
 
         elif job_status == 'successful':
-            print('Job successful after %s seconds!' % seconds_passed)
+            print(f'[async] job successful after {seconds_passed} seconds!')
             links_to_results = polling_result.json()['links']
-            #print('Links to results: %s' % links_to_results)
-            print('Picking the "%s"-type link from %s links to results.' % (required_type, len(links_to_results)))
+            #print('[async] Links to results: {links_to_results}')
+            print(f'[async] picking link of type "{required_type}" from {len(links_to_results)} result links.')
             link_types = []
             for link in links_to_results:
                 link_types.append(link['type'])
                 if link['type'] == required_type:
-                    #print('We pick this one (type %s): %s' % (required_type, link['href']))
+                    #print(f'[async] We pick this one (type {required_type}): {link['href']}')
                     link_to_result = link['href']
                     return link_to_result
 
-            print('Did not find a link of type "%s"! Only: %s' % (required_type, link_types))
+            print(f'[ERROR] did not find a link of type "{required_type}"! Only: {link_types}')
             print('Stopping.')
             sys.exit(1)
 
         else:
-            print('Could not understand job status: %s' % polling_result.json()['status'].lower())
+            print(f'[ERROR] could not understand job status: {polling_result.json()['status'].lower()}')
             print('Stopping.')
             sys.exit(1)
 
 '''
-##########################
-### points_att_polygon ###
-### excel              ###
-##########################
+############################
+### 1 points_att_polygon ###
+### excel                ###
+############################
 name = "points_att_polygon"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/points-att-polygon/execution'
@@ -151,16 +150,19 @@ final_result = session.get(result_points_att_polygon_url)
 print('  Result content: %s...' % str(final_result.content)[0:200])
 
 
-#################
-### peri_conv ###
-### excel     ###
-#################
+###################
+### 2 peri_conv ###
+### excel       ###
+###################
+## Input: Result from 1
+inputfile = result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv"
+
 name = "peri_conv"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/peri-conv/execution'
 inputs = {
     "inputs": {
-        "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
+        "input_data": inputfile,
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
@@ -201,10 +203,10 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 '''
 
 
-##########################
-### points_att_polygon ###
-### csv from ddas      ###
-##########################
+############################
+### 1 points_att_polygon ###
+### csv from ddas        ###
+############################
 # TODO: Can we use CSV data from https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv ?
 # For points_att_polygon, it is no problem, but later ts_selection_interpolation will fail!
 
@@ -245,21 +247,21 @@ print('It contains a link to our ACTUAL result: %s' % result_points_att_polygon_
 # Check out result itself:
 final_result = session.get(result_points_att_polygon_url)
 print('Result content: %s...' % str(final_result.content)[0:200])
-'''
 
-#####################
-### peri_conv     ###
-### csv from ddas ###
-#####################
-# TODO: Can we use CSV data from https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv ?
-# For peri_conv, it is no problem, if we specify the date format, but later ts_selection_interpolation will fail!
-'''
+
+#######################
+### 2 peri_conv     ###
+### csv from ddas   ###
+#######################
+## Input: Result from (1)
+inputfile = result_points_att_polygon_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/out/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv"
+
 name = "peri_conv"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/peri-conv/execution'
 inputs = {
     "inputs": {
-        "input_data": result_points_att_polygon_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/out/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv",
+        "input_data": inputfile,
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
@@ -294,15 +296,18 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 
-#####################
-### mean_by_group ###
-#####################
+#######################
+### 3 mean_by_group ###
+#######################
+## Input: Result from (2)
+inputfile = result_peri_conv_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/peri-conv/out/peri_conv-8a753070-cf6f-11f0-b3b0-fa163e42fba0.csv"
+
 name = "mean_by_group"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/mean-by-group/execution'
 inputs = {
     "inputs": {
-        "input_data": result_peri_conv_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/peri-conv/out/peri_conv-8a753070-cf6f-11f0-b3b0-fa163e42fba0.csv",
+        "input_data": inputfile,
         "colnames_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
         "colname_value": "transparen"
     }
@@ -342,15 +347,18 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 
-##################################
-### ts_selection_interpolation ###
-##################################
+####################################
+### 4 ts_selection_interpolation ###
+####################################
+## Input: Result from (3)
+inputfile = result_mean_by_group_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/mean-by-group/out/mean_by_group-46ee34f0-cf7e-11f0-8673-fa163e42fba0.csv"
+
 name = "ts_selection_interpolation"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/ts-selection-interpolation/execution'
 inputs = {
     "inputs": {
-        "input_data": result_mean_by_group_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/mean-by-group/out/mean_by_group-46ee34f0-cf7e-11f0-8673-fa163e42fba0.csv",
+        "input_data": inputfile,
         "colnames_relevant": "group_labels,HELCOM_ID",
         "missing_threshold_percentage": 60,
         "colname_year": "Year_adj_generated",
@@ -392,15 +400,20 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 
 
 
-#########################
-### trend_analysis_mk ###
-#########################
+###########################
+### 5 trend_analysis_mk ###
+###########################
+## Input: Result from (4)
+inputfile = result_ts_selection_interpolation_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/ts-selection-interpolation/out/interpolated_time_series-8c61e7b0-0845-11f1-a4fe-fa163e42fba0.csv"
+
 name = "trend_analysis_mk"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/trend-analysis-mk/execution'
+
+
 inputs = {
     "inputs": {
-        "input_data": result_ts_selection_interpolation_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/ts-selection-interpolation/out/interpolated_time_series-8c61e7b0-0845-11f1-a4fe-fa163e42fba0.csv",
+        "input_data": inputfile,
         #"colnames_relevant": "season,polygon_id",
         "colnames_relevant": "group_labels,HELCOM_ID",
         "colname_time": "Year_adj_generated",
@@ -439,9 +452,12 @@ final_result = session.get(result_trend_analysis_url)
 print('Result content: %s...' % str(final_result.content)[0:200])
 
 
-############################
-### map_shapefile_points ### 6.1
-############################
+##############################
+### 6 map_shapefile_points ### 6.1
+##############################
+## Input: Result from 1
+inputfile = result_points_att_polygon_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/out/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv"
+
 name = "map_shapefile_points"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/map-shapefile-points/execution'
@@ -451,7 +467,7 @@ inputs = {
         "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
         "colname_long": "longitude",
         "colname_lat": "latitude",
-        "input_data": result_points_att_polygon_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/out/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv",
+        "input_data": inputfile,
         "colname_value_name": "transparen",
         "colname_region_id": "HELCOM_ID"
     }
@@ -489,15 +505,18 @@ final_result = session.get(result_map_shapefile_points_url)
 print('Result content: %s...' % str(final_result.content)[0:200])
 
 
-#############################
-### barplot_trend_results ### 6.2
-#############################
+###############################
+### 7 barplot_trend_results ###
+###############################
+## Input: Result from 5
+inputfile = result_trend_analysis_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv"
+
 name = "barplot_trend_results"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/barplot-trend-results/execution'
 inputs = {
     "inputs": {
-        "input_data": result_trend_analysis_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv",
+        "input_data": inputfile,
         "colname_id": "HELCOM_ID", # "polygon_id",
         "colname_test_value": "Tau_Value",
         "colname_p_value": "P_Value",
@@ -548,6 +567,9 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 #########################
 ### map_trends_static ### 6.4
 #########################
+## Input: Result from 5
+inputfile = result_trend_analysis_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv"
+
 
 ## Missing package tmap!
 ## Has never worked, according to Markus!
@@ -560,7 +582,7 @@ inputs = {
     "inputs": {
         #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
-        "input_data": result_trend_analysis_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv",
+        "input_data": inputfile,
         "colname_id_trend": "HELCOM_ID", # "polygon_id",
         "colname_region_id": "HELCOM_ID",
         "colname_group": "period", # "season"
