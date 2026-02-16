@@ -263,8 +263,8 @@ inputs = {
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
-        "year_starts_at_Dec1": "True",
-        "date_format": "%Y/%m/%d" # correct for DDAS csv inputs
+        "year_starts_at_Dec1": True,
+        "date_format": "y/m/d" # correct for DDAS csv inputs
     }
 }
 
@@ -304,9 +304,10 @@ inputs = {
     "inputs": {
         "input_data": result_peri_conv_url or "https://aqua.igb-berlin.de/download/testinputs/peri_conv.csv",
         "colnames_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
-        "colname_value": "transparency_m"
+        "colname_value": "transparen"
     }
 }
+# Note: The column name used to be "transparency_m", now it is "transparen", not sure why.
 
 
 # sync:
@@ -351,10 +352,10 @@ inputs = {
     "inputs": {
         "input_data": result_mean_by_group_url or "https://aqua.igb-berlin.de/download/testinputs/mean_by_group.csv",
         "colnames_relevant": "group_labels,HELCOM_ID",
-        "missing_threshold_percentage": "40",
+        "missing_threshold_percentage": 60,
         "colname_year": "Year_adj_generated",
-        "colname_value": "transparency_m", # not in the result: "Secchi_m_mean_annual",
-        "min_data_point": "10"
+        "colname_value": "transparen", # not in the result: "Secchi_m_mean_annual",
+        "min_data_point": 10
     }
 }
 
@@ -382,7 +383,7 @@ if not resp.status_code == 200 or force_async:
     print('Result (JSON document): %s' % result_application_json)
 
 # Results (sync / async, does not matter):
-href = result_application_json['outputs']['data_grouped_by_date']['href']
+href = result_application_json['outputs']['interpolated_time_series']['href']
 result_ts_selection_interpolation_url = href
 print('It contains a link to our ACTUAL result: %s' % result_ts_selection_interpolation_url)
 # Check out result itself:
@@ -403,7 +404,7 @@ inputs = {
         #"colnames_relevant": "season,polygon_id",
         "colnames_relevant": "group_labels,HELCOM_ID",
         "colname_time": "Year_adj_generated",
-        "colname_value": "transparency_m", # "Secchi_m_mean_annual"
+        "colname_value": "transparen", # "Secchi_m_mean_annual"
     }
 }
 
@@ -451,7 +452,7 @@ inputs = {
         "colname_long": "longitude",
         "colname_lat": "latitude",
         "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
-        "colname_value_name": "transparency_m",
+        "colname_value_name": "transparen",
         "colname_region_id": "HELCOM_ID"
     }
 }
@@ -500,7 +501,7 @@ inputs = {
         "colname_id": "HELCOM_ID", # "polygon_id",
         "colname_test_value": "Tau_Value",
         "colname_p_value": "P_Value",
-        "p_value_threshold": "0.05",
+        "p_value_threshold": 0.05,
         "colname_group": "period", # "season"
     }
 }
@@ -558,7 +559,7 @@ inputs = {
         "colname_id_trend": "HELCOM_ID", # "polygon_id",
         "colname_region_id": "HELCOM_ID",
         "colname_group": "period", # "season"
-        "p_value_threshold": "0.05",
+        "p_value_threshold": 0.05,
         "colname_p_value": "P_Value"
     }
 }
