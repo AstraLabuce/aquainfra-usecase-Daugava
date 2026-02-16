@@ -100,6 +100,7 @@ def poll_for_links(resp201, session, required_type='application/json', seconds_p
             print('Stopping.')
             sys.exit(1)
 
+'''
 ##########################
 ### points_att_polygon ###
 ### excel              ###
@@ -197,7 +198,7 @@ print('It contains a link to our ACTUAL result: %s' % result_peri_conv_url)
 # Check out result itself:
 final_result = session.get(result_peri_conv_url)
 print('Result content: %s...' % str(final_result.content)[0:200])
-
+'''
 
 
 ##########################
@@ -206,7 +207,7 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 ##########################
 # TODO: Can we use CSV data from https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv ?
 # For points_att_polygon, it is no problem, but later ts_selection_interpolation will fail!
-'''
+
 name = "points_att_polygon"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/points-att-polygon/execution'
@@ -290,7 +291,7 @@ print('It contains a link to our ACTUAL result: %s' % result_peri_conv_url)
 # Check out result itself:
 final_result = session.get(result_peri_conv_url)
 print('Result content: %s...' % str(final_result.content)[0:200])
-'''
+
 
 
 #####################
