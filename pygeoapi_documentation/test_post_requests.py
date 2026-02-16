@@ -259,7 +259,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/peri-conv/execution'
 inputs = {
     "inputs": {
-        "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
+        "input_data": result_points_att_polygon_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/out/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv",
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "group_labels": "winter,spring,summer,autumn",
@@ -302,7 +302,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/mean-by-group/execution'
 inputs = {
     "inputs": {
-        "input_data": result_peri_conv_url or "https://aqua.igb-berlin.de/download/testinputs/peri_conv.csv",
+        "input_data": result_peri_conv_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/peri-conv/out/peri_conv-8a753070-cf6f-11f0-b3b0-fa163e42fba0.csv",
         "colnames_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
         "colname_value": "transparen"
     }
@@ -350,7 +350,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/ts-selection-interpolation/execution'
 inputs = {
     "inputs": {
-        "input_data": result_mean_by_group_url or "https://aqua.igb-berlin.de/download/testinputs/mean_by_group.csv",
+        "input_data": result_mean_by_group_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/mean-by-group/out/mean_by_group-46ee34f0-cf7e-11f0-8673-fa163e42fba0.csv",
         "colnames_relevant": "group_labels,HELCOM_ID",
         "missing_threshold_percentage": 60,
         "colname_year": "Year_adj_generated",
@@ -400,7 +400,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/trend-analysis-mk/execution'
 inputs = {
     "inputs": {
-        "input_data": result_ts_selection_interpolation_url or "https://aqua.igb-berlin.de/download/testinputs/interpolated_time_series.csv",
+        "input_data": result_ts_selection_interpolation_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/ts-selection-interpolation/out/interpolated_time_series-8c61e7b0-0845-11f1-a4fe-fa163e42fba0.csv",
         #"colnames_relevant": "season,polygon_id",
         "colnames_relevant": "group_labels,HELCOM_ID",
         "colname_time": "Year_adj_generated",
@@ -451,7 +451,7 @@ inputs = {
         "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
         "colname_long": "longitude",
         "colname_lat": "latitude",
-        "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
+        "input_data": result_points_att_polygon_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/out/data_merged_with_regions-f013320a-cf6c-11f0-98ef-fa163e42fba0.csv",
         "colname_value_name": "transparen",
         "colname_region_id": "HELCOM_ID"
     }
@@ -497,7 +497,7 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/barplot-trend-results/execution'
 inputs = {
     "inputs": {
-        "input_data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_results.csv",
+        "input_data": result_trend_analysis_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv",
         "colname_id": "HELCOM_ID", # "polygon_id",
         "colname_test_value": "Tau_Value",
         "colname_p_value": "P_Value",
@@ -560,7 +560,7 @@ inputs = {
     "inputs": {
         #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
-        "input_data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
+        "input_data": result_trend_analysis_url or "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv",
         "colname_id_trend": "HELCOM_ID", # "polygon_id",
         "colname_region_id": "HELCOM_ID",
         "colname_group": "period", # "season"
