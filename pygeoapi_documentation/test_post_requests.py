@@ -548,6 +548,11 @@ print('Result content: %s...' % str(final_result.content)[0:200])
 #########################
 ### map_trends_static ### 6.4
 #########################
+
+## Missing package tmap!
+## Has never worked, according to Markus!
+
+'''
 name = "map_trends_static"
 print('\nCalling %s...' % name)
 url = base_url+'/processes/map-trends-static/execution'
@@ -594,7 +599,7 @@ print('It contains a link to our ACTUAL result: %s' % result_map_trends_static_u
 # Check out result itself:
 final_result = session.get(result_map_trends_static_url)
 print('Result content: %s...' % str(final_result.content)[0:200])
-
+'''
 
 
 ###################
