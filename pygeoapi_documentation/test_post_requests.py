@@ -110,7 +110,7 @@ url = base_url+'/processes/points-att-polygon/execution'
 inputs = { 
     "inputs": {
         #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
-        "regions": "https://aqua.igb-berlin.de/download/testinputs/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
         "colname_long": "longitude",
         "colname_lat": "latitude",
         "input_data": "https://aqua.igb-berlin.de/download/testinputs/in_situ_example.xlsx" # date format: 1998-02-14T12:30:00
@@ -212,7 +212,8 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/points-att-polygon/execution'
 inputs = {
     "inputs": {
-        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
         "colname_long": "longitude",
         "colname_lat": "latitude",
         "input_data": "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # date format: 1998/02/14 12:30:00.000
@@ -444,7 +445,8 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/map-shapefile-points/execution'
 inputs = {
     "inputs": {
-        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
         "colname_long": "longitude",
         "colname_lat": "latitude",
         "input_data": result_points_att_polygon_url or "https://aqua.igb-berlin.de/download/testinputs/points_att_polygon.csv",
@@ -549,7 +551,8 @@ print('\nCalling %s...' % name)
 url = base_url+'/processes/map-trends-static/execution'
 inputs = {
     "inputs": {
-        "regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
+        "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
         "input_data": result_trend_analysis_url or "https://aqua.igb-berlin.de/download/testinputs/trend_analysis_mk.csv",
         "colname_id_trend": "HELCOM_ID", # "polygon_id",
         "colname_region_id": "HELCOM_ID",
