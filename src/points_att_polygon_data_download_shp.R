@@ -36,9 +36,9 @@ tryCatch(
     print(paste0("Unzipped to directory ", shp_dir_unzipped))
   },
   warning = function(warn) {
-    message(paste("Unzipping ", regions_path, " failed, reason: ", warn[1]))
+    message(paste("Error: Unzipping ", regions_path, " failed, reason: ", warn[1]))
   },
   error = function(err) {
-    message(paste("Unzipping ", regions_path, " failed, reason: ", warn[1]))
+    message(paste("Error: Unzipping ", regions_path, " failed, reason: ", warn[1]))
   }
 )

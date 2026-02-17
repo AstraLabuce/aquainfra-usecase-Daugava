@@ -19,10 +19,11 @@ tryCatch(
     print(paste0("File ", table_file_path, " downloaded."))
   },
   warning = function(warn) {
-    message(paste("Download of input table failed, reason: ", warn[1]))
+    # TODO: Shouldn't these be proper errors, via "stop()"?
+    message(paste("Error: Download of input table failed, reason: ", warn[1]))
   },
   error = function(err) {
-    message(paste("Download of input table failed, reason: ", err[1]))
+    message(paste("Error: Download of input table failed, reason: ", err[1]))
   }
 )
 
