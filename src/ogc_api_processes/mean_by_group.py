@@ -15,7 +15,7 @@ curl -X POST https://${PYSERVER}/processes/mean-by-group/execution \
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/mean-by-group/peri_conv.csv",
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/peri-conv/out/peri_conv-8a753070-cf6f-11f0-b3b0-fa163e42fba0.csv",
         "colnames_to_group_by": "longitude, latitude, Year_adj_generated, group_labels, HELCOM_ID",
         "colname_value": "transparen"
     } 

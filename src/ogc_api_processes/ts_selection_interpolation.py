@@ -16,7 +16,7 @@ curl -X POST https://${PYSERVER}/processes/ts-selection-interpolation/execution 
 --header 'Content-Type: application/json' \
 --data '{ 
     "inputs": {
-        "input_data": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/ts-selection-interpolation/mean_by_group.csv",
+        "input_data": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/mean-by-group/out/mean_by_group-46ee34f0-cf7e-11f0-8673-fa163e42fba0.csv",
         "colnames_relevant": "group_labels,HELCOM_ID",
         "missing_threshold_percentage": 60,
         "colname_year": "Year_adj_generated",
