@@ -41,27 +41,48 @@ docker build -t daugava-workflow-image .
 
 The following commands were implemented and tested on Ubuntu 22.04.5 LTS. Other operating systems might require adjustments regarding file paths. The commands can be executed one after the other.  
 
-`docker run -it -v ./out:/out -e R_SCRIPT="points_att_polygon.R" daugava-workflow-image -- "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "https://zenodo.org/records/15234377/files/inputdata_points.json?download=1" "longitude" "latitude" "/out/output1_pointsAttPolygon.csv"`
+```
+docker run -it -v ./out:/out -e R_SCRIPT="points_att_polygon.R" daugava-workflow-image -- "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "https://zenodo.org/records/15234377/files/inputdata_points.json?download=1" "longitude" "latitude" "/out/output1_pointsAttPolygon.csv"
+```
 
-`docker run -it -v ./out:/out -e R_SCRIPT="peri_conv.R" daugava-workflow-image -- "/out/output1_pointsAttPolygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" "y/m/d" "true" "/out/output2_periConv.csv"`
+```
+docker run -it -v ./out:/out -e R_SCRIPT="peri_conv.R" daugava-workflow-image -- "/out/output1_pointsAttPolygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" "y/m/d" "true" "/out/output2_periConv.csv"
+```
 
-`docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image -- "/out/output2_periConv.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output3_meanByGropup.csv"`
+```
+docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image -- "/out/output2_periConv.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output3_meanByGropup.csv"
+```
 
-`docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image -- "/out/output3_meanByGropup.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output4_meanByGropup.csv"`
+```
+docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image -- "/out/output3_meanByGropup.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output4_meanByGropup.csv"
+```
 
-`docker run -it -v ./out:/out -e R_SCRIPT="ts_selection_interpolation.R" daugava-workflow-image -- "/out/output4_meanByGropup.csv" "group_labels,HELCOM_ID" 80 "Year_adj_generated" "transparen" 10 "/out/output5_tsSelectionInterpolation.csv"`
+```
+docker run -it -v ./out:/out -e R_SCRIPT="ts_selection_interpolation.R" daugava-workflow-image -- "/out/output4_meanByGropup.csv" "group_labels,HELCOM_ID" 80 "Year_adj_generated" "transparen" 10 "/out/output5_tsSelectionInterpolation.csv"
+```
 
-`docker run -it -v ./out:/out -e R_SCRIPT="trend_analysis_mk.R" daugava-workflow-image -- "/out/output5_tsSelectionInterpolation.csv" "group_labels,HELCOM_ID" "Year_adj_generated" "transparen" "/out/output6_trendAnalysisMk.csv"`
+```
+docker run -it -v ./out:/out -e R_SCRIPT="trend_analysis_mk.R" daugava-workflow-image -- "/out/output5_tsSelectionInterpolation.csv" "group_labels,HELCOM_ID" "Year_adj_generated" "transparen" "/out/output6_trendAnalysisMk.csv"
+```
 
-`docker run -it -v ./out:/out -e R_SCRIPT="barplot_trend_results.R" daugava-workflow-image -- "/out/output6_trendAnalysisMk.csv" "HELCOM_ID" "Tau_Value" "P_Value" 0.05 "group_labels" "/out/output7_barplotTrendResults.png"`
+```
+docker run -it -v ./out:/out -e R_SCRIPT="barplot_trend_results.R" daugava-workflow-image -- "/out/output6_trendAnalysisMk.csv" "HELCOM_ID" "Tau_Value" "P_Value" 0.05 "group_labels" "/out/output7_barplotTrendResults.png"
+```
 
-`docker run -it -v ./out:/out -e R_SCRIPT="map_shapefile_points.R" daugava-workflow-image -- "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "/out/output1_pointsAttPolygon.csv" "longitude" "latitude" "transparen" "HELCOM_ID" "/out/output8_mapShapefilePoints.html"`
+```
+docker run -it -v ./out:/out -e R_SCRIPT="map_shapefile_points.R" daugava-workflow-image -- "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "/out/output1_pointsAttPolygon.csv" "longitude" "latitude" "transparen" "HELCOM_ID" "/out/output8_mapShapefilePoints.html"
+```
+
 
 ## Running functions via cURL commands
 
-The response of the commands include a jobID, which can be attached to the URL `https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs/", e.g., https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs/bde6c077-8a26-11f0-960c-fa163e42fba0`. Under `https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs/bde6c077-8a26-11f0-960c-fa163e42fba0/results?f=json` you can find the URL ot the resulting output under `href`. This URL can be used as input for the next function. 
+The response of the commands include a jobID, which can be attached to the URL `https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs/", e.g., https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs/bde6c077-8a26-11f0-960c-fa163e42fba0`. Under `https://aquainfra.ogc.igb-berlin.de/pygeoapi/jobs/bde6c077-8a26-11f0-960c-fa163e42fba0/results?f=json` you can find the URL ot the resulting output under `href`. This URL can be used as input for the next function.
 
-`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/points-att-polygon/execution' \
+Note: You can also find the URL with the attached jobID by adding `-i` to the curl request, and looking for the `location` header in the HTTP response headers.
+
+
+```
+curl -i --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/points-att-polygon/execution' \
 --header 'Content-Type: application/json' \
 --header 'Prefer: respond-async' \
 --data '{ 
@@ -71,9 +92,12 @@ The response of the commands include a jobID, which can be attached to the URL `
         "colname_long": "longitude",
         "colname_lat": "latitude"
     }
-}'`
+}'
+```
 
-`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/peri-conv/execution' \
+
+```
+curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/peri-conv/execution' \
 --header 'Content-Type: application/json' \
 --header 'Prefer: respond-async' \
 --data '{ 
@@ -82,12 +106,18 @@ The response of the commands include a jobID, which can be attached to the URL `
         "colname_date": "visit_date",
         "group_to_periods": "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30",
         "period_labels": "winter,spring,summer,autumn",
-        "year_starts_at_dec1": "True",
+        "year_starts_at_dec1": true,
         "date_format": "y/m/d"
     } 
-}'`
+}'
 
-`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/mean-by-group/execution' \
+# ... or with "-i":
+# curl -i --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/peri-conv/execution' \
+```
+
+
+```
+curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/mean-by-group/execution' \
 --header 'Prefer: respond-async' \
 --header 'Content-Type: application/json' \
 --data '{ 
@@ -96,9 +126,12 @@ The response of the commands include a jobID, which can be attached to the URL `
         "colnames_to_group_by": "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID",
         "colname_value": "transparen"
     } 
-}'`
+}'
+```
 
-`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/mean-by-group/execution' \
+
+```
+curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/mean-by-group/execution' \
 --header 'Prefer: respond-async' \
 --header 'Content-Type: application/json' \
 --data '{ 
@@ -107,9 +140,12 @@ The response of the commands include a jobID, which can be attached to the URL `
         "colnames_to_group_by": "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID",
         "colname_value": "transparen"
     } 
-}'`
+}'
+```
 
-`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/ts-selection-interpolation/execution' \
+
+```
+curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/ts-selection-interpolation/execution' \
 --header 'Prefer: respond-async' \
 --header 'Content-Type: application/json' \
 --data '{ 
@@ -119,11 +155,14 @@ The response of the commands include a jobID, which can be attached to the URL `
         "missing_threshold_percentage": 80.0,
         "colname_year": "Year_adj_generated",
         "colname_value": "transparen",
-        "min_data_point": "10"
+        "min_data_point": 10
     } 
-}'`
+}'
+```
 
-`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/trend-analysis-mk/execution' \
+
+```
+curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/trend-analysis-mk/execution' \
 --header 'Prefer: respond-async' \
 --header 'Content-Type: application/json' \
 --data '{ 
@@ -133,9 +172,12 @@ The response of the commands include a jobID, which can be attached to the URL `
         "colname_time": "Year_adj_generated",
         "colname_value": "transparen"
     } 
-}'`
+}'
+```
 
-`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/barplot-trend-results/execution' \
+
+```
+curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/barplot-trend-results/execution' \
 --header 'Prefer: respond-async' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -144,12 +186,15 @@ The response of the commands include a jobID, which can be attached to the URL `
         "colname_id": "HELCOM_ID",
         "colname_test_value": "Tau_Value",
         "colname_p_value": "P_Value",
-        "p_value_threshold": "0.05",
+        "p_value_threshold": 0.05,
         "colname_group": "group_labels"
     } 
-}'`
+}'
+```
 
-`curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/map-shapefile-points/execution' \
+
+```
+curl --location 'https://aquainfra.ogc.igb-berlin.de/pygeoapi/processes/map-shapefile-points/execution' \
 --header 'Prefer: respond-async' \
 --header 'Content-Type: application/json' \
 --data '{ 
@@ -161,7 +206,9 @@ The response of the commands include a jobID, which can be attached to the URL `
         "colname_value_name": "transparen",
         "colname_region_id": "HELCOM_ID"
     } 
-}'`
+}'
+```
+
 
 
 ## OGC processes
