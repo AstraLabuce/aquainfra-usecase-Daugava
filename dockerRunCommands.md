@@ -1,7 +1,7 @@
 
 # Example Docker Run Commands
 
-Testing 2026-02-17 with new image based on commit `ce88a01b6a91391342ec7bd2724645f4bc172a4b`.
+Testing 2026-02-17 with image based on commit `5a309b550c2aed823faf5a8a9bc3aba8e57e263f`.
 
 
 ## 1. points-att-polygon
@@ -146,6 +146,6 @@ docker run -it -v ./out:/out -e R_SCRIPT="map_trends_static.R" daugava-workflow-
     "/out/output9_map_trends_static_test.png";
 ```
 
-Fails: `Error in library(rosm) : there is no package called tmap`
+Fails: `Error in library(tmap) : there is no package called tmap`
 
 
