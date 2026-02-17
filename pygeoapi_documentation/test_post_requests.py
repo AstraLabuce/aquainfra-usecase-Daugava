@@ -121,7 +121,7 @@ def execute_and_retrieve_result(base_url, process_id, inputs, output_name, force
         print(f'[sync]  response: {result_application_json}')
 
     # Handle error during sync:
-    if not resp.status_code == 200 and not resp.status_code == 405:
+    if not resp.status_code == 200 and not resp.status_code == 504:
         try:
             print(f'[ERROR] ################################# FAILURE #################################')
             print(f'[ERROR] ### HTTP: {resp.status_code}')
@@ -135,7 +135,7 @@ def execute_and_retrieve_result(base_url, process_id, inputs, output_name, force
             sys.exit(1)
 
     # Handle Gateway timeout
-    if resp.status_code == 405 or force_async:
+    if resp.status_code == 504 or force_async:
         print(f'[async] request to: {process_id}')
         resp = session.post(url, headers=headers_async, json=inputs)
         print(f'[async] request to: {process_id}: HTTP {resp.status_code}') # should be HTTP 201
