@@ -16,8 +16,9 @@ mean_by_group <- function(data, cols_to_group_by = "group", value_col = "value")
   if (missing(cols_to_group_by))
     stop("missing cols_to_group_by")
   err = paste0("Error: `", value_col, "` is not numeric.")
-  stopifnot(err =
-              is.numeric(as.data.frame(data)[, names(data) == value_col]))
+  if (!is.numeric(as.data.frame(data)[, names(data) == value_col])) {
+    stop(paste0("Error: `", value_col, "` is not numeric."))
+  }
   print('calculating mean_by_group')
 
   data <- as.data.frame(data)[, names(data) %in% cols_to_group_by | names(data) == value_col]
