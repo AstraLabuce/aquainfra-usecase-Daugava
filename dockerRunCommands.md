@@ -1,7 +1,11 @@
 
 # Example Docker Run Commands
 
+<<<<<<< HEAD
 Testing 2026-02-17 with image based on commit `5a309b550c2aed823faf5a8a9bc3aba8e57e263f`.
+=======
+Testing 2026-02-17 with new image based on commit `ce88a01b6a91391342ec7bd2724645f4bc172a4b`.
+>>>>>>> 332fbf1 (Added README with docker run commands, tested 2026-02-17.)
 
 
 ## 1. points-att-polygon
@@ -9,7 +13,7 @@ Testing 2026-02-17 with image based on commit `5a309b550c2aed823faf5a8a9bc3aba8e
 Tested 2026-02-17
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="points_att_polygon.R" daugava-workflow-image:20260217-test -- \
+docker run -it -v ./out:/out -e SCRIPT="points_att_polygon.R" daugava-workflow-image:20260217-dev \
     "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip" \
     "https://raw.githubusercontent.com/AstraLabuce/aquainfra-usecase-Daugava/81f349dd549527df83bfd4eec589dc35b0c062d6/in_situ_data/in_situ_example.csv" \
     "longitude" "latitude" \
@@ -24,7 +28,7 @@ docker run -it -v ./out:/out -e R_SCRIPT="points_att_polygon.R" daugava-workflow
 * Note: Boolean has to be string `"true"` or `"false"`
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="peri_conv.R" daugava-workflow-image:20260217-test -- \
+docker run -it -v ./out:/out -e SCRIPT="peri_conv.R" daugava-workflow-image:20260217-dev \
     "/out/output1_pointsAttPolygon.csv" \
     "visit_date" \
     "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" \
@@ -40,7 +44,7 @@ docker run -it -v ./out:/out -e R_SCRIPT="peri_conv.R" daugava-workflow-image:20
 * Note: No spaces in list!
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image:20260217-test -- \
+docker run -it -v ./out:/out -e SCRIPT="mean_by_group.R" daugava-workflow-image:20260217-dev \
     "/out/output2_periConv.csv" \
     "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" \
     "transparen" \
@@ -53,7 +57,7 @@ docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-imag
 * Note: Numbers have to be strings, e.g. `"60"`
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="ts_selection_interpolation.R" daugava-workflow-image:20260217-test -- \
+docker run -it -v ./out:/out -e SCRIPT="ts_selection_interpolation.R" daugava-workflow-image:20260217-dev \
     "/out/output3_mean_by_group.csv" \
     "group_labels,HELCOM_ID" \
     "60" \
@@ -69,7 +73,7 @@ docker run -it -v ./out:/out -e R_SCRIPT="ts_selection_interpolation.R" daugava-
 * Tested 2026-02-17
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="trend_analysis_mk.R" daugava-workflow-image:20260217-test -- \
+docker run -it -v ./out:/out -e SCRIPT="trend_analysis_mk.R" daugava-workflow-image:20260217-dev \
     "/out/output4_ts_selection_interpolation.csv" \
     "group_labels,HELCOM_ID" \
     "Year_adj_generated" \
@@ -84,7 +88,7 @@ docker run -it -v ./out:/out -e R_SCRIPT="trend_analysis_mk.R" daugava-workflow-
 * Input is output of process 1!
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="map_shapefile_points.R" daugava-workflow-image:20260217-test -- \
+docker run -it -v ./out:/out -e SCRIPT="map_shapefile_points.R" daugava-workflow-image:20260217-dev \
     "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip" \
     "/out/output1_pointsAttPolygon.csv" \
     "longitude" \
@@ -101,7 +105,7 @@ docker run -it -v ./out:/out -e R_SCRIPT="map_shapefile_points.R" daugava-workfl
 * Note: Numbers have to be strings, e.g. `"0.05"`
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="barplot_trend_results.R" daugava-workflow-image:20260217-test -- \
+docker run -it -v ./out:/out -e SCRIPT="barplot_trend_results.R" daugava-workflow-image:20260217-dev \
     "/out/output5_trend_analysis.csv" \
     "HELCOM_ID" \
     "Tau_Value" \
@@ -124,7 +128,7 @@ not implemented
 * Note: Numbers have to be strings, e.g. `"0.05"`
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="map_trends_static.R" daugava-workflow-image:20260217-test -- \
+docker run -it -v ./out:/out -e SCRIPT="map_trends_static.R" daugava-workflow-image:20260217-dev \
     "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip" \
     "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/trend-analysis-mk/out/trend_analysis_results-1a7b73d8-0848-11f1-b387-fa163e42fba0.csv" \
     "HELCOM_ID" \
@@ -135,7 +139,7 @@ docker run -it -v ./out:/out -e R_SCRIPT="map_trends_static.R" daugava-workflow-
     "/out/output9_map_trends_static_test.png";
 
 
-docker run -it -v ./out:/out -e R_SCRIPT="map_trends_static.R" daugava-workflow-image:20260217-test -- \
+docker run -it -v ./out:/out -e SCRIPT="map_trends_static.R" daugava-workflow-image:20260217-dev \
     "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip" \
     "/out/output5_trend_analysis.csv" \
     "HELCOM_ID" \
@@ -146,6 +150,5 @@ docker run -it -v ./out:/out -e R_SCRIPT="map_trends_static.R" daugava-workflow-
     "/out/output9_map_trends_static_test.png";
 ```
 
-Fails: `Error in library(tmap) : there is no package called tmap`
-
+Fails: `Error in library(rosm) : there is no package called ‘rosm’`
 
