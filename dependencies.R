@@ -1,6 +1,7 @@
 
 packages <- c(
   "tmap",
+  "rosm",
   "mapview",
   "dplyr",
   "ggplot2",
