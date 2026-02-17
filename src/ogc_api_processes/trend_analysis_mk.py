@@ -37,7 +37,7 @@ class TrendAnalysisMkProcessor(BaseProcessor):
         self.supports_outputs = True
         self.job_id = 'nothing-yet'
         self.process_id = self.metadata["id"]
-        self.image_name = "daugava-workflow-image:20260217-bf84a5e"
+        self.image_name = "daugava-workflow-image:20260217-8b74622"
         self.script_name = "trend_analysis_mk.R"
         config_file_path = os.environ.get('AQUAINFRA_CONFIG_FILE', "./config.json")
         with open(config_file_path) as config_file:
