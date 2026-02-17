@@ -194,17 +194,21 @@ result_peri_conv_url = execute_and_retrieve_result(base_url, process_id, inputs,
 ### 1 points_att_polygon ###
 ### csv from ddas        ###
 ############################
+## Input:
+## CSV file with observations, from GitHub:
+inputfile = "https://raw.githubusercontent.com/AstraLabuce/aquainfra-usecase-Daugava/81f349dd549527df83bfd4eec589dc35b0c062d6/in_situ_data/in_situ_example.csv"
+## CSV with observations, from DDAS:
+inputfile = "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # date format: 1998/02/14 12:30:00.000
 
 process_id = "points-att-polygon"
 output_name = "data_merged_with_regions"
-url = base_url+'/processes/points-att-polygon/execution'
 inputs = {
     "inputs": {
         #"regions": "https://maps.helcom.fi/arcgis/rest/directories/arcgisoutput/MADS/tools_GPServer/_ags_HELCOM_subbasin_with_coastal_WFD_waterbodies_or_wa.zip",
         "regions": "https://aquainfra.ogc.igb-berlin.de/exampledata/daugava/points-att-polygon/HELCOM_subbasin_with_coastal_WFD_waterbodies_or_watertypes_2022.zip",
         "colname_long": "longitude",
         "colname_lat": "latitude",
-        "input_data": "https://vm4412.kaj.pouta.csc.fi/ddas/oapif/collections/lva_secchi/items?f=csv&limit=3000" # date format: 1998/02/14 12:30:00.000
+        "input_data": inputfile
     } 
 }
 
