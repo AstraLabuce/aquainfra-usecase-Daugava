@@ -1,4 +1,6 @@
 # Define directory and path for the data points file
+#input_data_dir <- get("input_data_dir", ifnotfound = "./")
+if (!exists("input_data_dir")) stop("input_data_dir must be defined before running this script.")
 in_situ_directory <- paste0(input_data_dir, "in_situ_data/")
 table_file_name <- "input_data_points"
 table_file_path <- paste0(in_situ_directory, table_file_name)

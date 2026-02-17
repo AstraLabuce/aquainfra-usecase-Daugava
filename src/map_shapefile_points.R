@@ -86,8 +86,8 @@ out_result_path_url <- args[7] # e.g. "map_shapefile_insitu.html"
 # Read the input data from file - this can take a URL!
 dpoints <- data.table::fread(in_dpoints_path_or_url)
 
+# Need to define input_data_dir, which is expected by the sourced code!
 input_data_dir <- "/in/"
-
 source("points_att_polygon_data_download_shp.R")
 
 # Read shapefile

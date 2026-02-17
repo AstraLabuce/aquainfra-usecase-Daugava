@@ -79,6 +79,8 @@ out_result_path_png <- args[8] # e.g. "map_trend_results.png"
 # Read the input data from file - this can take a URL!
 data <- data.table::fread(in_trend_results_path_or_url)
 
+# Need to define input_data_dir, which is expected by the sourced code!
+input_data_dir <- "/in/"
 source("points_att_polygon_data_download_shp.R")
 
 shapefile <- st_read(shp_dir_unzipped)

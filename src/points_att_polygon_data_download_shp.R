@@ -1,4 +1,6 @@
 # Define shapefile directory and path
+#input_data_dir <- get("input_data_dir", ifnotfound = "./")
+if (!exists("input_data_dir")) stop("input_data_dir must be defined before running this script.")
 regions_directory <- paste0(input_data_dir, "shp/")
 shp_file_name <- "input_data_regions.zip"
 regions_path <- paste0(regions_directory, shp_file_name)
