@@ -90,12 +90,16 @@ def poll_for_links(resp201, session, required_type='application/json', seconds_p
                     link_to_result = link['href']
                     return link_to_result
 
-            print(f'[ERROR] did not find a link of type "{required_type}"! Only: {link_types}')
+            print(f'[ERROR] ################################# FAILURE #################################')
+            print(f'[ERROR] ### did not find a link of type "{required_type}"! Only: {link_types}')
+            print(f'[ERROR] ### debug info: {polling_result.json()}')
             print('Stopping.')
             sys.exit(1)
 
         else:
-            print(f'[ERROR] could not understand job status: {polling_result.json()['status'].lower()}')
+            print(f'[ERROR] ################################# FAILURE #################################')
+            print(f'[ERROR] ### could not understand job status: {polling_result.json()['status'].lower()}')
+            print(f'[ERROR] ### debug info: {polling_result.json()}')
             print('Stopping.')
             sys.exit(1)
 
@@ -119,10 +123,14 @@ def execute_and_retrieve_result(base_url, process_id, inputs, output_name, force
     # Handle error during sync:
     if not resp.status_code == 200 and not resp.status_code == 405:
         try:
-            print(f'[ERROR] HTTP: {resp.status_code}')
-            print(f'[ERROR] response: {resp.json()}')
+            print(f'[ERROR] ################################# FAILURE #################################')
+            print(f'[ERROR] ### HTTP: {resp.status_code}')
+            print(f'[ERROR] ### response: {resp.json()}')
+            print('Stopping.')
+            sys.exit(1)
         except Exception as e:
-            print(f'[ERROR] ran into error: {e}')
+            print(f'[ERROR] ################################# FAILURE #################################')
+            print(f'[ERROR] ### ran into error: {e}')
             print('Stopping.')
             sys.exit(1)
 
