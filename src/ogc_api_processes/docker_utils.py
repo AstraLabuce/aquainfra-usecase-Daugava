@@ -52,12 +52,14 @@ def run_docker_container(
         sanitized_args.append(newarg)
 
     # Assemble docker command:
+    # Note: Previously, two dashes had to be added to denote when the script args
+    #       were starting, that has been changed by using an entrypoint.
+    # Note: Previously, the env var "R_SCRIPT" was used, now just "SCRIPT".
     docker_command = [
         docker_executable, "run", "--rm", "--name", container_name,
         "-v", f"{output_dir}:{container_out}",
-        "-e", f"R_SCRIPT={script_name}",  # Set the R_SCRIPT environment variable
+        "-e", f"SCRIPT={script_name}",  # Set the R_SCRIPT environment variable
         image_name,
-        "--",  # Indicates the end of Docker's internal arguments and the start of the user's arguments
     ]
     docker_command = docker_command + sanitized_args
 

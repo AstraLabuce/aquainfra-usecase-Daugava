@@ -42,35 +42,35 @@ docker build -t daugava-workflow-image .
 The following commands were implemented and tested on Ubuntu 22.04.5 LTS. Other operating systems might require adjustments regarding file paths. The commands can be executed one after the other.  
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="points_att_polygon.R" daugava-workflow-image -- "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "https://zenodo.org/records/15234377/files/inputdata_points.json?download=1" "longitude" "latitude" "/out/output1_pointsAttPolygon.csv"
+docker run -it -v ./out:/out -e SCRIPT="points_att_polygon.R" daugava-workflow-image "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "https://zenodo.org/records/15234377/files/inputdata_points.json?download=1" "longitude" "latitude" "/out/output1_pointsAttPolygon.csv"
 ```
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="peri_conv.R" daugava-workflow-image -- "/out/output1_pointsAttPolygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" "y/m/d" "true" "/out/output2_periConv.csv"
+docker run -it -v ./out:/out -e SCRIPT="peri_conv.R" daugava-workflow-image "/out/output1_pointsAttPolygon.csv" "visit_date" "Dec-01:Mar-01,Mar-02:May-30,Jun-01:Aug-30,Sep-01:Nov-30" "winter,spring,summer,autumn" "y/m/d" "true" "/out/output2_periConv.csv"
 ```
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image -- "/out/output2_periConv.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output3_meanByGropup.csv"
+docker run -it -v ./out:/out -e SCRIPT="mean_by_group.R" daugava-workflow-image "/out/output2_periConv.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output3_meanByGropup.csv"
 ```
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="mean_by_group.R" daugava-workflow-image -- "/out/output3_meanByGropup.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output4_meanByGropup.csv"
+docker run -it -v ./out:/out -e SCRIPT="mean_by_group.R" daugava-workflow-image "/out/output3_meanByGropup.csv" "longitude,latitude,Year_adj_generated,group_labels,HELCOM_ID" "transparen" "/out/output4_meanByGropup.csv"
 ```
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="ts_selection_interpolation.R" daugava-workflow-image -- "/out/output4_meanByGropup.csv" "group_labels,HELCOM_ID" 80 "Year_adj_generated" "transparen" 10 "/out/output5_tsSelectionInterpolation.csv"
+docker run -it -v ./out:/out -e SCRIPT="ts_selection_interpolation.R" daugava-workflow-image "/out/output4_meanByGropup.csv" "group_labels,HELCOM_ID" 80 "Year_adj_generated" "transparen" 10 "/out/output5_tsSelectionInterpolation.csv"
 ```
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="trend_analysis_mk.R" daugava-workflow-image -- "/out/output5_tsSelectionInterpolation.csv" "group_labels,HELCOM_ID" "Year_adj_generated" "transparen" "/out/output6_trendAnalysisMk.csv"
+docker run -it -v ./out:/out -e SCRIPT="trend_analysis_mk.R" daugava-workflow-image "/out/output5_tsSelectionInterpolation.csv" "group_labels,HELCOM_ID" "Year_adj_generated" "transparen" "/out/output6_trendAnalysisMk.csv"
 ```
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="barplot_trend_results.R" daugava-workflow-image -- "/out/output6_trendAnalysisMk.csv" "HELCOM_ID" "Tau_Value" "P_Value" 0.05 "group_labels" "/out/output7_barplotTrendResults.png"
+docker run -it -v ./out:/out -e SCRIPT="barplot_trend_results.R" daugava-workflow-image "/out/output6_trendAnalysisMk.csv" "HELCOM_ID" "Tau_Value" "P_Value" 0.05 "group_labels" "/out/output7_barplotTrendResults.png"
 ```
 
 ```
-docker run -it -v ./out:/out -e R_SCRIPT="map_shapefile_points.R" daugava-workflow-image -- "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "/out/output1_pointsAttPolygon.csv" "longitude" "latitude" "transparen" "HELCOM_ID" "/out/output8_mapShapefilePoints.html"
+docker run -it -v ./out:/out -e SCRIPT="map_shapefile_points.R" daugava-workflow-image "https://zenodo.org/records/15234377/files/inputdata_shapefile.zip?download=1" "/out/output1_pointsAttPolygon.csv" "longitude" "latitude" "transparen" "HELCOM_ID" "/out/output8_mapShapefilePoints.html"
 ```
 
 
