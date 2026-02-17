@@ -1,6 +1,9 @@
 # Use Rocker R base image with R 4.3.0
 FROM rocker/r-ver:4.3.0
 
+# Include git commit hash as label (at the end):
+ARG GIT_COMMIT=notset
+
 RUN apt-get update && apt-get install -y \
     curl \
     bzip2 \
@@ -36,6 +39,19 @@ WORKDIR /src
 
 ENTRYPOINT ["conda", "run", "-n", "r-environment", "/bin/bash", "-c", "Rscript /src/${R_SCRIPT} $@"]
 
+# Include git commit hash as label:
+LABEL org.opencontainers.image.revision=$GIT_COMMIT
+
 # Example build command:
 #today=$(date '+%Y%m%d')
 #docker build . -t daugava-workflow-image:${today}
+
+# Example build command:
+# This includes the git commit hash, so please
+# make sure all your changes are committed/stashed:
+#today=$(date '+%Y%m%d')
+#githash=$(git rev-parse --short HEAD)
+#docker build \
+#  --build-arg GIT_COMMIT=${githash} \
+#  -t daugava-workflow-image:${today}-${githash} .
+
